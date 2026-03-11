@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const categorias = [
+  {
+    nombre: 'Software',
+    items: [
+      { titulo: 'Adobe Illustrator', desc: 'Diseño vectorial y preparación de archivos para impresión.' },
+      { titulo: 'Adobe InDesign', desc: 'Maquetación editorial y producción de piezas multipágina.' },
+      { titulo: 'Adobe Photoshop', desc: 'Tratamiento de imágenes y preparación para impresión.' },
+    ]
+  },
+  {
+    nombre: 'Tutoriales',
+    items: [
+      { titulo: 'Preparación de archivos para offset', desc: 'Cómo preparar un archivo listo para imprenta offset.' },
+      { titulo: 'Perfiles de color ICC', desc: 'Instalación y uso de perfiles de color para impresión.' },
+      { titulo: 'Imposición y armado de pliegos', desc: 'Cómo armar pliegos para diferentes sistemas de impresión.' },
+    ]
+  },
+  {
+    nombre: 'Bibliografía',
+    items: [
+      { titulo: 'Producción Gráfica - L. Fábrega', desc: 'Manual de referencia sobre producción gráfica.' },
+      { titulo: 'El diseño como negocio - Chaves/Belluccia', desc: 'Gestión y presupuesto en diseño gráfico.' },
+    ]
+  },
+];
+---
+
+<BaseLayout title="Recursos | Cátedra Zachin" description="Material de apoyo, tutoriales y software recomendado.">
+  <section class="page-header">
+    <div class="container">
+      <span class="page-header__label">Material</span>
+      <h1>Recur<span class="text-magenta">sos</span></h1>
+      <p class="page-header__desc">Material de apoyo, tutoriales, software recomendado y bibliografía.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      {categorias.map(cat => (
+        <div class="recursos-cat">
+          <h2>{cat.nombre}</h2>
+          <div class="recursos-list">
+            {cat.items.map(item => (
+              <div class="recurso-item">
+                <h3>{item.titulo}</h3>
+                <p>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-top: calc(var(--header-height) + var(--space-2xl));
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-header__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-cyan);
+    font-weight: 600;
+  }
+
+  .page-header h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    margin-top: var(--space-sm);
+  }
+
+  .page-header__desc {
+    margin-top: var(--space-md);
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+  }
+
+  .recursos-cat {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .recursos-cat h2 {
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--color-magenta);
+    display: inline-block;
+  }
+
+  .recursos-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+
+  .recurso-item {
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    transition: border-color var(--transition-fast);
+  }
+
+  .recurso-item:hover {
+    border-color: var(--color-cyan);
+  }
+
+  .recurso-item h3 {
+    font-size: 1rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .recurso-item p {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .recursos-list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .recursos-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

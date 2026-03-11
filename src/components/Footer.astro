@@ -1,0 +1,135 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__inner container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <span class="footer__logo">ZACHIN</span>
+        <p class="footer__tagline">Cátedra de Tecnología<br/>FADU - UBA</p>
+      </div>
+
+      <div class="footer__links">
+        <h4 class="footer__heading">Niveles</h4>
+        <ul>
+          <li><a href="/nivel-1">Nivel 1</a></li>
+          <li><a href="/nivel-2">Nivel 2</a></li>
+          <li><a href="/equipo">Equipo Docente</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__links">
+        <h4 class="footer__heading">Contenido</h4>
+        <ul>
+          <li><a href="/galeria">Galería</a></li>
+          <li><a href="/trabajos">Trabajos</a></li>
+          <li><a href="/recursos">Recursos</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__contact">
+        <h4 class="footer__heading">Contacto</h4>
+        <ul>
+          <li>
+            <a href="mailto:nivel1@catedrazachin.ar">nivel1@catedrazachin.ar</a>
+          </li>
+          <li>
+            <a href="mailto:nivel2@catedrazachin.ar">nivel2@catedrazachin.ar</a>
+          </li>
+          <li>
+            <a href="https://instagram.com/catedrazachin" target="_blank" rel="noopener noreferrer" class="footer__instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+              @catedrazachin
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>&copy; {currentYear} Cátedra Zachin - FADU UBA</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background-color: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    padding-block: var(--space-xl) var(--space-lg);
+    margin-top: var(--space-2xl);
+  }
+
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+    gap: var(--space-xl);
+  }
+
+  .footer__logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-magenta);
+  }
+
+  .footer__tagline {
+    margin-top: var(--space-sm);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  .footer__heading {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-md);
+  }
+
+  .footer__links ul,
+  .footer__contact ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .footer__links a,
+  .footer__contact a {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .footer__instagram {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .footer__bottom {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-border);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .footer__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .footer__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

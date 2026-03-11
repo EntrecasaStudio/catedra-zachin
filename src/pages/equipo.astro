@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const docentes = [
+  { nombre: 'Prof. Zachin', rol: 'Titular', nivel: 'Ambos', foto: null },
+  { nombre: 'Docente 1', rol: 'Adjunto', nivel: 'Nivel 1', foto: null },
+  { nombre: 'Docente 2', rol: 'Adjunto', nivel: 'Nivel 2', foto: null },
+  { nombre: 'Docente 3', rol: 'JTP', nivel: 'Nivel 1', foto: null },
+  { nombre: 'Docente 4', rol: 'JTP', nivel: 'Nivel 2', foto: null },
+  { nombre: 'Ayudante 1', rol: 'Ayudante', nivel: 'Nivel 1', foto: null },
+  { nombre: 'Ayudante 2', rol: 'Ayudante', nivel: 'Nivel 1', foto: null },
+  { nombre: 'Ayudante 3', rol: 'Ayudante', nivel: 'Nivel 2', foto: null },
+];
+---
+
+<BaseLayout title="Equipo Docente | Cátedra Zachin" description="Conocé al equipo docente de la Cátedra Zachin.">
+  <section class="page-header">
+    <div class="container">
+      <span class="page-header__label">La cátedra</span>
+      <h1>Equipo <span class="text-magenta">Docente</span></h1>
+      <p class="page-header__desc">Los docentes y ayudantes que componen la cátedra de Tecnología.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="equipo-grid" data-animate-stagger>
+        {docentes.map(d => (
+          <div class="docente-card">
+            <div class="docente-card__avatar">
+              {d.foto
+                ? <img src={d.foto} alt={d.nombre} />
+                : <span class="docente-card__initial">{d.nombre[0]}</span>
+              }
+            </div>
+            <h3 class="docente-card__nombre">{d.nombre}</h3>
+            <span class="docente-card__rol">{d.rol}</span>
+            <span class="docente-card__nivel">{d.nivel}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-top: calc(var(--header-height) + var(--space-2xl));
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-header__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-cyan);
+    font-weight: 600;
+  }
+
+  .page-header h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    margin-top: var(--space-sm);
+  }
+
+  .page-header__desc {
+    margin-top: var(--space-md);
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+  }
+
+  .equipo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .docente-card {
+    text-align: center;
+    padding: var(--space-lg);
+  }
+
+  .docente-card__avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: var(--color-surface);
+    border: 2px solid var(--color-border);
+    margin: 0 auto var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .docente-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .docente-card__initial {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-magenta);
+  }
+
+  .docente-card__nombre {
+    font-size: 1rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  .docente-card__rol {
+    font-size: 0.8125rem;
+    color: var(--color-cyan);
+    font-weight: 600;
+    display: block;
+  }
+
+  .docente-card__nivel {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    display: block;
+    margin-top: var(--space-xs);
+  }
+
+  @media (max-width: 768px) {
+    .equipo-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .equipo-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

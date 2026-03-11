@@ -1,0 +1,182 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contacto | Cátedra Zachin" description="Información de contacto e inscripciones de la Cátedra Zachin.">
+  <section class="page-header">
+    <div class="container">
+      <span class="page-header__label">Contacto</span>
+      <h1>Contac<span class="text-magenta">to</span></h1>
+      <p class="page-header__desc">Información de inscripciones y contacto de la cátedra.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="contacto-grid">
+        <!-- Inscripciones -->
+        <div class="contacto-card contacto-card--highlight">
+          <h2>Inscripciones</h2>
+          <p>Las inscripciones para el primer cuatrimestre 2026 están abiertas.</p>
+          <div class="contacto-card__buttons">
+            <a href="#" class="btn btn-primary">Inscripción Nivel 1</a>
+            <a href="#" class="btn btn-primary">Inscripción Nivel 2</a>
+          </div>
+        </div>
+
+        <!-- Mails -->
+        <div class="contacto-card">
+          <h3>Nivel 1</h3>
+          <a href="mailto:nivel1@catedrazachin.ar" class="contacto-mail">nivel1@catedrazachin.ar</a>
+          <p class="contacto-card__desc">Consultas sobre inscripción, programa y cursada de Nivel 1.</p>
+        </div>
+
+        <div class="contacto-card">
+          <h3>Nivel 2</h3>
+          <a href="mailto:nivel2@catedrazachin.ar" class="contacto-mail">nivel2@catedrazachin.ar</a>
+          <p class="contacto-card__desc">Consultas sobre inscripción, programa y cursada de Nivel 2.</p>
+        </div>
+
+        <!-- Instagram -->
+        <div class="contacto-card">
+          <h3>Instagram</h3>
+          <a href="https://instagram.com/catedrazachin" target="_blank" rel="noopener noreferrer" class="contacto-instagram">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+            @catedrazachin
+          </a>
+          <p class="contacto-card__desc">Seguinos para novedades, eventos y contenido de la cátedra.</p>
+        </div>
+
+        <!-- Cursada -->
+        <div class="contacto-card">
+          <h3>Cursada</h3>
+          <div class="contacto-info">
+            <p><strong>Sede:</strong> FADU - UBA</p>
+            <p><strong>Dirección:</strong> Intendente Güiraldes 2160, CABA</p>
+            <p><strong>Horarios:</strong> Consultar por mail según nivel</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-top: calc(var(--header-height) + var(--space-2xl));
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-header__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-cyan);
+    font-weight: 600;
+  }
+
+  .page-header h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    margin-top: var(--space-sm);
+  }
+
+  .page-header__desc {
+    margin-top: var(--space-md);
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+  }
+
+  .contacto-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+
+  .contacto-card {
+    padding: var(--space-xl);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+  }
+
+  .contacto-card--highlight {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, var(--color-magenta), #a00058);
+    border: none;
+    color: var(--color-white);
+    text-align: center;
+    padding: var(--space-2xl);
+  }
+
+  .contacto-card--highlight h2 {
+    margin-bottom: var(--space-md);
+  }
+
+  .contacto-card--highlight p {
+    margin-bottom: var(--space-lg);
+    opacity: 0.9;
+    max-width: 100%;
+  }
+
+  .contacto-card__buttons {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .contacto-card--highlight .btn-primary {
+    background-color: var(--color-white);
+    color: var(--color-magenta);
+  }
+
+  .contacto-card--highlight .btn-primary:hover {
+    background-color: var(--color-yellow);
+    color: var(--color-black);
+  }
+
+  .contacto-card h3 {
+    margin-bottom: var(--space-md);
+    font-size: 1.25rem;
+  }
+
+  .contacto-mail {
+    font-size: 1.125rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: var(--space-sm);
+  }
+
+  .contacto-card__desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .contacto-instagram {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+  }
+
+  .contacto-info p {
+    font-size: 0.9375rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  .contacto-info strong {
+    color: var(--color-cyan);
+  }
+
+  @media (max-width: 768px) {
+    .contacto-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

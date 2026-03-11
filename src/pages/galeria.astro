@@ -1,0 +1,200 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Placeholder gallery items - replace with real content
+const items = [
+  { tipo: 'foto', src: '/images/galeria/placeholder.jpg', alt: 'Taller de serigrafía', categoria: 'taller' },
+  { tipo: 'foto', src: '/images/galeria/placeholder.jpg', alt: 'Clase de tipografía', categoria: 'clase' },
+  { tipo: 'foto', src: '/images/galeria/placeholder.jpg', alt: 'Evento Zachin Live', categoria: 'evento' },
+  { tipo: 'video', src: 'https://www.youtube.com/embed/dQw4w9WgXcQ', alt: 'Zachin Live 2024', categoria: 'evento' },
+  { tipo: 'foto', src: '/images/galeria/placeholder.jpg', alt: 'Producción offset', categoria: 'taller' },
+  { tipo: 'foto', src: '/images/galeria/placeholder.jpg', alt: 'Muestra de trabajos', categoria: 'evento' },
+];
+
+const categorias = ['todas', 'taller', 'clase', 'evento'];
+---
+
+<BaseLayout title="Galería | Cátedra Zachin" description="Fotos y videos de clases, talleres y eventos de la Cátedra Zachin.">
+  <section class="page-header">
+    <div class="container">
+      <span class="page-header__label">Multimedia</span>
+      <h1>Gale<span class="text-magenta">ría</span></h1>
+      <p class="page-header__desc">Fotos y videos de clases, talleres y eventos de la cátedra.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="galeria-filters" id="galeria-filters">
+        {categorias.map(cat => (
+          <button
+            class:list={['filter-btn', { active: cat === 'todas' }]}
+            data-filter={cat}
+          >
+            {cat.charAt(0).toUpperCase() + cat.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      <div class="galeria-grid" id="galeria-grid">
+        {items.map((item, i) => (
+          <div class="galeria-item" data-categoria={item.categoria}>
+            {item.tipo === 'foto' ? (
+              <div class="galeria-item__img">
+                <div class="galeria-item__placeholder">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span>{item.alt}</span>
+                </div>
+              </div>
+            ) : (
+              <div class="galeria-item__video">
+                <div class="galeria-item__placeholder">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  </svg>
+                  <span>{item.alt}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-top: calc(var(--header-height) + var(--space-2xl));
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-header__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-cyan);
+    font-weight: 600;
+  }
+
+  .page-header h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    margin-top: var(--space-sm);
+  }
+
+  .page-header__desc {
+    margin-top: var(--space-md);
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+  }
+
+  .galeria-filters {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    color: var(--color-text-secondary);
+    transition: all var(--transition-fast);
+  }
+
+  .filter-btn:hover,
+  .filter-btn.active {
+    border-color: var(--color-magenta);
+    color: var(--color-magenta);
+  }
+
+  .galeria-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+
+  .galeria-item__img,
+  .galeria-item__video {
+    aspect-ratio: 4/3;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  .galeria-item__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+  }
+
+  .galeria-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform var(--transition-base);
+  }
+
+  .galeria-item img:hover {
+    transform: scale(1.05);
+  }
+
+  .galeria-item[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .galeria-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .galeria-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const filters = document.getElementById('galeria-filters');
+    const grid = document.getElementById('galeria-grid');
+    if (!filters || !grid) return;
+
+    filters.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest('.filter-btn');
+      if (!btn) return;
+
+      filters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.getAttribute('data-filter');
+      grid.querySelectorAll('.galeria-item').forEach(item => {
+        if (filter === 'todas' || item.getAttribute('data-categoria') === filter) {
+          (item as HTMLElement).hidden = false;
+        } else {
+          (item as HTMLElement).hidden = true;
+        }
+      });
+    });
+  });
+</script>

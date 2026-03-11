@@ -1,0 +1,82 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Cátedra Zachin | Tecnología - FADU',
+  description = 'Cátedra de Tecnología Zachin, niveles 1 y 2 de la carrera de Diseño Gráfico en FADU.'
+} = Astro.props;
+---
+
+<html lang="es" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://catedrazachin.ar" />
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://use.typekit.net/owv7rck.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- View Transitions -->
+    <ClientRouter />
+
+    <title>{title}</title>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Theme: apply immediately to prevent flash
+      const theme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    </script>
+    <script>
+      import { initAnimations } from '../scripts/animations.js';
+
+      function setup() {
+        // Theme toggle
+        const toggle = document.getElementById('theme-toggle');
+        if (toggle) {
+          const newToggle = toggle.cloneNode(true);
+          toggle.parentNode?.replaceChild(newToggle, toggle);
+          newToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+          });
+        }
+
+        // GSAP Animations
+        initAnimations();
+      }
+
+      // Run on initial load and on view transition navigations
+      document.addEventListener('astro:page-load', setup);
+    </script>
+  </body>
+</html>

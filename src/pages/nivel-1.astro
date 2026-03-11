@@ -1,0 +1,190 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Nivel 1 | Cátedra Zachin" description="Nivel 1 de Tecnología - Introducción a los procesos de producción gráfica.">
+  <section class="page-header">
+    <div class="container">
+      <span class="page-header__label">Nivel</span>
+      <h1>Nivel <span class="text-magenta">1</span></h1>
+      <p class="page-header__desc">Introducción a las tecnologías de producción gráfica. Procesos analógicos y digitales.</p>
+      <a href="mailto:nivel1@catedrazachin.ar" class="page-header__mail">nivel1@catedrazachin.ar</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 data-animate>Programa</h2>
+      <div class="programa" data-animate-stagger>
+        <div class="programa__item">
+          <span class="programa__num">01</span>
+          <h3>Introducción a la Tecnología Gráfica</h3>
+          <p>Conceptos fundamentales de producción gráfica. Flujo de trabajo general.</p>
+        </div>
+        <div class="programa__item">
+          <span class="programa__num">02</span>
+          <h3>Sistemas de Impresión</h3>
+          <p>Offset, serigrafía, tipografía, flexografía, huecograbado. Procesos y aplicaciones.</p>
+        </div>
+        <div class="programa__item">
+          <span class="programa__num">03</span>
+          <h3>Preimpresión Digital</h3>
+          <p>Preparación de archivos, perfiles de color, resolución, trapping.</p>
+        </div>
+        <div class="programa__item">
+          <span class="programa__num">04</span>
+          <h3>Papeles y Soportes</h3>
+          <p>Tipos de papel, gramaje, texturas. Elección de soporte según el proyecto.</p>
+        </div>
+        <div class="programa__item">
+          <span class="programa__num">05</span>
+          <h3>Terminación y Postimpresión</h3>
+          <p>Troquelado, laminado, barnizado, encuadernación. Acabados especiales.</p>
+        </div>
+        <div class="programa__item">
+          <span class="programa__num">06</span>
+          <h3>Color</h3>
+          <p>Teoría del color aplicada. CMYK, RGB, Pantone. Gestión de color.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 data-animate>Cronograma</h2>
+      <div class="cronograma" data-animate-stagger>
+        <div class="cronograma__item">
+          <span class="cronograma__fecha">Semana 1-2</span>
+          <p>Introducción y diagnóstico</p>
+        </div>
+        <div class="cronograma__item">
+          <span class="cronograma__fecha">Semana 3-5</span>
+          <p>TP1: Sistemas de impresión</p>
+        </div>
+        <div class="cronograma__item">
+          <span class="cronograma__fecha">Semana 6-8</span>
+          <p>TP2: Preimpresión y color</p>
+        </div>
+        <div class="cronograma__item">
+          <span class="cronograma__fecha">Semana 9-11</span>
+          <p>TP3: Papeles y terminación</p>
+        </div>
+        <div class="cronograma__item">
+          <span class="cronograma__fecha">Semana 12-14</span>
+          <p>Trabajo Final Integrador</p>
+        </div>
+        <div class="cronograma__item">
+          <span class="cronograma__fecha">Semana 15-16</span>
+          <p>Entrega final y recuperatorios</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-top: calc(var(--header-height) + var(--space-2xl));
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-header__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-cyan);
+    font-weight: 600;
+  }
+
+  .page-header h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    margin-top: var(--space-sm);
+  }
+
+  .page-header__desc {
+    margin-top: var(--space-md);
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+  }
+
+  .page-header__mail {
+    display: inline-block;
+    margin-top: var(--space-md);
+    font-weight: 600;
+  }
+
+  .programa {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    margin-top: var(--space-lg);
+  }
+
+  .programa__item {
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    position: relative;
+  }
+
+  .programa__num {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-magenta);
+    opacity: 0.3;
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+  }
+
+  .programa__item h3 {
+    font-size: 1.125rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .programa__item p {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .cronograma {
+    display: grid;
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
+  }
+
+  .cronograma__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-md) var(--space-lg);
+    border-left: 3px solid var(--color-cyan);
+    background-color: var(--color-surface);
+  }
+
+  .cronograma__fecha {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--color-cyan);
+    white-space: nowrap;
+    min-width: 120px;
+  }
+
+  .cronograma__item p {
+    font-size: 0.9375rem;
+  }
+
+  @media (max-width: 768px) {
+    .programa {
+      grid-template-columns: 1fr;
+    }
+
+    .cronograma__item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-xs);
+    }
+  }
+</style>

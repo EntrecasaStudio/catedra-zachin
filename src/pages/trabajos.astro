@@ -1,0 +1,166 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const trabajos = [
+  { titulo: 'Packaging Cerveza Artesanal', alumno: 'Alumno 1', nivel: 'Nivel 2', cuatri: '2024-1C', foto: null },
+  { titulo: 'Editorial Revista Cultural', alumno: 'Alumno 2', nivel: 'Nivel 2', cuatri: '2024-1C', foto: null },
+  { titulo: 'Sistema de Impresión Serigráfico', alumno: 'Alumno 3', nivel: 'Nivel 1', cuatri: '2024-1C', foto: null },
+  { titulo: 'Señalética Museo', alumno: 'Alumno 4', nivel: 'Nivel 2', cuatri: '2024-2C', foto: null },
+  { titulo: 'Papeles y Texturas', alumno: 'Alumno 5', nivel: 'Nivel 1', cuatri: '2024-2C', foto: null },
+  { titulo: 'Producción Offset', alumno: 'Alumno 6', nivel: 'Nivel 1', cuatri: '2024-2C', foto: null },
+];
+---
+
+<BaseLayout title="Trabajos de Alumnos | Cátedra Zachin" description="Los mejores trabajos de alumnos de la Cátedra Zachin.">
+  <section class="page-header">
+    <div class="container">
+      <span class="page-header__label">Showcase</span>
+      <h1>Traba<span class="text-magenta">jos</span></h1>
+      <p class="page-header__desc">Los mejores trabajos de alumnos de cuatrimestres anteriores.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="trabajos-grid">
+        {trabajos.map(t => (
+          <div class="trabajo-card">
+            <div class="trabajo-card__img">
+              {t.foto
+                ? <img src={t.foto} alt={t.titulo} loading="lazy" />
+                : <div class="trabajo-card__placeholder">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </div>
+              }
+            </div>
+            <div class="trabajo-card__info">
+              <h3>{t.titulo}</h3>
+              <p class="trabajo-card__alumno">{t.alumno}</p>
+              <div class="trabajo-card__meta">
+                <span class="trabajo-card__nivel">{t.nivel}</span>
+                <span class="trabajo-card__cuatri">{t.cuatri}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-top: calc(var(--header-height) + var(--space-2xl));
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-header__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-cyan);
+    font-weight: 600;
+  }
+
+  .page-header h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    margin-top: var(--space-sm);
+  }
+
+  .page-header__desc {
+    margin-top: var(--space-md);
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+  }
+
+  .trabajos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .trabajo-card {
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color var(--transition-fast);
+  }
+
+  .trabajo-card:hover {
+    border-color: var(--color-magenta);
+  }
+
+  .trabajo-card__img {
+    aspect-ratio: 4/3;
+    background-color: var(--color-surface);
+    overflow: hidden;
+  }
+
+  .trabajo-card__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base);
+  }
+
+  .trabajo-card:hover .trabajo-card__img img {
+    transform: scale(1.05);
+  }
+
+  .trabajo-card__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+  }
+
+  .trabajo-card__info {
+    padding: var(--space-md);
+  }
+
+  .trabajo-card__info h3 {
+    font-size: 1rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  .trabajo-card__alumno {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .trabajo-card__meta {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-sm);
+  }
+
+  .trabajo-card__nivel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-cyan);
+  }
+
+  .trabajo-card__cuatri {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .trabajos-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .trabajos-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
