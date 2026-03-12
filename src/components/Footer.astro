@@ -6,7 +6,10 @@ const currentYear = new Date().getFullYear();
   <div class="footer__inner container">
     <div class="footer__grid">
       <div class="footer__brand">
-        <span class="footer__logo">ZACHIN</span>
+        <div class="footer__logo-wrap">
+          <img src="/images/logo-white.svg" alt="Tecnología Zachin" class="footer__logo-img footer__logo-dark" width="741" height="202" />
+          <img src="/images/logo-black.svg" alt="Tecnología Zachin" class="footer__logo-img footer__logo-light" width="741" height="202" />
+        </div>
         <p class="footer__tagline">Cátedra de Tecnología<br/>FADU - UBA</p>
       </div>
 
@@ -71,12 +74,20 @@ const currentYear = new Date().getFullYear();
     gap: var(--space-xl);
   }
 
-  .footer__logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--color-magenta);
+  .footer__logo-wrap {
+    max-width: 180px;
   }
+
+  .footer__logo-img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Theme-based logo switching */
+  :global([data-theme="dark"]) .footer__logo-dark { display: block; }
+  :global([data-theme="dark"]) .footer__logo-light { display: none; }
+  :global([data-theme="light"]) .footer__logo-dark { display: none; }
+  :global([data-theme="light"]) .footer__logo-light { display: block; }
 
   .footer__tagline {
     margin-top: var(--space-sm);

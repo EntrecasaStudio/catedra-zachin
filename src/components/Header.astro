@@ -15,9 +15,9 @@ const currentPath = Astro.url.pathname;
 
 <header class="header">
   <div class="header__inner container">
-    <a href="/" class="header__logo">
-      <span class="header__logo-text">ZACHIN</span>
-      <span class="header__logo-sub">Tecnología FADU</span>
+    <a href="/" class="header__logo" aria-label="Cátedra Zachin - Inicio">
+      <img src="/images/logo-white.svg" alt="Tecnología Zachin" class="header__logo-img header__logo-dark" width="741" height="202" />
+      <img src="/images/logo-black.svg" alt="Tecnología Zachin" class="header__logo-img header__logo-light" width="741" height="202" />
     </a>
 
     <nav class="header__nav" id="main-nav" aria-label="Navegación principal">
@@ -86,25 +86,21 @@ const currentPath = Astro.url.pathname;
 
   .header__logo {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     text-decoration: none;
-    color: var(--color-text);
-    line-height: 1;
+    flex-shrink: 0;
   }
 
-  .header__logo-text {
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--color-magenta);
+  .header__logo-img {
+    height: 2rem;
+    width: auto;
   }
 
-  .header__logo-sub {
-    font-size: 0.625rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--color-text-muted);
-  }
+  /* Theme-based logo switching */
+  :global([data-theme="dark"]) .header__logo-dark { display: block; }
+  :global([data-theme="dark"]) .header__logo-light { display: none; }
+  :global([data-theme="light"]) .header__logo-dark { display: none; }
+  :global([data-theme="light"]) .header__logo-light { display: block; }
 
   .header__nav-list {
     display: flex;
