@@ -182,15 +182,16 @@ const currentPath = Astro.url.pathname;
 
     .header__nav {
       position: fixed;
-      top: var(--header-height);
+      top: 100%;
       left: 0;
       right: 0;
-      bottom: 0;
+      height: calc(100dvh - var(--header-height));
       background-color: var(--color-bg);
       padding: var(--space-lg);
       transform: translateX(100%);
       transition: transform var(--transition-base);
       z-index: 99;
+      overflow-y: auto;
     }
 
     .header__nav.open {
