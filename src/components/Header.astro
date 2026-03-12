@@ -22,13 +22,17 @@ const currentPath = Astro.url.pathname;
 
     <nav class="header__nav" id="main-nav" aria-label="Navegación principal">
       <ul class="header__nav-list">
-        {navLinks.map(link => (
-          <li>
+        {navLinks.map((link, i) => (
+          <li class="header__nav-item" style={`--i: ${i}`}>
             <a
               href={link.href}
               class:list={['header__nav-link', { active: currentPath === link.href }]}
             >
-              {link.label}
+              <svg class="header__nav-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+              <span class="header__nav-label">{link.label}</span>
             </a>
           </li>
         ))}
@@ -102,9 +106,14 @@ const currentPath = Astro.url.pathname;
   :global([data-theme="light"]) .header__logo-dark { display: none; }
   :global([data-theme="light"]) .header__logo-light { display: block; }
 
+  /* --- Desktop nav --- */
   .header__nav-list {
     display: flex;
     gap: var(--space-md);
+  }
+
+  .header__nav-arrow {
+    display: none;
   }
 
   .header__nav-link {
@@ -116,6 +125,8 @@ const currentPath = Astro.url.pathname;
     transition: color var(--transition-fast);
     padding: var(--space-xs) 0;
     position: relative;
+    display: flex;
+    align-items: center;
   }
 
   .header__nav-link:hover,
@@ -174,7 +185,9 @@ const currentPath = Astro.url.pathname;
     transition: all var(--transition-fast);
   }
 
-  /* Mobile */
+  /* ======================
+     Mobile: Vertical Menu
+     ====================== */
   @media (max-width: 768px) {
     .header__burger {
       display: flex;
@@ -187,11 +200,13 @@ const currentPath = Astro.url.pathname;
       right: 0;
       height: calc(100dvh - var(--header-height));
       background-color: var(--color-bg);
-      padding: var(--space-lg);
+      padding: var(--space-xl) var(--space-lg);
       transform: translateX(100%);
       transition: transform var(--transition-base);
       z-index: 99;
       overflow-y: auto;
+      display: flex;
+      align-items: flex-start;
     }
 
     .header__nav.open {
@@ -200,13 +215,99 @@ const currentPath = Astro.url.pathname;
 
     .header__nav-list {
       flex-direction: column;
-      gap: var(--space-lg);
+      gap: var(--space-md);
+      width: 100%;
+      padding-left: var(--space-sm);
     }
 
+    /* --- Nav items: staggered entrance --- */
+    .header__nav-item {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+
+    .header__nav.open .header__nav-item {
+      animation: menuSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: calc(0.05s + var(--i) * 0.04s);
+    }
+
+    @keyframes menuSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* --- Link: vertical menu style --- */
     .header__nav-link {
-      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--color-text);
+      padding: var(--space-xs) 0;
+      transition: color 0.3s ease-out, transform 0.3s ease-out;
+      overflow: hidden;
     }
 
+    .header__nav-link:hover {
+      color: var(--color-magenta);
+      transform: translateX(4px);
+    }
+
+    .header__nav-link.active {
+      color: var(--color-magenta);
+    }
+
+    .header__nav-link.active::after {
+      display: none;
+    }
+
+    /* --- Arrow icon --- */
+    .header__nav-arrow {
+      display: block;
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      opacity: 0;
+      transform: translateX(-100%);
+      transition: opacity 0.3s ease-out, transform 0.3s ease-out, color 0.3s ease-out;
+      color: var(--color-magenta);
+    }
+
+    .header__nav-link:hover .header__nav-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .header__nav-link.active .header__nav-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* --- Label: shifts right when arrow appears --- */
+    .header__nav-label {
+      display: block;
+      transition: transform 0.3s ease-out;
+      transform: translateX(-36px);
+    }
+
+    .header__nav-link:hover .header__nav-label {
+      transform: translateX(0);
+    }
+
+    .header__nav-link.active .header__nav-label {
+      transform: translateX(0);
+    }
+
+    /* --- Burger X animation --- */
     .header__burger.open span:nth-child(1) {
       transform: rotate(45deg) translate(5px, 5px);
     }
