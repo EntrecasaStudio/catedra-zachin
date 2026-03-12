@@ -58,20 +58,7 @@ const {
       import { initAnimations } from '../scripts/animations.js';
 
       function setup() {
-        // Theme toggle
-        const toggle = document.getElementById('theme-toggle');
-        if (toggle) {
-          const newToggle = toggle.cloneNode(true);
-          toggle.parentNode?.replaceChild(newToggle, toggle);
-          newToggle.addEventListener('click', () => {
-            const current = document.documentElement.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-          });
-        }
-
-        // GSAP Animations
+          // GSAP Animations
         initAnimations();
       }
 

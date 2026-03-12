@@ -15,11 +15,13 @@ const currentPath = Astro.url.pathname;
 
 <header class="header">
   <div class="header__inner container">
+    <!-- Logo: circle iso only -->
     <a href="/" class="header__logo" aria-label="Cátedra Zachin - Inicio">
-      <img src="/images/logo-white.svg" alt="Tecnología Zachin" class="header__logo-img header__logo-dark" width="741" height="202" />
-      <img src="/images/logo-black.svg" alt="Tecnología Zachin" class="header__logo-img header__logo-light" width="741" height="202" />
+      <img src="/images/logo-iso-white.svg" alt="Cátedra Zachin" class="header__logo-img header__logo-dark" />
+      <img src="/images/logo-iso-black.svg" alt="Cátedra Zachin" class="header__logo-img header__logo-light" />
     </a>
 
+    <!-- Navigation -->
     <nav class="header__nav" id="main-nav" aria-label="Navegación principal">
       <ul class="header__nav-list">
         {navLinks.map((link, i) => (
@@ -37,36 +39,64 @@ const currentPath = Astro.url.pathname;
           </li>
         ))}
       </ul>
+
+      <!-- Theme toggle inside menu (mobile) -->
+      <div class="header__nav-footer">
+        <button class="theme-toggle theme-toggle--mobile" aria-label="Cambiar tema">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" stroke-linecap="round">
+            <clipPath id="theme-clip-m">
+              <path d="M0-5h30a1 1 0 0 0 9 13v24H0Z" class="toggle__clip-path"/>
+            </clipPath>
+            <g clip-path="url(#theme-clip-m)">
+              <circle class="toggle__circle" cx="16" cy="16" r="8"/>
+              <g class="toggle__rays" stroke="currentColor" stroke-width="1.5">
+                <path d="M16 5.5v-4"/><path d="M16 30.5v-4"/>
+                <path d="M1.5 16h4"/><path d="M26.5 16h4"/>
+                <path d="m23.4 8.6 2.8-2.8"/><path d="m5.7 26.3 2.9-2.9"/>
+                <path d="m5.8 5.8 2.8 2.8"/><path d="m23.4 23.4 2.9 2.9"/>
+              </g>
+            </g>
+          </svg>
+        </button>
+      </div>
     </nav>
 
+    <!-- Actions -->
     <div class="header__actions">
-      <button id="theme-toggle" class="header__theme-toggle" aria-label="Cambiar tema">
-        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/>
-          <line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/>
-          <line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
-        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      <!-- Theme toggle (desktop) -->
+      <button class="theme-toggle theme-toggle--desktop" aria-label="Cambiar tema">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" stroke-linecap="round">
+          <clipPath id="theme-clip-d">
+            <path d="M0-5h30a1 1 0 0 0 9 13v24H0Z" class="toggle__clip-path"/>
+          </clipPath>
+          <g clip-path="url(#theme-clip-d)">
+            <circle class="toggle__circle" cx="16" cy="16" r="8"/>
+            <g class="toggle__rays" stroke="currentColor" stroke-width="1.5">
+              <path d="M16 5.5v-4"/><path d="M16 30.5v-4"/>
+              <path d="M1.5 16h4"/><path d="M26.5 16h4"/>
+              <path d="m23.4 8.6 2.8-2.8"/><path d="m5.7 26.3 2.9-2.9"/>
+              <path d="m5.8 5.8 2.8 2.8"/><path d="m23.4 23.4 2.9 2.9"/>
+            </g>
+          </g>
         </svg>
       </button>
 
+      <!-- Hamburger -->
       <button class="header__burger" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
+        <div class="burger__lines">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </button>
     </div>
   </div>
 </header>
 
 <style>
+  /* ==============================
+     Header Shell
+     ============================== */
   .header {
     position: fixed;
     top: 0;
@@ -88,6 +118,9 @@ const currentPath = Astro.url.pathname;
     gap: var(--space-lg);
   }
 
+  /* ==============================
+     Logo: circle iso
+     ============================== */
   .header__logo {
     display: flex;
     align-items: center;
@@ -96,25 +129,26 @@ const currentPath = Astro.url.pathname;
   }
 
   .header__logo-img {
-    height: 2rem;
-    width: auto;
+    height: 2.25rem;
+    width: 2.25rem;
+    object-fit: contain;
   }
 
-  /* Theme-based logo switching */
   :global([data-theme="dark"]) .header__logo-dark { display: block; }
   :global([data-theme="dark"]) .header__logo-light { display: none; }
   :global([data-theme="light"]) .header__logo-dark { display: none; }
   :global([data-theme="light"]) .header__logo-light { display: block; }
 
-  /* --- Desktop nav --- */
+  /* ==============================
+     Desktop Nav
+     ============================== */
   .header__nav-list {
     display: flex;
     gap: var(--space-md);
   }
 
-  .header__nav-arrow {
-    display: none;
-  }
+  .header__nav-arrow { display: none; }
+  .header__nav-footer { display: none; }
 
   .header__nav-link {
     font-size: 0.8125rem;
@@ -129,9 +163,12 @@ const currentPath = Astro.url.pathname;
     align-items: center;
   }
 
-  .header__nav-link:hover,
+  .header__nav-link:hover {
+    color: var(--color-text);
+  }
+
   .header__nav-link.active {
-    color: var(--color-magenta);
+    color: var(--color-text);
   }
 
   .header__nav-link.active::after {
@@ -141,48 +178,127 @@ const currentPath = Astro.url.pathname;
     left: 0;
     right: 0;
     height: 2px;
-    background-color: var(--color-magenta);
+    background-color: var(--color-text);
   }
 
+  /* ==============================
+     Actions
+     ============================== */
   .header__actions {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
   }
 
-  .header__theme-toggle {
+  /* ==============================
+     Theme Toggle (sun/moon clipPath)
+     ============================== */
+  .theme-toggle {
     width: 36px;
     height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: background-color var(--transition-fast);
+    transition: background-color var(--transition-fast), transform 0.2s ease;
+    color: var(--color-text);
   }
 
-  .header__theme-toggle:hover {
+  .theme-toggle:hover {
     background-color: var(--color-bg-elevated);
   }
 
-  [data-theme="dark"] .icon-sun { display: block; }
-  [data-theme="dark"] .icon-moon { display: none; }
-  [data-theme="light"] .icon-sun { display: none; }
-  [data-theme="light"] .icon-moon { display: block; }
-
-  .header__burger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    width: 28px;
-    padding: 4px 0;
+  .theme-toggle:active {
+    transform: scale(0.92);
   }
 
-  .header__burger span {
+  .theme-toggle svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* clipPath animation */
+  .toggle__clip-path {
+    transition: transform 0.35s ease-in-out;
+  }
+
+  :global([data-theme="dark"]) .toggle__clip-path {
+    transform: translate(-12px, 10px);
+  }
+
+  /* Circle grows in dark mode */
+  .toggle__circle {
+    transition: transform 0.35s ease-in-out;
+    transform-origin: 16px 16px;
+  }
+
+  :global([data-theme="dark"]) .toggle__circle {
+    transform: scale(1.25);
+  }
+
+  /* Rays fade/rotate in dark mode */
+  .toggle__rays {
+    transition: transform 0.35s ease-in-out, opacity 0.35s ease-in-out;
+    transform-origin: 16px 16px;
+  }
+
+  :global([data-theme="dark"]) .toggle__rays {
+    transform: rotate(-100deg) scale(0.5);
+    opacity: 0;
+  }
+
+  /* ==============================
+     Hamburger: smooth 3-line → X
+     ============================== */
+  .header__burger {
+    display: none;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color var(--transition-fast);
+  }
+
+  .header__burger:hover {
+    background-color: var(--color-bg-elevated);
+  }
+
+  .burger__lines {
+    width: 22px;
+    height: 16px;
+    position: relative;
+  }
+
+  .burger__lines span {
     display: block;
+    position: absolute;
+    left: 0;
     width: 100%;
     height: 2px;
     background-color: var(--color-text);
-    transition: all var(--transition-fast);
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                opacity 0.25s ease,
+                width 0.3s ease;
+    transform-origin: center;
+  }
+
+  .burger__lines span:nth-child(1) { top: 0; }
+  .burger__lines span:nth-child(2) { top: 7px; }
+  .burger__lines span:nth-child(3) { top: 14px; }
+
+  /* Open state → X */
+  .header__burger.open .burger__lines span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .header__burger.open .burger__lines span:nth-child(2) {
+    opacity: 0;
+    width: 0;
+  }
+
+  .header__burger.open .burger__lines span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
   }
 
   /* ======================
@@ -193,6 +309,10 @@ const currentPath = Astro.url.pathname;
       display: flex;
     }
 
+    .theme-toggle--desktop {
+      display: none;
+    }
+
     .header__nav {
       position: fixed;
       top: 100%;
@@ -200,13 +320,13 @@ const currentPath = Astro.url.pathname;
       right: 0;
       height: calc(100dvh - var(--header-height));
       background-color: var(--color-bg);
-      padding: var(--space-xl) var(--space-lg);
+      padding: var(--space-xl) var(--space-lg) var(--space-lg);
       transform: translateX(100%);
       transition: transform var(--transition-base);
       z-index: 99;
       overflow-y: auto;
       display: flex;
-      align-items: flex-start;
+      flex-direction: column;
     }
 
     .header__nav.open {
@@ -218,9 +338,10 @@ const currentPath = Astro.url.pathname;
       gap: var(--space-md);
       width: 100%;
       padding-left: var(--space-sm);
+      flex: 1;
     }
 
-    /* --- Nav items: staggered entrance --- */
+    /* Staggered entrance */
     .header__nav-item {
       opacity: 0;
       transform: translateX(30px);
@@ -232,17 +353,11 @@ const currentPath = Astro.url.pathname;
     }
 
     @keyframes menuSlideIn {
-      from {
-        opacity: 0;
-        transform: translateX(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
-    /* --- Link: vertical menu style --- */
+    /* Vertical menu link style */
     .header__nav-link {
       display: flex;
       align-items: center;
@@ -258,19 +373,17 @@ const currentPath = Astro.url.pathname;
     }
 
     .header__nav-link:hover {
-      color: var(--color-magenta);
+      color: var(--color-text);
       transform: translateX(4px);
     }
 
     .header__nav-link.active {
-      color: var(--color-magenta);
+      color: var(--color-text);
     }
 
-    .header__nav-link.active::after {
-      display: none;
-    }
+    .header__nav-link.active::after { display: none; }
 
-    /* --- Arrow icon --- */
+    /* Arrow */
     .header__nav-arrow {
       display: block;
       width: 28px;
@@ -278,44 +391,45 @@ const currentPath = Astro.url.pathname;
       flex-shrink: 0;
       opacity: 0;
       transform: translateX(-100%);
-      transition: opacity 0.3s ease-out, transform 0.3s ease-out, color 0.3s ease-out;
-      color: var(--color-magenta);
+      transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+      color: var(--color-text);
     }
 
-    .header__nav-link:hover .header__nav-arrow {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
+    .header__nav-link:hover .header__nav-arrow,
     .header__nav-link.active .header__nav-arrow {
       opacity: 1;
       transform: translateX(0);
     }
 
-    /* --- Label: shifts right when arrow appears --- */
+    /* Label shift */
     .header__nav-label {
       display: block;
       transition: transform 0.3s ease-out;
       transform: translateX(-36px);
     }
 
-    .header__nav-link:hover .header__nav-label {
-      transform: translateX(0);
-    }
-
+    .header__nav-link:hover .header__nav-label,
     .header__nav-link.active .header__nav-label {
       transform: translateX(0);
     }
 
-    /* --- Burger X animation --- */
-    .header__burger.open span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
+    /* Nav footer with theme toggle */
+    .header__nav-footer {
+      display: flex;
+      align-items: center;
+      padding-top: var(--space-lg);
+      margin-top: auto;
+      border-top: 1px solid var(--color-border);
     }
-    .header__burger.open span:nth-child(2) {
-      opacity: 0;
+
+    .theme-toggle--mobile {
+      width: 44px;
+      height: 44px;
     }
-    .header__burger.open span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -5px);
+
+    .theme-toggle--mobile svg {
+      width: 26px;
+      height: 26px;
     }
   }
 </style>
@@ -326,6 +440,7 @@ const currentPath = Astro.url.pathname;
     const nav = document.getElementById('main-nav');
     if (!burger || !nav) return;
 
+    // Hamburger toggle
     burger.addEventListener('click', () => {
       const isOpen = nav.classList.toggle('open');
       burger.classList.toggle('open');
@@ -333,11 +448,23 @@ const currentPath = Astro.url.pathname;
     });
 
     // Close menu on link click
-    nav.querySelectorAll('a').forEach(link => {
+    nav.querySelectorAll('.header__nav-link').forEach(link => {
       link.addEventListener('click', () => {
         nav.classList.remove('open');
         burger.classList.remove('open');
         burger.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Theme toggles (desktop + mobile)
+    document.querySelectorAll('.theme-toggle').forEach(toggle => {
+      const newToggle = toggle.cloneNode(true);
+      toggle.parentNode?.replaceChild(newToggle, toggle);
+      newToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
       });
     });
   });

@@ -6,7 +6,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="page-header">
     <div class="container">
       <span class="page-header__label">Contacto</span>
-      <h1>Contac<span class="text-magenta">to</span></h1>
+      <h1>Contacto</h1>
       <p class="page-header__desc">Información de inscripciones y contacto de la cátedra.</p>
     </div>
   </section>
@@ -76,7 +76,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: var(--color-cyan);
+    color: var(--color-text-secondary);
     font-weight: 600;
   }
 
@@ -105,9 +105,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .contacto-card--highlight {
     grid-column: 1 / -1;
-    background: linear-gradient(135deg, var(--color-magenta), #a00058);
-    border: none;
-    color: var(--color-white);
+    background-color: var(--color-surface);
+    border: 2px solid var(--color-border);
     text-align: center;
     padding: var(--space-2xl);
   }
@@ -118,7 +117,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .contacto-card--highlight p {
     margin-bottom: var(--space-lg);
-    opacity: 0.9;
+    color: var(--color-text-secondary);
     max-width: 100%;
   }
 
@@ -129,14 +128,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     flex-wrap: wrap;
   }
 
-  .contacto-card--highlight .btn-primary {
-    background-color: var(--color-white);
-    color: var(--color-magenta);
+  .contacto-card__buttons .btn-primary:first-child {
+    background-color: var(--color-magenta);
+    color: var(--color-white);
   }
 
-  .contacto-card--highlight .btn-primary:hover {
-    background-color: var(--color-yellow);
-    color: var(--color-black);
+  .contacto-card__buttons .btn-primary:first-child:hover {
+    background-color: #c4006a;
+    color: var(--color-white);
+  }
+
+  .contacto-card__buttons .btn-primary:last-child {
+    background-color: var(--color-cyan);
+    color: var(--color-white);
+  }
+
+  .contacto-card__buttons .btn-primary:last-child:hover {
+    background-color: #0080b8;
+    color: var(--color-white);
   }
 
   .contacto-card h3 {
@@ -171,7 +180,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .contacto-info strong {
-    color: var(--color-cyan);
+    color: var(--color-text);
   }
 
   @media (max-width: 768px) {

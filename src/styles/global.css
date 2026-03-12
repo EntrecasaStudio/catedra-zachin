@@ -110,13 +110,13 @@ p {
 }
 
 a {
-  color: var(--color-cyan);
+  color: var(--color-text);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--color-magenta);
+  color: var(--color-text-secondary);
 }
 
 img {
@@ -179,23 +179,23 @@ button {
 }
 
 .btn-primary {
-  background-color: var(--color-magenta);
-  color: var(--color-white);
+  background-color: var(--color-text);
+  color: var(--color-bg);
 }
 
 .btn-primary:hover {
-  background-color: #c4006a;
-  color: var(--color-white);
+  background-color: var(--color-text-secondary);
+  color: var(--color-bg);
 }
 
 .btn-outline {
-  border: 2px solid var(--color-cyan);
-  color: var(--color-cyan);
+  border: 2px solid var(--color-text);
+  color: var(--color-text);
 }
 
 .btn-outline:hover {
-  background-color: var(--color-cyan);
-  color: var(--color-white);
+  background-color: var(--color-text);
+  color: var(--color-bg);
 }
 
 /* --- Page Header Entrance Animation --- */
