@@ -77,8 +77,8 @@ const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
       </div>
 
       <div class="galeria-grid" id="galeria-grid">
-        {items.map((item) => (
-          <div class="galeria-item" data-categoria={item.categoria}>
+        {items.map((item, i) => (
+          <div class="galeria-item" data-categoria={item.categoria} data-index={i} data-tipo={item.tipo} data-src={item.src} data-alt={item.alt}>
             {item.tipo === 'foto' ? (
               <div class="galeria-item__img">
                 <img src={item.src} alt={item.alt} loading="lazy" />
@@ -100,6 +100,30 @@ const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
       </div>
     </div>
   </section>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lightbox__close" id="lightbox-close" aria-label="Cerrar">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <button class="lightbox__nav lightbox__prev" id="lightbox-prev" aria-label="Anterior">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <button class="lightbox__nav lightbox__next" id="lightbox-next" aria-label="Siguiente">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </button>
+    <div class="lightbox__content" id="lightbox-content"></div>
+    <div class="lightbox__info">
+      <span class="lightbox__counter" id="lightbox-counter"></span>
+      <span class="lightbox__alt" id="lightbox-alt"></span>
+    </div>
+  </div>
 </BaseLayout>
 
 <style>
@@ -159,6 +183,10 @@ const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
     gap: var(--space-md);
   }
 
+  .galeria-item {
+    cursor: pointer;
+  }
+
   .galeria-item__img,
   .galeria-item__video {
     aspect-ratio: 4/3;
@@ -173,16 +201,11 @@ const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
     width: 100%;
     height: 100%;
     object-fit: cover;
-    cursor: pointer;
     transition: transform var(--transition-base);
   }
 
   .galeria-item__img:hover img {
     transform: scale(1.05);
-  }
-
-  .galeria-item__video {
-    cursor: pointer;
   }
 
   .galeria-item__video video {
@@ -212,17 +235,157 @@ const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
     background: rgba(0, 0, 0, 0.1);
   }
 
-  .galeria-item__video.playing .galeria-item__play {
-    opacity: 0;
-  }
-
   .galeria-item[hidden] {
     display: none;
+  }
+
+  /* Lightbox */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.96);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .lightbox.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Hide everything when lightbox is open */
+  :global(body.lightbox-open > *:not(.lightbox):not(script):not(astro-dev-toolbar)) {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .lightbox__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 90vw;
+    max-height: 80vh;
+  }
+
+  .lightbox__content :global(img) {
+    max-width: 90vw;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 4px;
+    animation: lbFadeIn 0.25s ease;
+  }
+
+  .lightbox__content :global(video) {
+    max-width: 90vw;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 4px;
+    animation: lbFadeIn 0.25s ease;
+  }
+
+  @keyframes lbFadeIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .lightbox__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.7);
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: color 0.2s ease, background 0.2s ease;
+  }
+
+  .lightbox__close:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .lightbox__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .lightbox__nav:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .lightbox__prev { left: 1rem; }
+  .lightbox__next { right: 1rem; }
+
+  .lightbox__info {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .lightbox__counter {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .lightbox__alt {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
   }
 
   @media (max-width: 768px) {
     .galeria-grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    .lightbox__nav {
+      width: 40px;
+      height: 40px;
+    }
+
+    .lightbox__prev { left: 0.5rem; }
+    .lightbox__next { right: 0.5rem; }
+
+    .lightbox__content :global(img),
+    .lightbox__content :global(video) {
+      max-width: 96vw;
+      max-height: 75vh;
     }
   }
 
@@ -230,6 +393,15 @@ const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
     .galeria-grid {
       grid-template-columns: 1fr;
     }
+
+    .lightbox__nav {
+      top: auto;
+      bottom: 4rem;
+      transform: none;
+    }
+
+    .lightbox__prev { left: 1.5rem; }
+    .lightbox__next { right: 1.5rem; }
   }
 </style>
 
@@ -237,7 +409,24 @@ const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
   document.addEventListener('astro:page-load', () => {
     const filters = document.getElementById('galeria-filters');
     const grid = document.getElementById('galeria-grid');
-    if (!filters || !grid) return;
+    const lightbox = document.getElementById('lightbox');
+    const lbContent = document.getElementById('lightbox-content');
+    const lbCounter = document.getElementById('lightbox-counter');
+    const lbAlt = document.getElementById('lightbox-alt');
+    const lbClose = document.getElementById('lightbox-close');
+    const lbPrev = document.getElementById('lightbox-prev');
+    const lbNext = document.getElementById('lightbox-next');
+    if (!filters || !grid || !lightbox || !lbContent) return;
+
+    // Move lightbox to body to ensure it's above the fixed header
+    document.body.appendChild(lightbox);
+
+    let currentIndex = -1;
+    let visibleItems: HTMLElement[] = [];
+
+    function getVisibleItems(): HTMLElement[] {
+      return Array.from(grid.querySelectorAll('.galeria-item:not([hidden])')) as HTMLElement[];
+    }
 
     // Filter buttons
     filters.addEventListener('click', (e) => {
@@ -257,27 +446,128 @@ const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
       });
     });
 
-    // Video play/pause on click
-    grid.querySelectorAll('.galeria-item__video').forEach(wrapper => {
-      const video = wrapper.querySelector('video');
-      if (!video) return;
+    // Open lightbox on item click
+    grid.addEventListener('click', (e) => {
+      const item = (e.target as HTMLElement).closest('.galeria-item') as HTMLElement;
+      if (!item) return;
 
-      wrapper.addEventListener('click', () => {
-        if (video.paused) {
-          // Pause all other videos first
-          grid.querySelectorAll('video').forEach(v => {
-            if (v !== video) {
-              v.pause();
-              v.closest('.galeria-item__video')?.classList.remove('playing');
-            }
-          });
-          video.play();
-          wrapper.classList.add('playing');
-        } else {
-          video.pause();
-          wrapper.classList.remove('playing');
-        }
-      });
+      visibleItems = getVisibleItems();
+      const idx = visibleItems.indexOf(item);
+      if (idx === -1) return;
+
+      openLightbox(idx);
     });
+
+    function openLightbox(idx: number) {
+      currentIndex = idx;
+      showItem(idx);
+      lightbox.classList.add('active');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('lightbox-open');
+      window.scrollTo(0, 0);
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      document.body.classList.remove('lightbox-open');
+
+      // Pause any playing video in lightbox
+      const vid = lbContent.querySelector('video');
+      if (vid) vid.pause();
+
+      // Also pause grid videos
+      grid.querySelectorAll('video').forEach(v => {
+        (v as HTMLVideoElement).pause();
+        v.closest('.galeria-item__video')?.classList.remove('playing');
+      });
+    }
+
+    function showItem(idx: number) {
+      const item = visibleItems[idx];
+      if (!item) return;
+
+      const tipo = item.getAttribute('data-tipo');
+      const src = item.getAttribute('data-src') || '';
+      const alt = item.getAttribute('data-alt') || '';
+
+      lbContent.innerHTML = '';
+
+      if (tipo === 'foto') {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = alt;
+        lbContent.appendChild(img);
+      } else {
+        const video = document.createElement('video');
+        video.src = src;
+        video.controls = true;
+        video.autoplay = true;
+        video.playsInline = true;
+        video.loop = true;
+        lbContent.appendChild(video);
+      }
+
+      if (lbCounter) lbCounter.textContent = `${idx + 1} / ${visibleItems.length}`;
+      if (lbAlt) lbAlt.textContent = alt;
+
+      // Update nav visibility
+      if (lbPrev) lbPrev.style.display = idx > 0 ? '' : 'none';
+      if (lbNext) lbNext.style.display = idx < visibleItems.length - 1 ? '' : 'none';
+    }
+
+    function navigate(dir: number) {
+      const newIdx = currentIndex + dir;
+      if (newIdx < 0 || newIdx >= visibleItems.length) return;
+
+      // Pause current video if any
+      const vid = lbContent.querySelector('video');
+      if (vid) vid.pause();
+
+      currentIndex = newIdx;
+      showItem(newIdx);
+    }
+
+    // Event listeners
+    lbClose?.addEventListener('click', closeLightbox);
+    // Close on click outside the content
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    lbPrev?.addEventListener('click', () => navigate(-1));
+    lbNext?.addEventListener('click', () => navigate(1));
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+
+      switch (e.key) {
+        case 'Escape': closeLightbox(); break;
+        case 'ArrowLeft': navigate(-1); break;
+        case 'ArrowRight': navigate(1); break;
+      }
+    });
+
+    // Touch swipe
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    lightbox.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    lightbox.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+
+      // Only trigger if horizontal swipe is dominant and > 50px
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 0) navigate(-1);
+        else navigate(1);
+      }
+    }, { passive: true });
   });
 </script>
