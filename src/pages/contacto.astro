@@ -26,14 +26,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <!-- Mails -->
         <div class="contacto-card">
+          <h3>General</h3>
+          <a href="mailto:cat.zachin@fadu.uba.ar" class="contacto-mail">cat.zachin@fadu.uba.ar</a>
+          <p class="contacto-card__desc">Consultas generales de la cátedra.</p>
+        </div>
+
+        <div class="contacto-card">
           <h3>Nivel 1</h3>
-          <a href="mailto:nivel1@catedrazachin.ar" class="contacto-mail">nivel1@catedrazachin.ar</a>
+          <a href="mailto:cat.zachin.tecno1@gmail.com" class="contacto-mail">cat.zachin.tecno1@gmail.com</a>
           <p class="contacto-card__desc">Consultas sobre inscripción, programa y cursada de Nivel 1.</p>
         </div>
 
         <div class="contacto-card">
           <h3>Nivel 2</h3>
-          <a href="mailto:nivel2@catedrazachin.ar" class="contacto-mail">nivel2@catedrazachin.ar</a>
+          <a href="mailto:cat.zachin.tecno2@gmail.com" class="contacto-mail">cat.zachin.tecno2@gmail.com</a>
           <p class="contacto-card__desc">Consultas sobre inscripción, programa y cursada de Nivel 2.</p>
         </div>
 
@@ -105,19 +111,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .contacto-card--highlight {
     grid-column: 1 / -1;
-    background-color: var(--color-surface);
-    border: 2px solid var(--color-border);
+    background-color: var(--color-text);
+    color: var(--color-bg);
     text-align: center;
     padding: var(--space-2xl);
   }
 
   .contacto-card--highlight h2 {
     margin-bottom: var(--space-md);
+    color: var(--color-bg);
   }
 
   .contacto-card--highlight p {
     margin-bottom: var(--space-lg);
-    color: var(--color-text-secondary);
+    color: color-mix(in srgb, var(--color-bg) 70%, transparent);
     max-width: 100%;
   }
 

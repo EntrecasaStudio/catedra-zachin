@@ -15,12 +15,20 @@ const {
 } = Astro.props;
 ---
 
-<html lang="es" data-theme="dark">
+<html lang="es" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+
+    <!-- Theme: apply before paint to prevent flash -->
+    <script is:inline>
+      (function() {
+        var theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -50,15 +58,16 @@ const {
     <Footer />
 
     <script>
-      // Theme: apply immediately to prevent flash
-      const theme = localStorage.getItem('theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
-    </script>
-    <script>
       import { initAnimations } from '../scripts/animations.js';
 
+      // Persist theme across View Transitions
+      document.addEventListener('astro:before-swap', (ev) => {
+        const theme = document.documentElement.getAttribute('data-theme') || 'light';
+        ev.newDocument.documentElement.setAttribute('data-theme', theme);
+      });
+
       function setup() {
-          // GSAP Animations
+        // GSAP Animations
         initAnimations();
       }
 

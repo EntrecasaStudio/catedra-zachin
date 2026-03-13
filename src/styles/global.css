@@ -53,19 +53,8 @@
   --transition-slow: 500ms ease;
 }
 
-/* --- Theme: Dark (default) --- */
+/* --- Theme: Light (default) --- */
 :root,
-[data-theme="dark"] {
-  --color-bg: var(--color-black);
-  --color-bg-elevated: #222222;
-  --color-text: var(--color-white);
-  --color-text-secondary: var(--color-gray-4);
-  --color-text-muted: var(--color-gray-3);
-  --color-border: var(--color-gray-2);
-  --color-surface: #1e1e1e;
-}
-
-/* --- Theme: Light --- */
 [data-theme="light"] {
   --color-bg: var(--color-white);
   --color-bg-elevated: var(--color-gray-5);
@@ -76,10 +65,20 @@
   --color-surface: #f5f5f5;
 }
 
+/* --- Theme: Dark --- */
+[data-theme="dark"] {
+  --color-bg: var(--color-black);
+  --color-bg-elevated: #222222;
+  --color-text: var(--color-white);
+  --color-text-secondary: var(--color-gray-4);
+  --color-text-muted: var(--color-gray-3);
+  --color-border: var(--color-gray-2);
+  --color-surface: #1e1e1e;
+}
+
 /* --- Base --- */
 html {
   font-size: 16px;
-  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
