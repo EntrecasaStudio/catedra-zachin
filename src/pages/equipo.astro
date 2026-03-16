@@ -73,7 +73,7 @@ const docentes = [
             </div>
             <h3 class="docente-card__nombre">{d.nombre}</h3>
             <span class="docente-card__rol">{d.rol}</span>
-            <span class="docente-card__nivel">{d.nivel}</span>
+            <span class:list={['docente-card__nivel', { 'nivel--1': d.nivel === 'Nivel 1', 'nivel--2': d.nivel === 'Nivel 2' }]}>{d.nivel}</span>
           </div>
         ))}
       </div>
@@ -85,7 +85,6 @@ const docentes = [
   .page-header {
     padding-top: calc(var(--header-height) + var(--space-2xl));
     padding-bottom: var(--space-xl);
-    border-bottom: 1px solid var(--color-border);
   }
 
   .page-header__label {
@@ -160,7 +159,11 @@ const docentes = [
     color: var(--color-text-muted);
     display: block;
     margin-top: var(--space-xs);
+    font-weight: 600;
   }
+
+  .nivel--1 { color: var(--color-magenta); }
+  .nivel--2 { color: var(--color-cyan); }
 
   @media (max-width: 768px) {
     .equipo-grid {
