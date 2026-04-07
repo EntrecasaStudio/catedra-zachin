@@ -65,8 +65,9 @@ const currentYear = new Date().getFullYear();
 
 <style>
   .footer {
-    background-color: var(--color-surface);
-    border-top: 1px solid var(--color-border);
+    background-color: transparent;
+    border-top: 2px solid var(--color-border);
+    margin-inline: 32px;
     padding-block: var(--space-xl) var(--space-lg);
     margin-top: var(--space-2xl);
   }
@@ -103,8 +104,9 @@ const currentYear = new Date().getFullYear();
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--color-text-muted);
+    color: var(--color-text);
     margin-bottom: var(--space-md);
+    font-weight: 700;
   }
 
   .footer__links ul,
@@ -118,6 +120,12 @@ const currentYear = new Date().getFullYear();
   .footer__contact a {
     font-size: 0.875rem;
     color: var(--color-text-secondary);
+    transition: color var(--transition-fast);
+  }
+
+  .footer__links a:hover,
+  .footer__contact a:hover {
+    color: var(--color-text);
   }
 
   .footer__instagram {

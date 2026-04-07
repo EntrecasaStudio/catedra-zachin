@@ -53,30 +53,52 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="section">
     <div class="container">
       <h2 data-animate>Cronograma</h2>
-      <div class="cronograma" data-animate-stagger>
-        <div class="cronograma__item">
-          <span class="cronograma__fecha">Semana 1-2</span>
-          <p>Introducción y diagnóstico</p>
+      <div class="timeline" data-animate-stagger>
+        <div class="timeline__item">
+          <div class="timeline__node"></div>
+          <div class="timeline__content">
+            <span class="timeline__fecha">Semana 1-2</span>
+            <p class="timeline__desc">Introducción y diagnóstico</p>
+          </div>
         </div>
-        <div class="cronograma__item">
-          <span class="cronograma__fecha">Semana 3-5</span>
-          <p>TP1: Sistemas de impresión</p>
+        <div class="timeline__item">
+          <div class="timeline__node"></div>
+          <div class="timeline__content">
+            <span class="timeline__fecha">Semana 3-5</span>
+            <p class="timeline__desc">TP1: Sistemas de impresión</p>
+            <span class="timeline__badge">Entrega TP1</span>
+          </div>
         </div>
-        <div class="cronograma__item">
-          <span class="cronograma__fecha">Semana 6-8</span>
-          <p>TP2: Preimpresión y color</p>
+        <div class="timeline__item">
+          <div class="timeline__node"></div>
+          <div class="timeline__content">
+            <span class="timeline__fecha">Semana 6-8</span>
+            <p class="timeline__desc">TP2: Preimpresión y color</p>
+            <span class="timeline__badge">Entrega TP2</span>
+          </div>
         </div>
-        <div class="cronograma__item">
-          <span class="cronograma__fecha">Semana 9-11</span>
-          <p>TP3: Papeles y terminación</p>
+        <div class="timeline__item">
+          <div class="timeline__node"></div>
+          <div class="timeline__content">
+            <span class="timeline__fecha">Semana 9-11</span>
+            <p class="timeline__desc">TP3: Papeles y terminación</p>
+            <span class="timeline__badge">Entrega TP3</span>
+          </div>
         </div>
-        <div class="cronograma__item">
-          <span class="cronograma__fecha">Semana 12-14</span>
-          <p>Trabajo Final Integrador</p>
+        <div class="timeline__item">
+          <div class="timeline__node"></div>
+          <div class="timeline__content">
+            <span class="timeline__fecha">Semana 12-14</span>
+            <p class="timeline__desc">Trabajo Final Integrador</p>
+            <span class="timeline__badge timeline__badge--final">Entrega Final</span>
+          </div>
         </div>
-        <div class="cronograma__item">
-          <span class="cronograma__fecha">Semana 15-16</span>
-          <p>Entrega final y recuperatorios</p>
+        <div class="timeline__item">
+          <div class="timeline__node timeline__node--end"></div>
+          <div class="timeline__content">
+            <span class="timeline__fecha">Semana 15-16</span>
+            <p class="timeline__desc">Entrega final y recuperatorios</p>
+          </div>
         </div>
       </div>
     </div>
@@ -149,31 +171,89 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     color: var(--color-text-secondary);
   }
 
-  .cronograma {
-    display: grid;
-    gap: var(--space-sm);
+  .timeline {
     margin-top: var(--space-lg);
+    position: relative;
+    padding-left: 2rem;
   }
 
-  .cronograma__item {
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--color-border);
+  }
+
+  .timeline__item {
+    position: relative;
+    padding-bottom: var(--space-lg);
     display: flex;
-    align-items: center;
-    gap: var(--space-lg);
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .timeline__item:last-child {
+    padding-bottom: 0;
+  }
+
+  .timeline__node {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color-bg);
+    border: 3px solid var(--color-magenta);
+    position: absolute;
+    left: -2rem;
+    top: 2px;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .timeline__node--end {
+    background: var(--color-magenta);
+  }
+
+  .timeline__content {
     padding: var(--space-md) var(--space-lg);
-    border-left: 3px solid var(--color-magenta);
-    background-color: var(--color-surface);
+    background: var(--color-surface);
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    flex: 1;
   }
 
-  .cronograma__fecha {
+  .timeline__fecha {
     font-weight: 700;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--color-magenta);
-    white-space: nowrap;
-    min-width: 120px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
-  .cronograma__item p {
+  .timeline__desc {
     font-size: 0.9375rem;
+    margin-top: var(--space-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .timeline__badge {
+    display: inline-block;
+    margin-top: var(--space-sm);
+    padding: 2px 10px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-magenta) 12%, transparent);
+    color: var(--color-magenta);
+  }
+
+  .timeline__badge--final {
+    background: var(--color-magenta);
+    color: var(--color-white);
   }
 
   @media (max-width: 768px) {
@@ -181,10 +261,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       grid-template-columns: 1fr;
     }
 
-    .cronograma__item {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--space-xs);
+    .timeline {
+      padding-left: 1.5rem;
+    }
+
+    .timeline__node {
+      left: -1.5rem;
+      width: 12px;
+      height: 12px;
+    }
+
+    .timeline::before {
+      left: 5px;
     }
   }
 </style>

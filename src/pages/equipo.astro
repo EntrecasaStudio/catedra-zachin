@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const docentes = [
+type Docente = { nombre: string; rol: string; nivel: string; foto: string };
+
+const docentes: Docente[] = [
   // Adjuntos
   { nombre: 'Daniela Vulcano', rol: 'Adjunta', nivel: 'Nivel 1', foto: '/images/docentes/Adjunta-Daniela-Vulcano.png' },
   { nombre: 'Leandro Barales', rol: 'Adjunto', nivel: 'Nivel 2', foto: '/images/docentes/Adjunto-Leandro-Barales.png' },
@@ -49,6 +51,14 @@ const docentes = [
   { nombre: 'Julieta Rotman', rol: 'Ayudante', nivel: 'Nivel 2', foto: '/images/docentes/AYUDANTE-julieta-Rotman.png' },
   { nombre: 'Sofía Giuliano', rol: 'Ayudante', nivel: 'Nivel 2', foto: '/images/docentes/AYUDANTE-Sofía-Giuliano.png' },
 ];
+
+// Group by role
+const groups = [
+  { label: 'Adjuntos', members: docentes.filter(d => d.rol.startsWith('Adjunt')) },
+  { label: 'Jefes de Trabajos Prácticos', members: docentes.filter(d => d.rol === 'JTP') },
+  { label: 'Docentes', members: docentes.filter(d => d.rol === 'Docente') },
+  { label: 'Ayudantes', members: docentes.filter(d => d.rol === 'Ayudante') },
+];
 ---
 
 <BaseLayout title="Plantel Docente | Cátedra Zachin" description="Conocé al plantel docente de la Cátedra Zachin.">
@@ -60,25 +70,28 @@ const docentes = [
     </div>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <div class="equipo-grid" data-animate-stagger>
-        {docentes.map(d => (
-          <div class="docente-card">
-            <div class="docente-card__avatar">
-              {d.foto
-                ? <img src={d.foto} alt={d.nombre} />
-                : <span class="docente-card__initial">{d.nombre[0]}</span>
-              }
+  {groups.map(group => (
+    <section class="section equipo-section">
+      <div class="container">
+        <h2 class="equipo-section__title" data-animate>{group.label}</h2>
+        <div class="equipo-grid" data-animate-stagger>
+          {group.members.map(d => (
+            <div class="docente-card">
+              <div class="docente-card__avatar">
+                {d.foto
+                  ? <img src={d.foto} alt={`Foto de ${d.nombre}`} />
+                  : <span class="docente-card__initial">{d.nombre[0]}</span>
+                }
+              </div>
+              <h3 class="docente-card__nombre">{d.nombre}</h3>
+              <span class="docente-card__rol">{d.rol}</span>
+              <span class:list={['docente-card__nivel', { 'nivel--1': d.nivel === 'Nivel 1', 'nivel--2': d.nivel === 'Nivel 2' }]}>{d.nivel}</span>
             </div>
-            <h3 class="docente-card__nombre">{d.nombre}</h3>
-            <span class="docente-card__rol">{d.rol}</span>
-            <span class:list={['docente-card__nivel', { 'nivel--1': d.nivel === 'Nivel 1', 'nivel--2': d.nivel === 'Nivel 2' }]}>{d.nivel}</span>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
 </BaseLayout>
 
 <style>
@@ -104,6 +117,24 @@ const docentes = [
     margin-top: var(--space-md);
     color: var(--color-text-secondary);
     font-size: 1.125rem;
+  }
+
+  .equipo-section {
+    padding-block: var(--space-lg);
+  }
+
+  .equipo-section:first-of-type {
+    padding-top: 0;
+  }
+
+  .equipo-section__title {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .equipo-grid {

@@ -52,6 +52,12 @@ const items = [
 ];
 
 const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
+
+// Count items per category
+const counts: Record<string, number> = { todas: items.length };
+for (const cat of categorias.filter(c => c !== 'todas')) {
+  counts[cat] = items.filter(i => i.categoria === cat).length;
+}
 ---
 
 <BaseLayout title="Galería | Cátedra Zachin" description="Fotos y videos de clases, talleres, jornadas y TPs de la Cátedra Zachin.">
@@ -65,13 +71,16 @@ const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
 
   <section class="section">
     <div class="container">
-      <div class="galeria-filters" id="galeria-filters">
+      <div class="galeria-filters" id="galeria-filters" role="tablist" aria-label="Filtrar galería por categoría">
         {categorias.map(cat => (
           <button
             class:list={['filter-btn', { active: cat === 'todas' }]}
             data-filter={cat}
+            role="tab"
+            aria-selected={cat === 'todas' ? 'true' : 'false'}
           >
             {cat === 'tps' ? 'TPs' : cat.charAt(0).toUpperCase() + cat.slice(1)}
+            <span class="filter-btn__count">{counts[cat]}</span>
           </button>
         ))}
       </div>
@@ -169,6 +178,12 @@ const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
     border-radius: 2px;
     color: var(--color-text-secondary);
     transition: all var(--transition-fast);
+  }
+
+  .filter-btn__count {
+    font-size: 0.6875rem;
+    opacity: 0.5;
+    margin-left: 2px;
   }
 
   .filter-btn:hover,
@@ -433,8 +448,12 @@ const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
       const btn = (e.target as HTMLElement).closest('.filter-btn');
       if (!btn) return;
 
-      filters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      filters.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
       btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
 
       const filter = btn.getAttribute('data-filter');
       grid.querySelectorAll('.galeria-item').forEach(item => {
