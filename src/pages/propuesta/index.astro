@@ -71,7 +71,13 @@ const galeria = [
 
 <style>
   .hero {
-    padding-block: clamp(3rem, 10vh, 7rem) var(--pz-space-2xl);
+    /* Full viewport: el hero llena la pantalla y el divisor de la sección
+       siguiente queda justo en el borde inferior. */
+    min-height: calc(100dvh - var(--pz-header-height));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: var(--pz-space-2xl);
   }
   .hero__title {
     font-size: clamp(3.5rem, 15vw, 10rem);
