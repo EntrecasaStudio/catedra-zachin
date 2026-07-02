@@ -3,31 +3,23 @@ import PropuestaLayout from '../../layouts/PropuestaLayout.astro';
 import NivelDetalle from '../../components/propuesta/NivelDetalle.astro';
 
 const programa = [
-  { num: '01', titulo: 'Introducción a la Tecnología Gráfica', desc: 'Conceptos fundamentales de producción gráfica. Flujo de trabajo general.' },
-  { num: '02', titulo: 'Sistemas de Impresión', desc: 'Offset, serigrafía, tipografía, flexografía, huecograbado. Procesos y aplicaciones.' },
-  { num: '03', titulo: 'Preimpresión Digital', desc: 'Preparación de archivos, perfiles de color, resolución, trapping.' },
-  { num: '04', titulo: 'Papeles y Soportes', desc: 'Tipos de papel, gramaje, texturas. Elección de soporte según el proyecto.' },
-  { num: '05', titulo: 'Terminación y Postimpresión', desc: 'Troquelado, laminado, barnizado, encuadernación. Acabados especiales.' },
-  { num: '06', titulo: 'Color', desc: 'Teoría del color aplicada. CMYK, RGB, Pantone. Gestión de color.' },
+  { num: '01', titulo: 'Color', desc: 'Teoría y principios de formación del color para gráfica virtual y material (RGB, CMYK, hexadecimal, Lab). Espacio, modelo y gama.' },
+  { num: '02', titulo: 'Tecnología y Diseño', desc: 'La producción del objeto de diseño y el rol del diseñador. Flujo de trabajo, estandarización, sustentabilidad, dispositivos y software.' },
+  { num: '03', titulo: 'La Imagen Digital', desc: 'Tipos de imágenes: obtención, generación y aplicación. Imagen pixelar y vectorial. Archivos de fuentes tipográficas.' },
+  { num: '04', titulo: 'Soportes Digitales', desc: 'Dispositivos y características: formación de imagen, resoluciones de pantalla. Diseño responsivo (adaptabilidad).' },
+  { num: '05', titulo: 'Generación Digital de Originales', desc: 'Destino virtual y material. Almacenamiento y traslado digital. Archivos y formatos. Periféricos de entrada y salida. Uso de fuentes.' },
+  { num: '06', titulo: 'Web', desc: 'Estándares, lenguajes e hipertexto. Interfaces, usabilidad y experiencia de usuario.' },
+  { num: '07', titulo: 'Introducción a la Industria Gráfica', desc: 'Reproducción masiva de piezas materiales. Introducción a los procesos de impresión convencional y digital.' },
 ];
 
-const cronograma = [
-  { fecha: 'Semana 1-2', desc: 'Introducción y diagnóstico' },
-  { fecha: 'Semana 3-5', desc: 'TP1: Sistemas de impresión', badge: 'Entrega TP1' },
-  { fecha: 'Semana 6-8', desc: 'TP2: Preimpresión y color', badge: 'Entrega TP2' },
-  { fecha: 'Semana 9-11', desc: 'TP3: Papeles y terminación', badge: 'Entrega TP3' },
-  { fecha: 'Semana 12-14', desc: 'Trabajo Final Integrador', badge: 'Entrega Final', final: true },
-  { fecha: 'Semana 15-16', desc: 'Entrega final y recuperatorios' },
-];
 ---
 
 <PropuestaLayout title="Tecnología 1 | Propuesta Zachin" description="Tecnología 1 — Introducción a los procesos de producción gráfica.">
   <NivelDetalle
     nivel={1}
-    desc="Introducción a las tecnologías de producción gráfica. Procesos analógicos y digitales."
+    desc="Reproducción del diseño: color, imagen digital, soportes, generación de originales, web e introducción a la industria gráfica."
     mail="cat.zachin.tecno1@gmail.com"
     programa={programa}
-    cronograma={cronograma}
     cursada={[
       { turno: 'Mañana', detalle: 'Viernes de 09:00 a 13:00 h' },
       { turno: 'Noche', detalle: 'Viernes de 19:00 a 23:00 h' },

@@ -8,10 +8,13 @@
  * 1. Tokens de marca (constantes)                                     *
  * ------------------------------------------------------------------ */
 :root {
-  /* CMYK / marca */
+  /* Marca — CMYK (tema claro) */
   --pz-magenta: #e5007d;
   --pz-cyan: #009cde;
   --pz-yellow: #fbec43;
+  /* Marca — RGB (tema oscuro): magenta→rojo, cyan→azul */
+  --pz-red: #ff3b3b;
+  --pz-blue: #2b7fff;
   --pz-black: #181818;
   --pz-white: #ffffff;
 
@@ -45,6 +48,9 @@
   --pz-surface: #f4f4f2;
   --pz-shadow-color: var(--pz-black);
   --pz-on-accent: var(--pz-white);
+  /* Color por nivel — claro/CMYK: N1 magenta · N2 cyan */
+  --pz-n1: var(--pz-magenta);
+  --pz-n2: var(--pz-cyan);
 }
 
 [data-theme='dark'] {
@@ -54,6 +60,17 @@
   --pz-surface: #191919;
   --pz-shadow-color: #000000;
   --pz-on-accent: var(--pz-white);
+  /* Color por nivel — oscuro/RGB: N1 rojo · N2 azul */
+  --pz-n1: var(--pz-red);
+  --pz-n2: var(--pz-blue);
+}
+
+/* Tokens comunes (referencian n1/n2/fg → se adaptan solos al tema).
+   Lo común a ambos niveles usa el gradiente (nunca un solo color de nivel);
+   los acentos neutros usan el color de texto. */
+:root {
+  --pz-duo: linear-gradient(120deg, var(--pz-n1), var(--pz-n2));
+  --pz-accent: var(--pz-fg);
 }
 
 /* ------------------------------------------------------------------ *
@@ -71,7 +88,6 @@
   --pz-radius: 4px;
   --pz-shadow: none;
   --pz-shadow-hover: none;
-  --pz-accent: var(--pz-magenta);
   --pz-display-transform: none;
   --pz-display-weight: 800;
   --pz-display-tracking: -0.03em;
@@ -88,7 +104,6 @@
   --pz-radius: 0px;
   --pz-shadow: none;
   --pz-shadow-hover: none;
-  --pz-accent: var(--pz-magenta);
   --pz-display-transform: uppercase;
   --pz-display-weight: 700;
   --pz-display-tracking: -0.01em;
@@ -105,7 +120,6 @@
   --pz-radius: 8px;
   --pz-shadow: 5px 5px 0 var(--pz-shadow-color);
   --pz-shadow-hover: 8px 8px 0 var(--pz-shadow-color);
-  --pz-accent: var(--pz-magenta);
   --pz-display-transform: none;
   --pz-display-weight: 800;
   --pz-display-tracking: -0.045em;
@@ -185,8 +199,8 @@ button {
 }
 
 ::selection {
-  background: var(--pz-accent);
-  color: var(--pz-on-accent);
+  background: var(--pz-fg);
+  color: var(--pz-bg);
 }
 
 /* ------------------------------------------------------------------ *
@@ -222,6 +236,8 @@ button {
 
 .text-magenta { color: var(--pz-magenta); }
 .text-cyan { color: var(--pz-cyan); }
+.text-n1 { color: var(--pz-n1); }
+.text-n2 { color: var(--pz-n2); }
 .text-yellow { color: var(--pz-yellow); }
 
 /* Eyebrow / label tipo "system" con marcas de tick */
@@ -241,7 +257,7 @@ button {
   content: '';
   width: 1.75rem;
   height: var(--pz-border-width);
-  background: var(--pz-accent);
+  background: var(--pz-duo);
 }
 
 /* ------------------------------------------------------------------ *
@@ -329,7 +345,7 @@ button {
 /* Primary = CTA general (para ambos niveles): gradiente magenta → cyan */
 .pz-btn--primary {
   --_fg: #fff;
-  background: linear-gradient(120deg, var(--pz-magenta), var(--pz-cyan));
+  background: var(--pz-duo);
   color: #fff;
   border-color: var(--pz-fg);
 }
@@ -389,9 +405,9 @@ button {
   line-height: 1.3;
 }
 
-.pz-tag--n1 { color: var(--pz-magenta); border-color: var(--pz-magenta); }
-.pz-tag--n2 { color: var(--pz-cyan); border-color: var(--pz-cyan); }
-.pz-tag--solid { background: var(--pz-accent); color: var(--pz-on-accent); border-color: var(--pz-accent); }
+.pz-tag--n1 { color: var(--pz-n1); border-color: var(--pz-n1); }
+.pz-tag--n2 { color: var(--pz-n2); border-color: var(--pz-n2); }
+.pz-tag--solid { background: var(--pz-duo); color: var(--pz-on-accent); border-color: transparent; }
 
 /* ------------------------------------------------------------------ *
  * 10. Card                                                            *

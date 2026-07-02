@@ -48,8 +48,8 @@ const num = nivel === 1 ? '01' : '02';
     transform: translate(var(--pz-lift), var(--pz-lift));
     box-shadow: var(--pz-shadow-hover);
   }
-  .pz-nivel--n1:hover { border-color: var(--pz-magenta); }
-  .pz-nivel--n2:hover { border-color: var(--pz-cyan); }
+  .pz-nivel--n1:hover { border-color: var(--pz-n1); }
+  .pz-nivel--n2:hover { border-color: var(--pz-n2); }
 
   .pz-nivel__num {
     position: absolute;
@@ -61,8 +61,8 @@ const num = nivel === 1 ? '01' : '02';
     line-height: 1;
     opacity: 0.12;
   }
-  .pz-nivel--n1 .pz-nivel__num { color: var(--pz-magenta); }
-  .pz-nivel--n2 .pz-nivel__num { color: var(--pz-cyan); }
+  .pz-nivel--n1 .pz-nivel__num { color: var(--pz-n1); }
+  .pz-nivel--n2 .pz-nivel__num { color: var(--pz-n2); }
 
   .pz-nivel__title { font-size: clamp(1.5rem, 4vw, 2.25rem); }
   .pz-nivel__desc { color: var(--pz-muted); font-size: 0.95rem; }
@@ -74,6 +74,6 @@ const num = nivel === 1 ? '01' : '02';
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
-  .pz-nivel--n1 .pz-nivel__cta { color: var(--pz-magenta); }
-  .pz-nivel--n2 .pz-nivel__cta { color: var(--pz-cyan); }
+  .pz-nivel--n1 .pz-nivel__cta { color: var(--pz-n1); }
+  .pz-nivel--n2 .pz-nivel__cta { color: var(--pz-n2); }
 </style>

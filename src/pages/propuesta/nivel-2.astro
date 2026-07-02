@@ -3,31 +3,21 @@ import PropuestaLayout from '../../layouts/PropuestaLayout.astro';
 import NivelDetalle from '../../components/propuesta/NivelDetalle.astro';
 
 const programa = [
-  { num: '01', titulo: 'Producción Editorial', desc: 'Flujo de producción editorial completo. Del original al libro impreso.' },
-  { num: '02', titulo: 'Packaging', desc: 'Diseño estructural y gráfico de envases. Materiales y procesos.' },
-  { num: '03', titulo: 'Señalética y Gran Formato', desc: 'Sistemas de señalización. Impresión en gran formato y materialidad.' },
-  { num: '04', titulo: 'Producción Digital', desc: 'Impresión digital, plotters, CNC. Nuevas tecnologías de producción.' },
-  { num: '05', titulo: 'Presupuesto y Gestión', desc: 'Cálculo de costos, presupuestos de producción, gestión con proveedores.' },
-  { num: '06', titulo: 'Proyecto Integrador', desc: 'Proyecto de producción completo integrando todos los contenidos.' },
+  { num: '01', titulo: 'Industria Gráfica', desc: 'Reproducción masiva y bajo demanda. Traslado digital (concepto computer-to).' },
+  { num: '02', titulo: 'Soportes e Insumos', desc: 'Papel: características y fabricación. Otros soportes: plástico, metal, vidrio. Pigmentos y tintas.' },
+  { num: '03', titulo: 'Pre-impresión', desc: 'Lenguaje de transmisión de datos (PDL). Transformaciones, tramados, fotocromía y rango dinámico.' },
+  { num: '04', titulo: 'Impresión', desc: 'Controles, pie de máquina y aprobación de pliego. Sistemas en relieve, superficie, profundidad, híbridos y digitales. Impresión bajo demanda.' },
+  { num: '05', titulo: 'Postimpresión', desc: 'Impresiones especiales, tratamientos superficiales, cortes y dobleces. Packaging y encuadernación.' },
 ];
 
-const cronograma = [
-  { fecha: 'Semana 1-2', desc: 'Introducción y revisión de contenidos Nivel 1' },
-  { fecha: 'Semana 3-5', desc: 'TP1: Producción editorial', badge: 'Entrega TP1' },
-  { fecha: 'Semana 6-8', desc: 'TP2: Packaging', badge: 'Entrega TP2' },
-  { fecha: 'Semana 9-11', desc: 'TP3: Señalética y gran formato', badge: 'Entrega TP3' },
-  { fecha: 'Semana 12-14', desc: 'Proyecto Integrador Final', badge: 'Entrega Final', final: true },
-  { fecha: 'Semana 15-16', desc: 'Entrega final y recuperatorios' },
-];
 ---
 
 <PropuestaLayout title="Tecnología 2 | Propuesta Zachin" description="Tecnología 2 — Tecnologías avanzadas de producción gráfica.">
   <NivelDetalle
     nivel={2}
-    desc="Profundización en tecnologías avanzadas de producción y gestión de proyectos gráficos."
+    desc="Replicación del diseño material: industria gráfica, soportes e insumos, pre-impresión, impresión y postimpresión."
     mail="cat.zachin.tecno2@gmail.com"
     programa={programa}
-    cronograma={cronograma}
     cursada={[
       { turno: 'Mañana', detalle: 'Viernes de 09:00 a 13:00 h' },
       { turno: 'Noche', detalle: 'Viernes de 19:00 a 23:00 h' },
