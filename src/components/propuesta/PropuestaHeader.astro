@@ -203,15 +203,15 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
   .pz-header__burger span {
     display: block;
     width: 1.6rem;
-    height: 2px;
+    height: var(--pz-border-width);
     background: var(--pz-fg);
     border-radius: 2px;
     transition: transform var(--pz-transition), opacity var(--pz-transition);
   }
-  /* X centrada: gap 6 + alto 2 → 8px centro a centro */
-  .pz-header__burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  /* X centrada: distancia centro a centro = grosor de línea + gap (6px) */
+  .pz-header__burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(calc(var(--pz-border-width) + 6px)) rotate(45deg); }
   .pz-header__burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
-  .pz-header__burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+  .pz-header__burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(calc(-1 * (var(--pz-border-width) + 6px))) rotate(-45deg); }
 
   /* ===========================
      Mobile: menú fullscreen slide-in (estilo del sitio original)

@@ -122,7 +122,7 @@
   --pz-shadow-hover: 8px 8px 0 var(--pz-shadow-color);
   --pz-display-transform: none;
   --pz-display-weight: 800;
-  --pz-display-tracking: -0.045em;
+  --pz-display-tracking: -0.02em;
   --pz-display-leading: 0.94;
   --pz-eyebrow-family: var(--pz-font-mono);
   --pz-lift: 0px;
