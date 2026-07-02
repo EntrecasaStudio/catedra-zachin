@@ -82,7 +82,7 @@
 :root,
 [data-brutalism='refined'] {
   --pz-font-display: 'ff-din-paneuropean', 'Inter', system-ui, sans-serif;
-  --pz-font-body: 'Inter', system-ui, sans-serif;
+  --pz-font-body: 'ff-din-paneuropean', 'Inter', system-ui, sans-serif;
   --pz-font-mono: 'Space Mono', ui-monospace, monospace;
   --pz-border-width: 2px;
   --pz-radius: 4px;
@@ -114,7 +114,7 @@
 
 [data-brutalism='neo'] {
   --pz-font-display: 'ff-din-paneuropean', 'Inter', system-ui, sans-serif;
-  --pz-font-body: 'Inter', system-ui, sans-serif;
+  --pz-font-body: 'ff-din-paneuropean', 'Inter', system-ui, sans-serif;
   --pz-font-mono: 'Space Mono', ui-monospace, monospace;
   --pz-border-width: 3px;
   --pz-radius: 8px;
