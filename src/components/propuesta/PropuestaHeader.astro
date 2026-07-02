@@ -4,7 +4,6 @@
  * Nav sin Trabajos ni Inscripciones (coherente con la limpieza del sitio).
  */
 const nav = [
-  { href: '/propuesta', label: 'Inicio' },
   { href: '/propuesta/nivel-1', label: 'Tecnología 1' },
   { href: '/propuesta/nivel-2', label: 'Tecnología 2' },
   { href: '/propuesta/equipo', label: 'Plantel' },
@@ -17,9 +16,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
 
 <header class="pz-header">
   <div class="pz-header__inner pz-container">
-    <a href="/propuesta" class="pz-header__brand">
-      <span class="pz-header__mark" aria-hidden="true">◉</span>
-      <span class="pz-header__word">Zachin<span class="pz-header__word-sub">/ propuesta</span></span>
+    <a href="/propuesta" class="pz-header__brand" aria-label="Cátedra Zachin — Inicio">
+      <img src="/images/logo-iso-white.svg" alt="Cátedra Zachin" class="pz-header__logo pz-header__logo--dark" width="40" height="40" />
+      <img src="/images/logo-iso-black.svg" alt="Cátedra Zachin" class="pz-header__logo pz-header__logo--light" width="40" height="40" />
     </a>
 
     <nav class="pz-header__nav" id="pz-nav" aria-label="Navegación de la propuesta">
@@ -69,24 +68,13 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
   .pz-header__brand {
     display: inline-flex;
     align-items: center;
-    gap: var(--pz-space-xs);
-    font-family: var(--pz-font-display);
-    font-weight: var(--pz-display-weight);
-    letter-spacing: var(--pz-display-tracking);
-    text-transform: var(--pz-display-transform);
-    font-size: 1.25rem;
     flex-shrink: 0;
   }
-  .pz-header__mark { color: var(--pz-accent); }
-  .pz-header__word-sub {
-    font-family: var(--pz-font-mono);
-    font-size: 0.7rem;
-    font-weight: 400;
-    color: var(--pz-muted);
-    margin-left: 0.35rem;
-    text-transform: none;
-    letter-spacing: 0;
-  }
+  .pz-header__logo { width: 2.5rem; height: 2.5rem; object-fit: contain; }
+  :global([data-theme='dark']) .pz-header__logo--dark { display: block; }
+  :global([data-theme='dark']) .pz-header__logo--light { display: none; }
+  :global([data-theme='light']) .pz-header__logo--dark { display: none; }
+  :global([data-theme='light']) .pz-header__logo--light { display: block; }
 
   .pz-header__list { display: flex; gap: var(--pz-space-md); }
 

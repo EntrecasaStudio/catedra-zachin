@@ -326,8 +326,13 @@ button {
 
 .pz-btn:active { transform: translate(0, 0); box-shadow: var(--pz-shadow); }
 
-.pz-btn--primary { --_bg: var(--pz-accent); --_fg: var(--pz-on-accent); border-color: var(--pz-accent); }
-[data-brutalism='neo'] .pz-btn--primary { border-color: var(--pz-fg); }
+/* Primary = CTA general (para ambos niveles): gradiente magenta → cyan */
+.pz-btn--primary {
+  --_fg: #fff;
+  background: linear-gradient(120deg, var(--pz-magenta), var(--pz-cyan));
+  color: #fff;
+  border-color: var(--pz-fg);
+}
 
 .pz-btn--secondary { --_bg: transparent; --_fg: var(--pz-fg); }
 

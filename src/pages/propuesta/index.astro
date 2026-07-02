@@ -28,14 +28,15 @@ const galeria = [
     <h1 class="hero__title">Cátedra<br />Zachin</h1>
     <p class="hero__subtitle">Tecnología — Niveles 1 &amp; 2</p>
     <div class="hero__actions">
-      <Button href="/propuesta/nivel-1" variant="primary">Ver Tecnología 1</Button>
-      <Button href="/propuesta/equipo" variant="secondary">Plantel docente</Button>
-      <Button href="https://instagram.com/catedrazachin" variant="ghost" target="_blank" rel="noopener noreferrer">@catedrazachin</Button>
+      <Button href="https://instagram.com/catedrazachin" variant="secondary" target="_blank" rel="noopener noreferrer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+        </svg>
+        @catedrazachin
+      </Button>
     </div>
-    <p class="hero__meta">
-      <span aria-hidden="true">↘</span> Cambiá la piel brutalista abajo a la derecha:
-      <strong>refined · raw · neo</strong>
-    </p>
   </section>
 
   <!-- Niveles -->
@@ -46,8 +47,8 @@ const galeria = [
     </Grid>
   </Section>
 
-  <!-- Halftone Lab (sección propia, colapsable) -->
-  <Section eyebrow="Experimento" title="El juego de patrones" lead="El semitono CMYK ya no vive de fondo: es una pieza propia con la que se puede jugar. Expandila cuando quieras.">
+  <!-- Halftone Lab: la sección ES el juego interactivo, sin texto -->
+  <Section>
     <HalftoneLab />
   </Section>
 
@@ -88,11 +89,4 @@ const galeria = [
     gap: var(--pz-space-sm);
     margin-top: var(--pz-space-xl);
   }
-  .hero__meta {
-    margin-top: var(--pz-space-lg);
-    font-family: var(--pz-font-mono);
-    font-size: 0.8rem;
-    color: var(--pz-muted);
-  }
-  .hero__meta strong { color: var(--pz-accent); }
 </style>

@@ -33,7 +33,7 @@ export function initHalftoneLab(root) {
   const MAX_RADIUS = SPACING * 0.6;
   const INFLUENCE = 160;
   const LERP = 0.12;
-  const CHANNEL_ALPHA = 0.14;
+  const CHANNEL_ALPHA = 1; // color al 100%; los canales se suman por 'multiply'
   const SWEEP_DURATION = 800;
   const SWEEP_SOFT = 100;
 
@@ -176,14 +176,16 @@ export function initHalftoneLab(root) {
         offCtx.fill();
       }
 
+      // Multiply: los canales CMYK se superponen como tinta (sobreimpresión)
       ctx.globalAlpha = CHANNEL_ALPHA;
-      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalCompositeOperation = 'multiply';
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.drawImage(offscreen, 0, 0);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
     if (running && !reducedMotion) rafId = requestAnimationFrame(draw);
   }
 

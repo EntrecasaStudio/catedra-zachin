@@ -2,7 +2,6 @@
 import { ClientRouter } from 'astro:transitions';
 import PropuestaHeader from '../components/propuesta/PropuestaHeader.astro';
 import PropuestaFooter from '../components/propuesta/PropuestaFooter.astro';
-import StyleSwitcher from '../components/propuesta/StyleSwitcher.astro';
 import '../styles/propuesta.css';
 
 interface Props {
@@ -15,22 +14,19 @@ const {
 } = Astro.props;
 ---
 
-<html lang="es" data-theme="light" data-brutalism="refined">
+<html lang="es" data-theme="light" data-brutalism="neo">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Tema + piel: aplicar antes del paint para evitar flash -->
+    <!-- Tema: aplicar antes del paint para evitar flash -->
     <script is:inline>
       (function () {
         try {
           var t = localStorage.getItem('theme') || 'light';
           document.documentElement.setAttribute('data-theme', t);
-          var b = localStorage.getItem('pz-brutalism') || 'refined';
-          if (['refined', 'raw', 'neo'].indexOf(b) === -1) b = 'refined';
-          document.documentElement.setAttribute('data-brutalism', b);
         } catch (e) {}
       })();
     </script>
@@ -59,16 +55,12 @@ const {
       <slot />
     </main>
     <PropuestaFooter />
-    <StyleSwitcher />
 
     <script>
-      // Persistir tema y piel a través de las View Transitions
+      // Persistir el tema a través de las View Transitions
       document.addEventListener('astro:before-swap', (ev) => {
-        const root = document.documentElement;
-        const theme = root.getAttribute('data-theme') || 'light';
-        const brut = root.getAttribute('data-brutalism') || 'refined';
+        const theme = document.documentElement.getAttribute('data-theme') || 'light';
         ev.newDocument.documentElement.setAttribute('data-theme', theme);
-        ev.newDocument.documentElement.setAttribute('data-brutalism', brut);
       });
     </script>
   </body>

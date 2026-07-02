@@ -2,10 +2,12 @@
 
 Librería de componentes de la propuesta de rediseño (`/propuesta`). Vive en
 paralelo al sitio actual sin tocarlo. Todo se estiliza con tokens de
-`src/styles/propuesta.css` y responde a dos ejes conmutables:
+`src/styles/propuesta.css`:
 
+- **Piel:** `neo` (brutalismo con sombras duras), fijada en `data-brutalism="neo"`.
+  El sistema de tokens soporta más pieles (`refined`, `raw`) por si se reactivan
+  en el futuro, pero la propuesta usa sólo `neo`.
 - **Tema:** `data-theme="light|dark"` en `<html>`.
-- **Piel brutalista:** `data-brutalism="refined|raw|neo"` en `<html>` (ver `StyleSwitcher`).
 
 Página viva con todos los componentes y sus estados: **`/propuesta/componentes`**.
 
@@ -37,8 +39,7 @@ Página viva con todos los componentes y sus estados: **`/propuesta/componentes`
 |---|---|---|
 | `Card` | `href`, `interactive` | Slots `media` / default / `footer`. Con `href` es enlace interactivo. |
 | `Collapsible` | `summary`, `eyebrow`, `open`, `id` | Disclosure sobre `<details>/<summary>`: funciona sin JS y por teclado. Emite `toggle`. |
-| `HalftoneLab` | `open`, `id` | Sección propia con el motor CMYK. Sólo anima mientras está abierta (pausa al colapsar) y respeta reduced-motion. Base: `Collapsible` + `src/scripts/halftone-lab.js`. |
-| `StyleSwitcher` | — | `role="radiogroup"` con flechas. Setea `data-brutalism` y persiste en `localStorage` (`pz-brutalism`). |
+| `HalftoneLab` | `id` | El juego CMYK, directo y sin texto (canvas + controles de canal). Sólo anima mientras está visible (IntersectionObserver) y respeta reduced-motion. Motor: `src/scripts/halftone-lab.js`. Colores al 100% con blend `multiply` (sobreimpresión de tinta). |
 | `Slideshow` | `images`, `interval`, `offset`, `ratio` | Crossfade con autoplay. <2 imágenes → estático; `[]` → placeholder. No cicla con reduced-motion. |
 
 ### De dominio
@@ -74,9 +75,9 @@ import NivelCard from '../../components/propuesta/NivelCard.astro';
 </Section>
 ```
 
-## Añadir una piel
+## Tokens y pieles
 
-En `propuesta.css`, duplicar un bloque `[data-brutalism="…"]` y remapear los
-tokens (`--pz-font-display`, `--pz-border-width`, `--pz-radius`, `--pz-shadow`,
-`--pz-accent`, etc.). Agregar el valor a `StyleSwitcher` y al array `VALUES` de su
-script. Ningún componente necesita cambios.
+Los componentes no usan valores fijos: bordes, radios, sombras, tipografía y
+acento salen de variables CSS en `propuesta.css`. La piel activa es `neo`
+(`data-brutalism="neo"` en el layout). Para reactivar otra piel, cambiar ese
+atributo; los bloques `[data-brutalism="refined"|"raw"]` siguen definidos.
