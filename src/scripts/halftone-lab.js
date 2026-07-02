@@ -37,6 +37,16 @@ export function initHalftoneLab(root) {
   const SWEEP_DURATION = 800;
   const SWEEP_SOFT = 100;
 
+  // Subpíxeles RGB (modo oscuro / aditivo): cada celda = rayas R|G|B sobre negro.
+  const CELL = 21;            // divisible por 3 → rayas de 7px
+  const SEAM = 1;             // matriz negra entre subpíxeles
+  const BASE_BRIGHT = 0.12;   // emisión en reposo (pantalla casi apagada)
+  const MAX_BRIGHT = 1;       // emisión bajo el cursor
+  const RGB_EMIT = { m: '#ff1a1a', y: '#22ff22', c: '#1a6bff' }; // rojo / verde / azul puros
+  const RGB_SLOT = { m: 0, y: 1, c: 2 }; // posición de la raya dentro de la celda
+
+  const isDarkNow = () => document.documentElement.getAttribute('data-theme') === 'dark';
+
   const channels = [
     { id: 'k', angle: Math.PI / 4, color: '#000000', dots: [], active: true, sweep: 0, sweepTarget: 1 },
     { id: 'c', angle: (Math.PI * 15) / 180, color: '#00AEEF', dots: [], active: false, sweep: 0, sweepTarget: 0 },
@@ -54,11 +64,27 @@ export function initHalftoneLab(root) {
   let lastFrameTime = performance.now();
   let rafId = null;
   let running = false;
+  let lastIsDark = null; // detecta cambio de tema para regenerar la geometría
 
   function generateDotsForChannel(ch) {
     ch.dots = [];
     const w = displayW;
     const h = displayH;
+
+    if (isDarkNow()) {
+      // RGB aditivo: grilla ortogonal compartida. El escalar current/target es BRILLO (0–1).
+      for (let gy = 0; gy < h; gy += CELL) {
+        for (let gx = 0; gx < w; gx += CELL) {
+          ch.dots.push({
+            x: gx, y: gy,
+            current: BASE_BRIGHT, target: BASE_BRIGHT, frozen: false,
+            fixedR: BASE_BRIGHT, maxR: MAX_BRIGHT, baseR: BASE_BRIGHT,
+          });
+        }
+      }
+      return;
+    }
+
     const cosA = Math.cos(ch.angle);
     const sinA = Math.sin(ch.angle);
     const diag = Math.sqrt(w * w + h * h);
@@ -112,6 +138,35 @@ export function initHalftoneLab(root) {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     const dpr = window.devicePixelRatio || 1;
 
+    // Cambió el tema → cambia el modelo (halftone ↔ subpíxeles): regenerar geometría.
+    if (isDark !== lastIsDark) {
+      lastIsDark = isDark;
+      if (isDark) {
+        // RGB no tiene canal blanco: apagar K; si no hay color activo, encender R/G/B.
+        const k = channels.find((c) => c.id === 'k');
+        k.active = false; k.sweep = 0; k.sweepTarget = 0; k.dots = [];
+        const anyColor = channels.some((c) => c.id !== 'k' && c.active);
+        if (!anyColor) {
+          for (const id of ['c', 'm', 'y']) {
+            const c = channels.find((x) => x.id === id);
+            c.active = true; c.sweep = 0; c.sweepTarget = 1;
+          }
+          selectedChannel = 'm';
+        }
+      } else {
+        // Volviendo a CMYK: si no quedó nada activo, reactivar K.
+        if (!channels.some((c) => c.active)) {
+          const k = channels.find((c) => c.id === 'k');
+          k.active = true; k.sweep = 0; k.sweepTarget = 1;
+          selectedChannel = 'k';
+        }
+      }
+      for (const ch of channels) {
+        if (ch.active || ch.dots.length > 0) generateDotsForChannel(ch);
+      }
+      updateButtonStates();
+    }
+
     for (const ch of channels) {
       if (ch.sweep !== ch.sweepTarget) {
         const speed = dt / SWEEP_DURATION;
@@ -128,8 +183,15 @@ export function initHalftoneLab(root) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+    // Fondo negro puro para anclar la suma aditiva (sólo oscuro)
+    if (isDark) {
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, displayW, displayH);
+    }
+
     for (const ch of channels) {
       if (!ch.active || ch.sweep <= 0) continue;
+      if (isDark && ch.id === 'k') continue; // RGB: sin canal blanco (W)
 
       const isSelected = ch.id === selectedChannel;
       const totalSweepW = displayW + SWEEP_SOFT * 2;
@@ -138,25 +200,26 @@ export function initHalftoneLab(root) {
       offCtx.globalCompositeOperation = 'source-over';
       offCtx.globalAlpha = 1;
       offCtx.clearRect(0, 0, displayW, displayH);
-      // Claro = CMYK (tintas); Oscuro = RGB aditivo (luz): C→azul, M→rojo, Y→verde, K→blanco
+      // Claro = CMYK (tintas). Oscuro = RGB aditivo (luz casi pura): C→azul, M→rojo, Y→verde, K→blanco
       offCtx.fillStyle =
         ch.id === 'k'
           ? isDark ? '#FFFFFF' : '#000000'
           : isDark
-            ? ch.id === 'c' ? '#2b7fff' : ch.id === 'm' ? '#ff3b3b' : '#22c55e'
+            ? RGB_EMIT[ch.id]
             : ch.color;
 
+      // En oscuro (aditivo) el cursor enciende TODOS los canales activos → luz blanca bajo el cursor.
+      const respond = isDark ? true : isSelected;
       for (const dot of ch.dots) {
-        if (dot.maxR <= 0.1) continue;
         const distFromEdge = sweepEdge - dot.x;
         const sweepScale = Math.max(0, Math.min(1, distFromEdge / SWEEP_SOFT));
         if (sweepScale <= 0.01) continue;
 
         if (dot.frozen) {
-          // Fijo: descansa en su tamaño fijado. Puede crecer por encima al pasar
-          // el mouse; al alejarse vuelve al tamaño fijado. Sólo un nuevo click re-fija.
+          // Fijo: descansa en su valor fijado. Puede crecer por encima al pasar
+          // el mouse; al alejarse vuelve al valor fijado. Sólo un nuevo click re-fija.
           let g = dot.fixedR;
-          if (isSelected && !reducedMotion) {
+          if (respond && !reducedMotion) {
             const dx = mouseX - dot.x;
             const dy = mouseY - dot.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -166,7 +229,7 @@ export function initHalftoneLab(root) {
             }
           }
           dot.target = g;
-        } else if (isSelected && !reducedMotion) {
+        } else if (respond && !reducedMotion) {
           const dx = mouseX - dot.x;
           const dy = mouseY - dot.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
@@ -184,11 +247,22 @@ export function initHalftoneLab(root) {
         if (Math.abs(diff) > 0.05) dot.current += diff * LERP;
         else dot.current = dot.target;
 
-        const r = Math.max(dot.current * sweepScale, 0.3);
-        offCtx.beginPath();
-        offCtx.arc(dot.x, dot.y, r, 0, Math.PI * 2);
-        offCtx.fill();
+        if (isDark) {
+          // Subpíxel: el escalar es BRILLO → alpha. Raya del slot, o celda completa para W (k).
+          offCtx.globalAlpha = Math.max(0, Math.min(1, dot.current * sweepScale));
+          if (ch.id === 'k') {
+            offCtx.fillRect(dot.x, dot.y, CELL - SEAM, CELL - SEAM);
+          } else {
+            offCtx.fillRect(dot.x + RGB_SLOT[ch.id] * (CELL / 3), dot.y, CELL / 3 - SEAM, CELL - SEAM);
+          }
+        } else {
+          const r = Math.max(dot.current * sweepScale, 0.3);
+          offCtx.beginPath();
+          offCtx.arc(dot.x, dot.y, r, 0, Math.PI * 2);
+          offCtx.fill();
+        }
       }
+      offCtx.globalAlpha = 1;
 
       // Claro: multiply (tinta, sustractivo). Oscuro: lighter (luz, aditivo → suman a blanco)
       ctx.globalAlpha = CHANNEL_ALPHA;
@@ -230,19 +304,22 @@ export function initHalftoneLab(root) {
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
-    const ch = channels.find((c) => c.id === selectedChannel);
-    if (!ch || !ch.active) return;
-    for (const dot of ch.dots) {
-      const dx = mx - dot.x;
-      const dy = my - dot.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < INFLUENCE) {
-        // Fija el punto al tamaño que tiene ahora (incluye lo que creció por el hover);
-        // un nuevo click re-fija a un tamaño mayor.
-        const t = 1 - dist / INFLUENCE;
-        const grown = dot.baseR + (dot.maxR - dot.baseR) * t;
-        dot.frozen = true;
-        dot.fixedR = Math.max(dot.current, grown);
+    // Claro: fija el canal seleccionado. Oscuro (aditivo): fija todos los activos → mancha de luz.
+    const targets = isDarkNow()
+      ? channels.filter((c) => c.active)
+      : channels.filter((c) => c.id === selectedChannel && c.active);
+    for (const ch of targets) {
+      for (const dot of ch.dots) {
+        const dx = mx - dot.x;
+        const dy = my - dot.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < INFLUENCE) {
+          // Fija el valor actual (incluye lo que creció por el hover); un nuevo click re-fija más alto.
+          const t = 1 - dist / INFLUENCE;
+          const grown = dot.baseR + (dot.maxR - dot.baseR) * t;
+          dot.frozen = true;
+          dot.fixedR = Math.max(dot.current, grown);
+        }
       }
     }
   }

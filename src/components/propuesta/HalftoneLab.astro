@@ -103,6 +103,9 @@ const channels = [
   .lbl--rgb { display: none; }
   :global([data-theme='dark']) .lbl--cmyk { display: none; }
   :global([data-theme='dark']) .lbl--rgb { display: inline; }
+
+  /* RGB (oscuro) no tiene canal blanco: se oculta el botón K/W */
+  :global([data-theme='dark']) .pz-channel-btn--k { display: none; }
 </style>
 
 <script>
