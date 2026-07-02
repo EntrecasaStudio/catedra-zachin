@@ -146,23 +146,19 @@ export function initHalftoneLab(root) {
         const sweepScale = Math.max(0, Math.min(1, distFromEdge / SWEEP_SOFT));
         if (sweepScale <= 0.01) continue;
 
-        if (isSelected && !reducedMotion) {
+        if (dot.frozen) {
+          // Congelado: queda inerte, no reacciona más al mouse
+        } else if (isSelected && !reducedMotion) {
           const dx = mouseX - dot.x;
           const dy = mouseY - dot.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dot.frozen) {
-            if (dist < INFLUENCE) {
-              const t = 1 - dist / INFLUENCE;
-              const newTarget = dot.baseR + (dot.maxR - dot.baseR) * t;
-              if (newTarget > dot.target) dot.target = newTarget;
-            }
-          } else if (dist < INFLUENCE) {
+          if (dist < INFLUENCE) {
             const t = 1 - dist / INFLUENCE;
             dot.target = dot.baseR + (dot.maxR - dot.baseR) * t;
           } else {
             dot.target = dot.baseR;
           }
-        } else if (!dot.frozen) {
+        } else {
           dot.target = dot.baseR;
         }
 
@@ -222,7 +218,15 @@ export function initHalftoneLab(root) {
       if (dot.frozen) continue;
       const dx = mx - dot.x;
       const dy = my - dot.y;
-      if (Math.sqrt(dx * dx + dy * dy) < INFLUENCE) dot.frozen = true;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < INFLUENCE) {
+        // "Estampa" el punto a un tamaño fijo según la distancia al click y lo congela
+        const t = 1 - dist / INFLUENCE;
+        const size = dot.baseR + (dot.maxR - dot.baseR) * t;
+        dot.frozen = true;
+        dot.current = size;
+        dot.target = size;
+      }
     }
   }
 
