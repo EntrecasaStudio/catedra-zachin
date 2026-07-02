@@ -188,6 +188,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
     display: none;
     flex-direction: column;
     justify-content: center;
+    align-items: stretch;
     gap: 4px;
     width: 2.25rem;
     height: 2.25rem;
@@ -195,8 +196,20 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
     border-radius: var(--pz-radius);
     padding: 0 0.5rem;
     flex-shrink: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    line-height: 0;
   }
-  .pz-header__burger span { height: var(--pz-border-width); background: var(--pz-fg); transition: transform var(--pz-transition), opacity var(--pz-transition); }
+  /* display:block + ancho explícito: Safari no dibuja spans vacíos como flex-items */
+  .pz-header__burger span {
+    display: block;
+    width: 100%;
+    height: var(--pz-border-width);
+    background: var(--pz-fg);
+    border-radius: 1px;
+    transition: transform var(--pz-transition), opacity var(--pz-transition);
+  }
   .pz-header__burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
   .pz-header__burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
   .pz-header__burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
