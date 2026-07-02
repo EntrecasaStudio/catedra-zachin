@@ -1,0 +1,130 @@
+---
+import Section from './Section.astro';
+import Grid from './Grid.astro';
+import Tag from './Tag.astro';
+import Button from './Button.astro';
+
+/**
+ * NivelDetalle — plantilla de página de nivel (programa + cronograma).
+ * DRY: nivel-1 y nivel-2 sólo pasan datos.
+ *
+ * @prop {1|2} nivel
+ * @prop {string} desc
+ * @prop {string} mail
+ * @prop {{num:string, titulo:string, desc:string}[]} programa
+ * @prop {{fecha:string, desc:string, badge?:string, final?:boolean}[]} cronograma
+ */
+interface Props {
+  nivel: 1 | 2;
+  desc: string;
+  mail: string;
+  programa: { num: string; titulo: string; desc: string }[];
+  cronograma: { fecha: string; desc: string; badge?: string; final?: boolean }[];
+}
+const { nivel, desc, mail, programa, cronograma } = Astro.props;
+const accent = nivel === 1 ? 'n1' : 'n2';
+---
+
+<section class:list={['niveldet-hero', `niveldet-hero--${accent}`, 'pz-container']}>
+  <span class="pz-eyebrow">Tecnología</span>
+  <h1 class="niveldet-hero__title">
+    Tecnología <span class={nivel === 1 ? 'text-magenta' : 'text-cyan'}>{nivel}</span>
+  </h1>
+  <p class="niveldet-hero__desc">{desc}</p>
+  <Button href={`mailto:${mail}`} variant="secondary" size="sm">{mail}</Button>
+</section>
+
+<Section eyebrow="Contenidos" title="Programa">
+  <Grid cols={3} colsMd={2} colsSm={1} isEmpty={programa.length === 0} emptyText="Programa en preparación.">
+    {programa.map((item) => (
+      <article class="niveldet-item">
+        <span class="niveldet-item__num" aria-hidden="true">{item.num}</span>
+        <h3 class="niveldet-item__title">{item.titulo}</h3>
+        <p class="niveldet-item__desc">{item.desc}</p>
+      </article>
+    ))}
+  </Grid>
+</Section>
+
+<Section eyebrow="Calendario" title="Cronograma">
+  {cronograma.length === 0 ? (
+    <p class="niveldet-empty">Cronograma a confirmar.</p>
+  ) : (
+    <ol class:list={['niveldet-timeline', `niveldet-timeline--${accent}`]}>
+      {cronograma.map((c) => (
+        <li class="niveldet-timeline__item">
+          <span class="niveldet-timeline__node" data-final={c.final ? '' : undefined}></span>
+          <div class="niveldet-timeline__content">
+            <span class="niveldet-timeline__fecha">{c.fecha}</span>
+            <p class="niveldet-timeline__desc">{c.desc}</p>
+            {c.badge && <Tag tone={c.final ? 'solid' : accent}>{c.badge}</Tag>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  )}
+</Section>
+
+<style>
+  .niveldet-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
+  .niveldet-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
+  .niveldet-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin: var(--pz-space-md) 0 var(--pz-space-lg); max-width: 60ch; }
+
+  .niveldet-item {
+    position: relative;
+    padding: var(--pz-space-lg);
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-bg);
+    transition: transform var(--pz-transition), box-shadow var(--pz-transition);
+  }
+  .niveldet-item:hover { transform: translate(var(--pz-lift), var(--pz-lift)); box-shadow: var(--pz-shadow-hover); }
+  .niveldet-item__num {
+    position: absolute; top: var(--pz-space-sm); right: var(--pz-space-md);
+    font-family: var(--pz-font-display); font-weight: 800; font-size: 2.25rem; opacity: 0.15;
+  }
+  .niveldet-hero--n1 ~ * .niveldet-item__num,
+  .niveldet-timeline--n1 { --pz-accent-local: var(--pz-magenta); }
+  .niveldet-item__title { font-size: 1.15rem; margin-bottom: var(--pz-space-xs); max-width: 22ch; }
+  .niveldet-item__desc { color: var(--pz-muted); font-size: 0.88rem; }
+
+  .niveldet-empty { color: var(--pz-muted); font-family: var(--pz-font-mono); }
+
+  /* Timeline */
+  .niveldet-timeline { position: relative; padding-left: 2rem; }
+  .niveldet-timeline::before {
+    content: ''; position: absolute; left: 7px; top: 10px; bottom: 10px;
+    width: var(--pz-border-width); background: var(--pz-fg);
+  }
+  .niveldet-timeline__item { position: relative; padding-bottom: var(--pz-space-lg); display: flex; }
+  .niveldet-timeline__item:last-child { padding-bottom: 0; }
+  .niveldet-timeline__node {
+    position: absolute; left: -2rem; top: 2px; width: 16px; height: 16px;
+    border-radius: 50%; background: var(--pz-bg);
+    border: var(--pz-border-width) solid var(--pz-tl, var(--pz-magenta)); z-index: 1;
+  }
+  .niveldet-timeline--n1 .niveldet-timeline__node { border-color: var(--pz-magenta); }
+  .niveldet-timeline--n2 .niveldet-timeline__node { border-color: var(--pz-cyan); }
+  .niveldet-timeline--n1 .niveldet-timeline__node[data-final] { background: var(--pz-magenta); }
+  .niveldet-timeline--n2 .niveldet-timeline__node[data-final] { background: var(--pz-cyan); }
+
+  .niveldet-timeline__content {
+    flex: 1; padding: var(--pz-space-md) var(--pz-space-lg);
+    background: var(--pz-surface);
+    border: var(--pz-border-width) solid var(--pz-fg); border-radius: var(--pz-radius);
+    display: flex; flex-direction: column; align-items: flex-start; gap: var(--pz-space-2xs);
+  }
+  .niveldet-timeline__fecha {
+    font-family: var(--pz-font-mono); font-weight: 700; font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .niveldet-timeline--n1 .niveldet-timeline__fecha { color: var(--pz-magenta); }
+  .niveldet-timeline--n2 .niveldet-timeline__fecha { color: var(--pz-cyan); }
+  .niveldet-timeline__desc { color: var(--pz-muted); font-size: 0.92rem; }
+
+  @media (max-width: 560px) {
+    .niveldet-timeline { padding-left: 1.5rem; }
+    .niveldet-timeline__node { left: -1.5rem; }
+  }
+</style>

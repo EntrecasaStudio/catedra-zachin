@@ -1,0 +1,76 @@
+---
+/**
+ * GaleriaItem — celda de la galería (foto o video). Expone data-* para el
+ * filtrado y el lightbox de la página. Imágenes con dimensiones para evitar
+ * layout shift y carga diferida.
+ *
+ * @prop {{tipo:'foto'|'video', src:string, alt:string, categoria:string}} item
+ * @prop {number} index
+ */
+interface Props {
+  item: { tipo: 'foto' | 'video'; src: string; alt: string; categoria: string };
+  index: number;
+}
+const { item, index } = Astro.props;
+---
+
+<button
+  class="pz-galitem"
+  data-categoria={item.categoria}
+  data-index={index}
+  data-tipo={item.tipo}
+  data-src={item.src}
+  data-alt={item.alt}
+  aria-label={`Ampliar: ${item.alt}`}
+>
+  {item.tipo === 'foto' ? (
+    <img src={item.src} alt={item.alt} loading="lazy" decoding="async" width="640" height="480" />
+  ) : (
+    <>
+      <video src={item.src} muted loop playsinline preload="metadata"><track kind="captions" /></video>
+      <span class="pz-galitem__play" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
+      </span>
+    </>
+  )}
+</button>
+
+<style>
+  .pz-galitem {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-surface);
+    overflow: hidden;
+    transition: transform var(--pz-transition), box-shadow var(--pz-transition);
+  }
+  .pz-galitem:hover {
+    transform: translate(var(--pz-lift), var(--pz-lift));
+    box-shadow: var(--pz-shadow-hover);
+  }
+  .pz-galitem img,
+  .pz-galitem video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--pz-transition-slow);
+  }
+  .pz-galitem:hover img,
+  .pz-galitem:hover video { transform: scale(1.05); }
+
+  .pz-galitem__play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+  }
+
+  .pz-galitem[hidden] { display: none; }
+</style>

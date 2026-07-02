@@ -1,0 +1,184 @@
+---
+import PropuestaLayout from '../../layouts/PropuestaLayout.astro';
+import Section from '../../components/propuesta/Section.astro';
+import Grid from '../../components/propuesta/Grid.astro';
+import GaleriaItem from '../../components/propuesta/GaleriaItem.astro';
+import { items, categorias, countByCategoria } from '../../data/galeria.js';
+
+const counts = countByCategoria(items);
+const label = (c) => (c === 'tps' ? 'TPs' : c.charAt(0).toUpperCase() + c.slice(1));
+---
+
+<PropuestaLayout title="Galería | Propuesta Zachin" description="Fotos y videos de clases, talleres, jornadas y TPs de la Cátedra Zachin.">
+  <section class="gal-hero pz-container">
+    <span class="pz-eyebrow">Multimedia</span>
+    <h1 class="gal-hero__title">Galería</h1>
+    <p class="gal-hero__desc">Fotos y videos de clases, talleres, jornadas y TPs de la cátedra.</p>
+  </section>
+
+  <Section flush>
+    <div class="gal-filters" id="gal-filters" role="tablist" aria-label="Filtrar galería por categoría">
+      {categorias.map((cat, i) => (
+        <button
+          class:list={['pz-btn', 'pz-btn--secondary', 'pz-btn--sm', { 'is-active': i === 0 }]}
+          data-filter={cat}
+          role="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+        >
+          {label(cat)}<span class="gal-filters__count">{counts[cat]}</span>
+        </button>
+      ))}
+    </div>
+
+    <Grid cols={3} colsMd={2} colsSm={1} id="gal-grid" isEmpty={items.length === 0} emptyText="No hay material cargado todavía.">
+      {items.map((item, i) => <GaleriaItem item={item} index={i} />)}
+    </Grid>
+  </Section>
+
+  <!-- Lightbox -->
+  <div class="gal-lightbox" id="gal-lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Vista ampliada">
+    <button class="gal-lightbox__btn gal-lightbox__close" id="gal-close" aria-label="Cerrar">✕</button>
+    <button class="gal-lightbox__btn gal-lightbox__nav gal-lightbox__prev" id="gal-prev" aria-label="Anterior">‹</button>
+    <button class="gal-lightbox__btn gal-lightbox__nav gal-lightbox__next" id="gal-next" aria-label="Siguiente">›</button>
+    <div class="gal-lightbox__content" id="gal-content"></div>
+    <div class="gal-lightbox__info"><span id="gal-counter"></span> · <span id="gal-alt"></span></div>
+  </div>
+</PropuestaLayout>
+
+<style>
+  .gal-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
+  .gal-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
+  .gal-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin-top: var(--pz-space-md); }
+
+  .gal-filters { display: flex; flex-wrap: wrap; gap: var(--pz-space-xs); margin-bottom: var(--pz-space-xl); }
+  .gal-filters .is-active { background: var(--pz-accent); color: var(--pz-on-accent); border-color: var(--pz-accent); }
+  .gal-filters__count { margin-left: 0.35rem; opacity: 0.6; }
+
+  .gal-lightbox {
+    position: fixed; inset: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0, 0, 0, 0.96);
+    opacity: 0; visibility: hidden;
+    transition: opacity var(--pz-transition), visibility var(--pz-transition);
+  }
+  .gal-lightbox.is-open { opacity: 1; visibility: visible; }
+  .gal-lightbox__content { max-width: 90vw; max-height: 82vh; display: flex; }
+  .gal-lightbox__content :global(img),
+  .gal-lightbox__content :global(video) {
+    max-width: 90vw; max-height: 82vh; object-fit: contain;
+    border: var(--pz-border-width) solid #fff;
+  }
+  .gal-lightbox__btn {
+    position: absolute; z-index: 2; color: #fff;
+    width: 3rem; height: 3rem; display: grid; place-items: center;
+    font-size: 1.5rem; line-height: 1;
+    border: var(--pz-border-width) solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+    transition: background var(--pz-transition);
+  }
+  .gal-lightbox__btn:hover { background: rgba(255, 255, 255, 0.2); }
+  .gal-lightbox__close { top: 1rem; right: 1rem; }
+  .gal-lightbox__nav { top: 50%; transform: translateY(-50%); }
+  .gal-lightbox__prev { left: 1rem; }
+  .gal-lightbox__next { right: 1rem; }
+  .gal-lightbox__info {
+    position: absolute; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.6); font-family: var(--pz-font-mono); font-size: 0.75rem;
+  }
+  @media (max-width: 560px) {
+    .gal-lightbox__nav { top: auto; bottom: 4.5rem; transform: none; }
+    .gal-lightbox__prev { left: 1.5rem; }
+    .gal-lightbox__next { right: 1.5rem; }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const filters = document.getElementById('gal-filters');
+    const grid = document.getElementById('gal-grid');
+    const lb = document.getElementById('gal-lightbox');
+    const content = document.getElementById('gal-content');
+    const counter = document.getElementById('gal-counter');
+    const altEl = document.getElementById('gal-alt');
+    if (!filters || !grid || !lb || !content) return;
+
+    document.body.appendChild(lb);
+
+    let index = -1;
+    let visible = [];
+    const getVisible = () => Array.from(grid.querySelectorAll('.pz-galitem:not([hidden])'));
+
+    filters.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-filter]');
+      if (!btn) return;
+      filters.querySelectorAll('[data-filter]').forEach((b) => {
+        b.classList.remove('is-active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('is-active');
+      btn.setAttribute('aria-selected', 'true');
+      const f = btn.getAttribute('data-filter');
+      grid.querySelectorAll('.pz-galitem').forEach((it) => {
+        it.hidden = !(f === 'todas' || it.getAttribute('data-categoria') === f);
+      });
+    });
+
+    grid.addEventListener('click', (e) => {
+      const it = e.target.closest('.pz-galitem');
+      if (!it) return;
+      visible = getVisible();
+      const i = visible.indexOf(it);
+      if (i > -1) open(i);
+    });
+
+    function show(i) {
+      const it = visible[i];
+      if (!it) return;
+      const tipo = it.getAttribute('data-tipo');
+      const src = it.getAttribute('data-src') || '';
+      const alt = it.getAttribute('data-alt') || '';
+      content.innerHTML = '';
+      if (tipo === 'foto') {
+        const img = document.createElement('img');
+        img.src = src; img.alt = alt;
+        content.appendChild(img);
+      } else {
+        const v = document.createElement('video');
+        v.src = src; v.controls = true; v.autoplay = true; v.loop = true; v.playsInline = true;
+        content.appendChild(v);
+      }
+      if (counter) counter.textContent = `${i + 1} / ${visible.length}`;
+      if (altEl) altEl.textContent = alt;
+    }
+
+    function open(i) {
+      index = i;
+      show(i);
+      lb.classList.add('is-open');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lb.classList.remove('is-open');
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      content.querySelector('video')?.pause();
+    }
+    function nav(d) {
+      const n = index + d;
+      if (n < 0 || n >= visible.length) return;
+      index = n; show(n);
+    }
+
+    document.getElementById('gal-close')?.addEventListener('click', close);
+    document.getElementById('gal-prev')?.addEventListener('click', () => nav(-1));
+    document.getElementById('gal-next')?.addEventListener('click', () => nav(1));
+    lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') nav(-1);
+      else if (e.key === 'ArrowRight') nav(1);
+    });
+  });
+</script>

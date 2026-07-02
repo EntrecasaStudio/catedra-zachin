@@ -1,0 +1,98 @@
+---
+import PropuestaLayout from '../../layouts/PropuestaLayout.astro';
+import Section from '../../components/propuesta/Section.astro';
+import Grid from '../../components/propuesta/Grid.astro';
+import Button from '../../components/propuesta/Button.astro';
+import NivelCard from '../../components/propuesta/NivelCard.astro';
+import HalftoneLab from '../../components/propuesta/HalftoneLab.astro';
+import Card from '../../components/propuesta/Card.astro';
+import Slideshow from '../../components/propuesta/Slideshow.astro';
+
+const plantel = [
+  { src: '/images/docentes/Adjunta-Daniela-Vulcano.png', alt: 'Plantel docente' },
+  { src: '/images/docentes/Adjunto-Leandro-Barales.png', alt: 'Plantel docente' },
+  { src: '/images/docentes/DOCENTE-Juan-Hileger.png', alt: 'Plantel docente' },
+  { src: '/images/docentes/DOCENTE-Catalina-Somoza.png', alt: 'Plantel docente' },
+];
+const galeria = [
+  { src: '/images/galeria/jornada/IMG_1481.jpg', alt: 'Jornada Zachin Live' },
+  { src: '/images/galeria/clase/IMG_4048.jpg', alt: 'Clase de tecnología' },
+  { src: '/images/galeria/taller/IMG_2825.jpg', alt: 'Taller de producción' },
+];
+---
+
+<PropuestaLayout>
+  <!-- Hero -->
+  <section class="hero pz-container">
+    <span class="pz-eyebrow">FADU · UBA / Diseño Gráfico</span>
+    <h1 class="hero__title">Cátedra<br />Zachin</h1>
+    <p class="hero__subtitle">Tecnología — Niveles 1 &amp; 2</p>
+    <div class="hero__actions">
+      <Button href="/propuesta/nivel-1" variant="primary">Ver Tecnología 1</Button>
+      <Button href="/propuesta/equipo" variant="secondary">Plantel docente</Button>
+      <Button href="https://instagram.com/catedrazachin" variant="ghost" target="_blank" rel="noopener noreferrer">@catedrazachin</Button>
+    </div>
+    <p class="hero__meta">
+      <span aria-hidden="true">↘</span> Cambiá la piel brutalista abajo a la derecha:
+      <strong>refined · raw · neo</strong>
+    </p>
+  </section>
+
+  <!-- Niveles -->
+  <Section eyebrow="Programa" title="Dos niveles, un sistema" lead="De los procesos analógicos y digitales de producción a la gestión avanzada de proyectos gráficos.">
+    <Grid cols={2} colsMd={1}>
+      <NivelCard nivel={1} title="Tecnología 1" href="/propuesta/nivel-1" desc="Introducción a las tecnologías de producción gráfica. Procesos analógicos y digitales." />
+      <NivelCard nivel={2} title="Tecnología 2" href="/propuesta/nivel-2" desc="Profundización en tecnologías avanzadas de producción y gestión de proyectos gráficos." />
+    </Grid>
+  </Section>
+
+  <!-- Halftone Lab (sección propia, colapsable) -->
+  <Section eyebrow="Experimento" title="El juego de patrones" lead="El semitono CMYK ya no vive de fondo: es una pieza propia con la que se puede jugar. Expandila cuando quieras.">
+    <HalftoneLab />
+  </Section>
+
+  <!-- Explorar -->
+  <Section eyebrow="Explorar" title="Adentro de la cátedra">
+    <Grid cols={2} colsMd={1}>
+      <Card href="/propuesta/equipo">
+        <Slideshow slot="media" images={plantel} offset={0} />
+        <h3 class="pz-card__title">Plantel docente</h3>
+        <p class="pz-card__text">Adjuntos, JTP, docentes y ayudantes de la cátedra.</p>
+      </Card>
+      <Card href="/propuesta/galeria">
+        <Slideshow slot="media" images={galeria} offset={1500} />
+        <h3 class="pz-card__title">Galería</h3>
+        <p class="pz-card__text">Fotos y videos de clases, talleres y jornadas.</p>
+      </Card>
+    </Grid>
+  </Section>
+</PropuestaLayout>
+
+<style>
+  .hero {
+    padding-block: clamp(3rem, 10vh, 7rem) var(--pz-space-2xl);
+  }
+  .hero__title {
+    font-size: clamp(3.5rem, 15vw, 10rem);
+    line-height: 0.9;
+    margin-top: var(--pz-space-md);
+  }
+  .hero__subtitle {
+    font-size: clamp(1.1rem, 3vw, 1.75rem);
+    color: var(--pz-muted);
+    margin-top: var(--pz-space-md);
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pz-space-sm);
+    margin-top: var(--pz-space-xl);
+  }
+  .hero__meta {
+    margin-top: var(--pz-space-lg);
+    font-family: var(--pz-font-mono);
+    font-size: 0.8rem;
+    color: var(--pz-muted);
+  }
+  .hero__meta strong { color: var(--pz-accent); }
+</style>

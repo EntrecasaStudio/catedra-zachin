@@ -1,0 +1,190 @@
+---
+/**
+ * PropuestaHeader — barra de navegación brutalista de la propuesta.
+ * Nav sin Trabajos ni Inscripciones (coherente con la limpieza del sitio).
+ */
+const nav = [
+  { href: '/propuesta', label: 'Inicio' },
+  { href: '/propuesta/nivel-1', label: 'Tecnología 1' },
+  { href: '/propuesta/nivel-2', label: 'Tecnología 2' },
+  { href: '/propuesta/equipo', label: 'Plantel' },
+  { href: '/propuesta/galeria', label: 'Galería' },
+  { href: '/propuesta/contacto', label: 'Contacto' },
+];
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
+---
+
+<header class="pz-header">
+  <div class="pz-header__inner pz-container">
+    <a href="/propuesta" class="pz-header__brand">
+      <span class="pz-header__mark" aria-hidden="true">◉</span>
+      <span class="pz-header__word">Zachin<span class="pz-header__word-sub">/ propuesta</span></span>
+    </a>
+
+    <nav class="pz-header__nav" id="pz-nav" aria-label="Navegación de la propuesta">
+      <ul class="pz-header__list">
+        {nav.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              class:list={['pz-header__link', { 'is-active': path === l.href }]}
+              aria-current={path === l.href ? 'page' : undefined}
+            >{l.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="pz-header__actions">
+      <button class="pz-header__theme" id="pz-theme-toggle" type="button" aria-label="Cambiar tema claro/oscuro">
+        <span class="pz-header__theme-icon" aria-hidden="true"></span>
+      </button>
+      <button class="pz-header__burger" id="pz-burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="pz-nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .pz-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    height: var(--pz-header-height);
+    background: color-mix(in srgb, var(--pz-bg) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: var(--pz-border-width) solid var(--pz-fg);
+  }
+
+  .pz-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    gap: var(--pz-space-lg);
+  }
+
+  .pz-header__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--pz-space-xs);
+    font-family: var(--pz-font-display);
+    font-weight: var(--pz-display-weight);
+    letter-spacing: var(--pz-display-tracking);
+    text-transform: var(--pz-display-transform);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+  .pz-header__mark { color: var(--pz-accent); }
+  .pz-header__word-sub {
+    font-family: var(--pz-font-mono);
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--pz-muted);
+    margin-left: 0.35rem;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .pz-header__list { display: flex; gap: var(--pz-space-md); }
+
+  .pz-header__link {
+    font-family: var(--pz-font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pz-muted);
+    padding: var(--pz-space-2xs) 0;
+    border-bottom: var(--pz-border-width) solid transparent;
+    transition: color var(--pz-transition), border-color var(--pz-transition);
+  }
+  .pz-header__link:hover { color: var(--pz-fg); }
+  .pz-header__link.is-active { color: var(--pz-fg); border-bottom-color: var(--pz-accent); }
+
+  .pz-header__actions { display: flex; align-items: center; gap: var(--pz-space-xs); }
+
+  .pz-header__theme {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    transition: background var(--pz-transition);
+  }
+  .pz-header__theme:hover { background: var(--pz-surface); }
+  .pz-header__theme-icon {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: var(--pz-fg);
+    box-shadow: inset -0.35rem -0.35rem 0 0 var(--pz-bg);
+    transition: box-shadow var(--pz-transition), transform var(--pz-transition);
+  }
+  :global([data-theme='dark']) .pz-header__theme-icon {
+    box-shadow: inset 0 0 0 0 var(--pz-bg);
+    transform: scale(0.8);
+  }
+
+  .pz-header__burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    padding: 0 0.5rem;
+  }
+  .pz-header__burger span { height: var(--pz-border-width); background: var(--pz-fg); transition: transform var(--pz-transition), opacity var(--pz-transition); }
+  .pz-header__burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .pz-header__burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+  .pz-header__burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  @media (max-width: 860px) {
+    .pz-header__burger { display: flex; }
+    .pz-header__nav {
+      position: fixed;
+      inset: var(--pz-header-height) 0 auto 0;
+      background: var(--pz-bg);
+      border-bottom: var(--pz-border-width) solid var(--pz-fg);
+      transform: translateY(-120%);
+      transition: transform var(--pz-transition-slow);
+      padding: var(--pz-space-lg);
+    }
+    .pz-header__nav.is-open { transform: translateY(0); }
+    .pz-header__list { flex-direction: column; gap: var(--pz-space-sm); }
+    .pz-header__link { font-size: 1.1rem; }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const burger = document.getElementById('pz-burger');
+    const nav = document.getElementById('pz-nav');
+    if (burger && nav) {
+      burger.addEventListener('click', () => {
+        const open = nav.classList.toggle('is-open');
+        burger.setAttribute('aria-expanded', String(open));
+      });
+      nav.querySelectorAll('a').forEach((a) =>
+        a.addEventListener('click', () => {
+          nav.classList.remove('is-open');
+          burger.setAttribute('aria-expanded', 'false');
+        })
+      );
+    }
+
+    const theme = document.getElementById('pz-theme-toggle');
+    theme?.addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch {}
+    });
+  });
+</script>

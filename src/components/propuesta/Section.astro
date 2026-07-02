@@ -1,0 +1,45 @@
+---
+/**
+ * Section — envoltorio de sección con eyebrow + título + lead opcionales.
+ * Expone la grilla brutalista expuesta (borde superior duro) del sistema.
+ *
+ * @prop {string} [eyebrow] - Label tipo "system" (encima del título).
+ * @prop {string} [title] - Título de la sección.
+ * @prop {string} [lead] - Bajada / descripción.
+ * @prop {2|3|4|5|6} [level] - Nivel de heading del título. Default 2.
+ * @prop {string} [id] - Ancla de la sección.
+ * @prop {boolean} flush - Quita el borde/separador superior. Default false.
+ *
+ * @slot header - Reemplaza el header autogenerado (eyebrow/title/lead).
+ * @slot default - Contenido de la sección.
+ */
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  lead?: string;
+  level?: 2 | 3 | 4 | 5 | 6;
+  id?: string;
+  flush?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { eyebrow, title, lead, level = 2, id, flush = false, class: className, ...rest } = Astro.props;
+const Heading = `h${level}` as unknown as keyof HTMLElementTagNameMap;
+const hasHeader = Boolean(eyebrow || title || lead) || Astro.slots.has('header');
+---
+
+<section class:list={['pz-section', flush && 'pz-section--flush', className]} id={id} {...rest}>
+  <div class="pz-container">
+    {hasHeader && (
+      <header class="pz-section-head">
+        <slot name="header">
+          {eyebrow && <span class="pz-eyebrow">{eyebrow}</span>}
+          {title && <Heading class="pz-section-head__title">{title}</Heading>}
+          {lead && <p class="pz-section-head__lead">{lead}</p>}
+        </slot>
+      </header>
+    )}
+    <slot />
+  </div>
+</section>

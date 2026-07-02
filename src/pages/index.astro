@@ -15,7 +15,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </h1>
         <p class="hero__subtitle">Tecnología / Niveles 1 & 2</p>
         <div class="hero__actions">
-          <a href="/contacto" class="btn btn-hero-primary">Inscribite</a>
           <a href="https://instagram.com/catedrazachin" target="_blank" rel="noopener noreferrer" class="btn btn-hero-secondary">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
@@ -30,37 +29,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <button class="channel-btn channel-btn--m" data-channel="m" type="button" title="Magenta 75°" aria-label="Canal magenta (M) a 75 grados">M</button>
             <button class="channel-btn channel-btn--y" data-channel="y" type="button" title="Yellow 0°" aria-label="Canal amarillo (Y) a 0 grados">Y</button>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Inscripciones Banner -->
-  <section class="inscripciones section">
-    <div class="container">
-      <div class="inscripciones__banner" data-animate>
-        <div class="inscripciones__info">
-          <h2>Inscripciones Abiertas</h2>
-          <p>Primer cuatrimestre 2026 - Nivel 1 y Nivel 2</p>
-        </div>
-        <div class="inscripciones__links">
-          <a href="#" class="btn btn-nivel1">Inscripción Nivel 1</a>
-          <a href="#" class="btn btn-nivel2">Inscripción Nivel 2</a>
-        </div>
-      </div>
-
-      <div class="inscripciones__mails" data-animate-stagger>
-        <div class="mail-card mail-card--general">
-          <span class="mail-card__level">General</span>
-          <a href="mailto:cat.zachin@fadu.uba.ar">cat.zachin@fadu.uba.ar</a>
-        </div>
-        <div class="mail-card mail-card--n1">
-          <span class="mail-card__level">Nivel 1</span>
-          <a href="mailto:cat.zachin.tecno1@gmail.com">cat.zachin.tecno1@gmail.com</a>
-        </div>
-        <div class="mail-card mail-card--n2">
-          <span class="mail-card__level">Nivel 2</span>
-          <a href="mailto:cat.zachin.tecno2@gmail.com">cat.zachin.tecno2@gmail.com</a>
         </div>
       </div>
     </div>
@@ -139,24 +107,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="preview-card__text">
             <h3>Galería</h3>
             <p>Fotos y videos de las clases, eventos y talleres.</p>
-          </div>
-        </a>
-        <a href="/trabajos" class="preview-card">
-          <div class="preview-card__slideshow" data-slideshow data-offset="2000">
-            <img src="/images/galeria/tps/IMG_4073.jpg" alt="Trabajos prácticos" loading="lazy" data-active />
-            <img src="/images/galeria/tps/IMG_5138.jpg" alt="Trabajos prácticos" loading="lazy" />
-            <img src="/images/galeria/tps/IMG_4131.jpg" alt="Trabajos prácticos" loading="lazy" />
-            <img src="/images/galeria/tps/IMG_4087.jpg" alt="Trabajos prácticos" loading="lazy" />
-            <div class="slideshow-dots">
-              <span class="slideshow-dot" data-active></span>
-              <span class="slideshow-dot"></span>
-              <span class="slideshow-dot"></span>
-              <span class="slideshow-dot"></span>
-            </div>
-          </div>
-          <div class="preview-card__text">
-            <h3>Trabajos de Alumnos</h3>
-            <p>Los mejores trabajos de cuatrimestres anteriores.</p>
           </div>
         </a>
       </div>
@@ -345,87 +295,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     color: var(--color-text);
   }
 
-  /* Inscripciones */
-  .inscripciones__banner {
-    background-color: var(--color-text);
-    color: var(--color-bg);
-    border-radius: 4px;
-    padding: var(--space-xl);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-lg);
-    flex-wrap: wrap;
-  }
-
-  .inscripciones__banner h2 {
-    font-size: 1.5rem;
-    color: var(--color-bg);
-  }
-
-  .inscripciones__banner p {
-    color: color-mix(in srgb, var(--color-bg) 70%, transparent);
-    margin-top: var(--space-xs);
-  }
-
-  .inscripciones__links {
-    display: flex;
-    gap: var(--space-md);
-    flex-wrap: wrap;
-  }
-
-  .btn-nivel1 {
-    background-color: var(--color-magenta);
-    color: var(--color-white);
-  }
-
-  .btn-nivel1:hover {
-    background-color: #c4006a;
-    color: var(--color-white);
-  }
-
-  .btn-nivel2 {
-    background-color: var(--color-cyan);
-    color: var(--color-white);
-  }
-
-  .btn-nivel2:hover {
-    background-color: #0080b8;
-    color: var(--color-white);
-  }
-
-  .inscripciones__mails {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: var(--space-md);
-    margin-top: var(--space-lg);
-  }
-
-  .mail-card {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    padding: var(--space-lg);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .mail-card__level {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 700;
-  }
-
-  .mail-card--n1 .mail-card__level { color: var(--color-magenta); }
-  .mail-card--n2 .mail-card__level { color: var(--color-cyan); }
-
-  .mail-card a {
-    font-size: 1rem;
-    font-weight: 600;
-  }
-
   /* Section Title */
   .section-title {
     margin-bottom: var(--space-xl);
@@ -493,7 +362,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   /* Previews Grid */
   .previews__grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-md);
   }
 
@@ -604,28 +473,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   /* Responsive */
   @media (max-width: 768px) {
-    .inscripciones__mails,
-    .niveles__grid {
-      grid-template-columns: 1fr;
-    }
-
+    .niveles__grid,
     .previews__grid {
       grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .previews__grid {
-      grid-template-columns: 1fr;
-    }
-
-    .inscripciones__banner {
-      flex-direction: column;
-      text-align: center;
-    }
-
-    .inscripciones__links {
-      justify-content: center;
     }
   }
 </style>

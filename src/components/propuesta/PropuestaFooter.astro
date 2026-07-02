@@ -1,0 +1,105 @@
+---
+/**
+ * PropuestaFooter — pie brutalista con grilla expuesta.
+ */
+const year = 2026; // fijo: Date no disponible en algunos entornos de build
+---
+
+<footer class="pz-footer">
+  <div class="pz-container">
+    <div class="pz-footer__grid">
+      <div class="pz-footer__brand">
+        <p class="pz-footer__mark">◉ Cátedra Zachin</p>
+        <p class="pz-footer__tag">Tecnología · Niveles 1 &amp; 2<br />FADU — UBA</p>
+      </div>
+
+      <nav class="pz-footer__col" aria-label="Cátedra">
+        <h2 class="pz-footer__heading">Cátedra</h2>
+        <ul>
+          <li><a href="/propuesta/nivel-1">Tecnología 1</a></li>
+          <li><a href="/propuesta/nivel-2">Tecnología 2</a></li>
+          <li><a href="/propuesta/equipo">Plantel docente</a></li>
+        </ul>
+      </nav>
+
+      <nav class="pz-footer__col" aria-label="Contenido">
+        <h2 class="pz-footer__heading">Contenido</h2>
+        <ul>
+          <li><a href="/propuesta/galeria">Galería</a></li>
+          <li><a href="/propuesta/contacto">Contacto</a></li>
+          <li><a href="/propuesta/componentes">Sistema UI</a></li>
+        </ul>
+      </nav>
+
+      <div class="pz-footer__col">
+        <h2 class="pz-footer__heading">Contacto</h2>
+        <ul>
+          <li><a href="mailto:cat.zachin@fadu.uba.ar">cat.zachin@fadu.uba.ar</a></li>
+          <li><a href="https://instagram.com/catedrazachin" target="_blank" rel="noopener noreferrer">@catedrazachin</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pz-footer__bottom">
+      <span>© {year} Cátedra Zachin — FADU UBA</span>
+      <span class="pz-footer__note">Propuesta de rediseño · brutalista</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .pz-footer {
+    border-top: var(--pz-border-width) solid var(--pz-fg);
+    padding-block: var(--pz-space-2xl) var(--pz-space-lg);
+    margin-top: var(--pz-space-2xl);
+  }
+
+  .pz-footer__grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.4fr;
+    gap: var(--pz-space-xl);
+  }
+
+  .pz-footer__mark {
+    font-family: var(--pz-font-display);
+    font-weight: var(--pz-display-weight);
+    font-size: 1.25rem;
+    letter-spacing: var(--pz-display-tracking);
+  }
+  .pz-footer__tag { color: var(--pz-muted); font-size: 0.85rem; margin-top: var(--pz-space-xs); }
+
+  .pz-footer__heading {
+    font-family: var(--pz-font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--pz-muted);
+    margin-bottom: var(--pz-space-md);
+  }
+
+  .pz-footer__col ul { display: flex; flex-direction: column; gap: var(--pz-space-xs); }
+  .pz-footer__col a { font-size: 0.9rem; color: var(--pz-fg); }
+  .pz-footer__col a:hover { color: var(--pz-accent); }
+
+  .pz-footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--pz-space-xs);
+    margin-top: var(--pz-space-xl);
+    padding-top: var(--pz-space-md);
+    border-top: var(--pz-border-width) solid var(--pz-fg);
+    font-family: var(--pz-font-mono);
+    font-size: 0.72rem;
+    color: var(--pz-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  @media (max-width: 860px) {
+    .pz-footer__grid { grid-template-columns: 1fr 1fr; gap: var(--pz-space-lg); }
+  }
+  @media (max-width: 480px) {
+    .pz-footer__grid { grid-template-columns: 1fr; }
+  }
+</style>

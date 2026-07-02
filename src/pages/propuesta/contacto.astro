@@ -1,0 +1,70 @@
+---
+import PropuestaLayout from '../../layouts/PropuestaLayout.astro';
+import Section from '../../components/propuesta/Section.astro';
+import Grid from '../../components/propuesta/Grid.astro';
+import Tag from '../../components/propuesta/Tag.astro';
+
+const mails = [
+  { titulo: 'General', mail: 'cat.zachin@fadu.uba.ar', desc: 'Consultas generales de la cátedra.', tone: 'default' },
+  { titulo: 'Nivel 1', mail: 'cat.zachin.tecno1@gmail.com', desc: 'Consultas sobre programa y cursada de Nivel 1.', tone: 'n1' },
+  { titulo: 'Nivel 2', mail: 'cat.zachin.tecno2@gmail.com', desc: 'Consultas sobre programa y cursada de Nivel 2.', tone: 'n2' },
+];
+---
+
+<PropuestaLayout title="Contacto | Propuesta Zachin" description="Información de contacto de la Cátedra Zachin.">
+  <section class="cont-hero pz-container">
+    <span class="pz-eyebrow">Contacto</span>
+    <h1 class="cont-hero__title">Escribinos</h1>
+    <p class="cont-hero__desc">Información de contacto de la cátedra.</p>
+  </section>
+
+  <Section flush>
+    <Grid cols={3} colsMd={2} colsSm={1}>
+      {mails.map((m) => (
+        <article class="cont-card">
+          <Tag tone={m.tone}>{m.titulo}</Tag>
+          <a href={`mailto:${m.mail}`} class="cont-card__mail">{m.mail}</a>
+          <p class="cont-card__desc">{m.desc}</p>
+        </article>
+      ))}
+
+      <article class="cont-card">
+        <Tag tone="solid">Instagram</Tag>
+        <a href="https://instagram.com/catedrazachin" target="_blank" rel="noopener noreferrer" class="cont-card__mail">@catedrazachin</a>
+        <p class="cont-card__desc">Novedades, eventos y contenido de la cátedra.</p>
+      </article>
+
+      <article class="cont-card cont-card--wide">
+        <Tag>Cursada</Tag>
+        <div class="cont-card__info">
+          <p><strong>Sede:</strong> FADU — UBA</p>
+          <p><strong>Dirección:</strong> Intendente Güiraldes 2160, CABA</p>
+          <p><strong>Horarios:</strong> Consultar por mail según nivel</p>
+        </div>
+      </article>
+    </Grid>
+  </Section>
+</PropuestaLayout>
+
+<style>
+  .cont-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
+  .cont-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
+  .cont-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin-top: var(--pz-space-md); }
+
+  .cont-card {
+    display: flex; flex-direction: column; align-items: flex-start; gap: var(--pz-space-xs);
+    padding: var(--pz-space-lg);
+    border: var(--pz-border-width) solid var(--pz-fg); border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow); background: var(--pz-bg);
+    transition: transform var(--pz-transition), box-shadow var(--pz-transition);
+  }
+  .cont-card:hover { transform: translate(var(--pz-lift), var(--pz-lift)); box-shadow: var(--pz-shadow-hover); }
+  .cont-card--wide { grid-column: span 2; }
+  .cont-card__mail { font-family: var(--pz-font-display); font-size: 1.1rem; font-weight: 700; word-break: break-word; }
+  .cont-card__mail:hover { color: var(--pz-accent); }
+  .cont-card__desc { color: var(--pz-muted); font-size: 0.88rem; }
+  .cont-card__info p { font-size: 0.92rem; margin-bottom: var(--pz-space-2xs); }
+  .cont-card__info strong { font-family: var(--pz-font-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  @media (max-width: 560px) { .cont-card--wide { grid-column: span 1; } }
+</style>

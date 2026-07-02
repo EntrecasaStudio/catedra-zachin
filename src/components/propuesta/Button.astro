@@ -1,0 +1,61 @@
+---
+/**
+ * Button — botón polimórfico (renderiza <a> si recibe `href`, si no <button>).
+ *
+ * @prop {'primary'|'secondary'|'ghost'} variant - Jerarquía visual. Default 'primary'.
+ * @prop {'sm'|'md'|'lg'} size - Tamaño. Default 'md'.
+ * @prop {string} [href] - Si se pasa, renderiza un enlace.
+ * @prop {boolean} loading - Muestra spinner y bloquea interacción. Default false.
+ * @prop {boolean} disabled - Deshabilita (nativo en <button>, aria en <a>). Default false.
+ * @prop {boolean} block - Ocupa el ancho completo. Default false.
+ * @prop {string} [type] - type del <button> (ignorado en <a>). Default 'button'.
+ * Cualquier atributo extra (target, rel, aria-*, data-*) pasa al elemento.
+ */
+interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  loading?: boolean;
+  disabled?: boolean;
+  block?: boolean;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  loading = false,
+  disabled = false,
+  block = false,
+  type = 'button',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const isDisabled = disabled || loading;
+
+const classes = [
+  'pz-btn',
+  `pz-btn--${variant}`,
+  size !== 'md' && `pz-btn--${size}`,
+  block && 'pz-btn--block',
+  className,
+];
+---
+
+<Tag
+  class:list={classes}
+  href={href}
+  type={href ? undefined : type}
+  data-loading={loading ? 'true' : undefined}
+  disabled={!href && isDisabled ? true : undefined}
+  aria-disabled={href && isDisabled ? 'true' : undefined}
+  aria-busy={loading ? 'true' : undefined}
+  {...rest}
+>
+  <slot />
+</Tag>

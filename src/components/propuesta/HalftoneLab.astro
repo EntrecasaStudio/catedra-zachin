@@ -1,0 +1,143 @@
+---
+import Collapsible from './Collapsible.astro';
+
+/**
+ * HalftoneLab — sección autónoma, expandible/colapsable, con el motor de
+ * semitono CMYK interactivo. NO es un fondo: vive en su propia caja y sólo
+ * anima mientras está abierta. Pensada para el home de la propuesta.
+ *
+ * @prop {boolean} open - Estado inicial. Default false.
+ * @prop {string} [id] - id del <details>. Default 'halftone-lab'.
+ */
+interface Props {
+  open?: boolean;
+  id?: string;
+}
+const { open = false, id = 'halftone-lab' } = Astro.props;
+
+const channels = [
+  { id: 'k', label: 'K', title: 'Negro · 45°' },
+  { id: 'c', label: 'C', title: 'Cyan · 15°' },
+  { id: 'm', label: 'M', title: 'Magenta · 75°' },
+  { id: 'y', label: 'Y', title: 'Amarillo · 0°' },
+];
+---
+
+<Collapsible
+  id={id}
+  class="pz-halftone"
+  summary="Halftone Lab"
+  eyebrow="Juego de patrones · CMYK"
+  open={open}
+  data-halftone-lab
+>
+  <span slot="summary">Halftone Lab <span class="pz-halftone__hint">— expandir para jugar</span></span>
+
+  <p class="pz-halftone__desc">
+    Trama de semitono AM en cuatricromía. Activá canales, movés el cursor para
+    modular los puntos y hacés click para congelarlos. Se pausa sola al cerrar.
+  </p>
+
+  <div class="pz-halftone__stage" data-stage>
+    <canvas class="pz-halftone__canvas" id={`${id}-canvas`} aria-hidden="true"></canvas>
+  </div>
+
+  <div class="pz-halftone__controls" role="group" aria-label="Canales CMYK">
+    {channels.map((ch) => (
+      <button
+        type="button"
+        class:list={['pz-channel-btn', `pz-channel-btn--${ch.id}`, { active: ch.id === 'k', selected: ch.id === 'k' }]}
+        data-channel={ch.id}
+        title={ch.title}
+        aria-label={`Canal ${ch.title}`}
+        aria-pressed={ch.id === 'k' ? 'true' : 'false'}
+      >{ch.label}</button>
+    ))}
+  </div>
+</Collapsible>
+
+<style>
+  .pz-halftone__hint {
+    font-family: var(--pz-font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--pz-muted);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .pz-halftone__desc {
+    color: var(--pz-muted);
+    font-size: 0.95rem;
+    margin-bottom: var(--pz-space-lg);
+  }
+
+  .pz-halftone__stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    min-height: 220px;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    background: var(--pz-surface);
+    overflow: hidden;
+  }
+
+  .pz-halftone__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+  }
+
+  .pz-halftone__controls {
+    display: flex;
+    gap: var(--pz-space-xs);
+    margin-top: var(--pz-space-md);
+  }
+
+  .pz-channel-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pz-font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    background: transparent;
+    color: var(--pz-muted);
+    transition: all var(--pz-transition);
+  }
+
+  .pz-channel-btn:hover { color: var(--pz-fg); }
+
+  .pz-channel-btn--k.active { background: var(--pz-fg); color: var(--pz-bg); border-color: var(--pz-fg); }
+  .pz-channel-btn--c.active { background: #00aeef; color: #fff; border-color: #00aeef; }
+  .pz-channel-btn--m.active { background: #ec008c; color: #fff; border-color: #ec008c; }
+  .pz-channel-btn--y.active { background: #fff200; color: #000; border-color: #fff200; }
+
+  .pz-channel-btn.selected { outline: 2px solid var(--pz-accent); outline-offset: 2px; }
+</style>
+
+<script>
+  import { initHalftoneLab } from '../../scripts/halftone-lab.js';
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('[data-halftone-lab]').forEach((details) => {
+      const lab = initHalftoneLab(details);
+      if (!lab) return;
+
+      const sync = () => (details.open ? lab.start() : lab.stop());
+      details.addEventListener('toggle', sync);
+      // Estado inicial (defer para que el layout tenga medidas)
+      requestAnimationFrame(sync);
+
+      // Limpieza al navegar por view transitions
+      document.addEventListener('astro:before-swap', () => lab.destroy(), { once: true });
+    });
+  });
+</script>

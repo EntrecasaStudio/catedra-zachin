@@ -1,0 +1,138 @@
+---
+import PropuestaLayout from '../../layouts/PropuestaLayout.astro';
+import Section from '../../components/propuesta/Section.astro';
+import Grid from '../../components/propuesta/Grid.astro';
+import Button from '../../components/propuesta/Button.astro';
+import Tag from '../../components/propuesta/Tag.astro';
+import Card from '../../components/propuesta/Card.astro';
+import Collapsible from '../../components/propuesta/Collapsible.astro';
+import NivelCard from '../../components/propuesta/NivelCard.astro';
+import DocenteCard from '../../components/propuesta/DocenteCard.astro';
+import Slideshow from '../../components/propuesta/Slideshow.astro';
+
+const demoDocente = { nombre: 'Ada Lovelace', rol: 'Docente', nivel: 'Nivel 1', foto: '/no-existe.png' };
+const demoImgs = [
+  { src: '/images/galeria/jornada/IMG_1481.jpg', alt: 'demo' },
+  { src: '/images/galeria/clase/IMG_4048.jpg', alt: 'demo' },
+];
+---
+
+<PropuestaLayout title="Sistema UI | Propuesta Zachin" description="Showcase de la librería de componentes brutalistas.">
+  <section class="ui-hero pz-container">
+    <span class="pz-eyebrow">Design system</span>
+    <h1 class="ui-hero__title">Sistema UI</h1>
+    <p class="ui-hero__desc">
+      Cada componente con sus variantes y estados. Probá las tres pieles
+      (refined / raw / neo) y el tema claro/oscuro — todo responde a los tokens.
+    </p>
+  </section>
+
+  <!-- Button -->
+  <Section eyebrow="Primitivo" title="Button">
+    <div class="ui-row">
+      <Button variant="primary">Primary</Button>
+      <Button variant="secondary">Secondary</Button>
+      <Button variant="ghost">Ghost</Button>
+    </div>
+    <div class="ui-row">
+      <Button size="sm">Small</Button>
+      <Button size="md">Medium</Button>
+      <Button size="lg">Large</Button>
+    </div>
+    <div class="ui-row">
+      <Button loading>Loading</Button>
+      <Button disabled>Disabled</Button>
+      <Button href="#componentes" variant="secondary">Como enlace (&lt;a&gt;)</Button>
+    </div>
+  </Section>
+
+  <!-- Tag -->
+  <Section eyebrow="Primitivo" title="Tag" flush>
+    <div class="ui-row">
+      <Tag>Default</Tag>
+      <Tag tone="n1">Nivel 1</Tag>
+      <Tag tone="n2">Nivel 2</Tag>
+      <Tag tone="solid">Solid</Tag>
+    </div>
+  </Section>
+
+  <!-- Grid + estados -->
+  <Section eyebrow="Layout" title="Grid" flush>
+    <p class="ui-note">Responsive por props (<code>cols</code>, <code>colsMd</code>, <code>colsSm</code>) y con empty-state incorporado:</p>
+    <Grid cols={3} colsMd={2} colsSm={1} isEmpty emptyText="Empty-state: no hay elementos que mostrar." />
+  </Section>
+
+  <!-- Card -->
+  <Section eyebrow="Contenedor" title="Card" flush>
+    <Grid cols={3} colsMd={2} colsSm={1}>
+      <Card>
+        <h3 class="pz-card__title">Card simple</h3>
+        <p class="pz-card__text">Sólo cuerpo, sin media ni footer.</p>
+      </Card>
+      <Card href="#componentes">
+        <Slideshow slot="media" images={demoImgs} ratio="16 / 9" />
+        <h3 class="pz-card__title">Card con media</h3>
+        <p class="pz-card__text">Interactiva (es un enlace) + slideshow en la zona media.</p>
+      </Card>
+      <Card>
+        <h3 class="pz-card__title">Con footer</h3>
+        <p class="pz-card__text">Slot footer para acciones.</p>
+        <Fragment slot="footer"><Button size="sm" variant="ghost">Acción →</Button></Fragment>
+      </Card>
+    </Grid>
+  </Section>
+
+  <!-- NivelCard -->
+  <Section eyebrow="Dominio" title="NivelCard" flush>
+    <Grid cols={2} colsMd={1}>
+      <NivelCard nivel={1} title="Tecnología 1" href="#" desc="Ejemplo de tarjeta de nivel con su color de marca." />
+      <NivelCard nivel={2} title="Tecnología 2" href="#" desc="Ejemplo de tarjeta de nivel con su color de marca." />
+    </Grid>
+  </Section>
+
+  <!-- DocenteCard (fallback de imagen) -->
+  <Section eyebrow="Dominio" title="DocenteCard" flush>
+    <p class="ui-note">La foto de este ejemplo no existe: se ve el <strong>fallback</strong> (inicial) sin romper el layout.</p>
+    <Grid cols={6} colsMd={3} colsSm={2}>
+      <DocenteCard docente={demoDocente} />
+    </Grid>
+  </Section>
+
+  <!-- Collapsible -->
+  <Section eyebrow="Compuesto" title="Collapsible" flush>
+    <Collapsible summary="Abrir / cerrar (accesible, teclado)" eyebrow="Disclosure">
+      <p class="ui-note">Basado en <code>&lt;details&gt;</code>: funciona sin JS y con teclado. Es la base del Halftone Lab del home.</p>
+    </Collapsible>
+  </Section>
+
+  <!-- Slideshow estados -->
+  <Section eyebrow="Compuesto" title="Slideshow — estados" flush>
+    <Grid cols={3} colsMd={2} colsSm={1}>
+      <div>
+        <p class="ui-note">Normal (2+ imágenes, autoplay):</p>
+        <Slideshow images={demoImgs} ratio="4 / 3" />
+      </div>
+      <div>
+        <p class="ui-note">Una imagen → estático (sin dots):</p>
+        <Slideshow images={[demoImgs[0]]} ratio="4 / 3" />
+      </div>
+      <div>
+        <p class="ui-note">Vacío → placeholder:</p>
+        <Slideshow images={[]} ratio="4 / 3" />
+      </div>
+    </Grid>
+  </Section>
+</PropuestaLayout>
+
+<style>
+  .ui-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
+  .ui-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
+  .ui-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin-top: var(--pz-space-md); max-width: 60ch; }
+
+  .ui-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--pz-space-sm); margin-bottom: var(--pz-space-md); }
+  .ui-note { color: var(--pz-muted); font-size: 0.9rem; margin-bottom: var(--pz-space-sm); }
+  .ui-note code {
+    font-family: var(--pz-font-mono); font-size: 0.82em;
+    background: var(--pz-surface); padding: 0.1em 0.35em; border-radius: 3px;
+  }
+</style>

@@ -1,0 +1,79 @@
+---
+import Tag from './Tag.astro';
+
+/**
+ * NivelCard — tarjeta de nivel de la cátedra.
+ *
+ * @prop {1|2} nivel - Determina color y número.
+ * @prop {string} title - Título (ej. "Tecnología 1").
+ * @prop {string} desc - Descripción breve.
+ * @prop {string} href - Destino.
+ * @prop {string} [cta] - Texto del enlace. Default 'Ver programa'.
+ */
+interface Props {
+  nivel: 1 | 2;
+  title: string;
+  desc: string;
+  href: string;
+  cta?: string;
+}
+const { nivel, title, desc, href, cta = 'Ver programa' } = Astro.props;
+const num = nivel === 1 ? '01' : '02';
+---
+
+<a href={href} class:list={['pz-nivel', `pz-nivel--n${nivel}`]}>
+  <span class="pz-nivel__num" aria-hidden="true">{num}</span>
+  <Tag tone={nivel === 1 ? 'n1' : 'n2'}>Nivel {nivel}</Tag>
+  <h3 class="pz-nivel__title">{title}</h3>
+  <p class="pz-nivel__desc">{desc}</p>
+  <span class="pz-nivel__cta">{cta} <span aria-hidden="true">→</span></span>
+</a>
+
+<style>
+  .pz-nivel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--pz-space-sm);
+    padding: var(--pz-space-xl);
+    background: var(--pz-bg);
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    overflow: hidden;
+    transition: transform var(--pz-transition), box-shadow var(--pz-transition), border-color var(--pz-transition);
+  }
+  .pz-nivel:hover {
+    transform: translate(var(--pz-lift), var(--pz-lift));
+    box-shadow: var(--pz-shadow-hover);
+  }
+  .pz-nivel--n1:hover { border-color: var(--pz-magenta); }
+  .pz-nivel--n2:hover { border-color: var(--pz-cyan); }
+
+  .pz-nivel__num {
+    position: absolute;
+    top: var(--pz-space-xs);
+    right: var(--pz-space-md);
+    font-family: var(--pz-font-display);
+    font-weight: 800;
+    font-size: clamp(3.5rem, 10vw, 6rem);
+    line-height: 1;
+    opacity: 0.12;
+  }
+  .pz-nivel--n1 .pz-nivel__num { color: var(--pz-magenta); }
+  .pz-nivel--n2 .pz-nivel__num { color: var(--pz-cyan); }
+
+  .pz-nivel__title { font-size: clamp(1.5rem, 4vw, 2.25rem); }
+  .pz-nivel__desc { color: var(--pz-muted); font-size: 0.95rem; }
+  .pz-nivel__cta {
+    margin-top: var(--pz-space-xs);
+    font-family: var(--pz-font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .pz-nivel--n1 .pz-nivel__cta { color: var(--pz-magenta); }
+  .pz-nivel--n2 .pz-nivel__cta { color: var(--pz-cyan); }
+</style>
