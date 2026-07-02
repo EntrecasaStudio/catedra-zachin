@@ -20,8 +20,9 @@ interface Props {
   mail: string;
   programa: { num: string; titulo: string; desc: string }[];
   cronograma: { fecha: string; desc: string; badge?: string; final?: boolean }[];
+  cursada?: { turno: string; detalle: string }[];
 }
-const { nivel, desc, mail, programa, cronograma } = Astro.props;
+const { nivel, desc, mail, programa, cronograma, cursada = [] } = Astro.props;
 const accent = nivel === 1 ? 'n1' : 'n2';
 ---
 
@@ -32,6 +33,17 @@ const accent = nivel === 1 ? 'n1' : 'n2';
   </h1>
   <p class="niveldet-hero__desc">{desc}</p>
   <Button href={`mailto:${mail}`} variant="secondary" size="sm">{mail}</Button>
+
+  {cursada.length > 0 && (
+    <div class="niveldet-cursada">
+      <span class="pz-eyebrow">Cursada</span>
+      <ul class="niveldet-cursada__list">
+        {cursada.map((c) => (
+          <li><strong>Turno {c.turno}</strong> — {c.detalle}</li>
+        ))}
+      </ul>
+    </div>
+  )}
 </section>
 
 <Section eyebrow="Contenidos" title="Programa">
@@ -69,6 +81,18 @@ const accent = nivel === 1 ? 'n1' : 'n2';
   .niveldet-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
   .niveldet-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
   .niveldet-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin: var(--pz-space-md) 0 var(--pz-space-lg); max-width: 60ch; }
+
+  .niveldet-cursada { margin-top: var(--pz-space-lg); }
+  .niveldet-cursada__list {
+    margin-top: var(--pz-space-xs);
+    display: flex;
+    flex-direction: column;
+    gap: var(--pz-space-2xs);
+    font-family: var(--pz-font-mono);
+    font-size: 0.9rem;
+    color: var(--pz-muted);
+  }
+  .niveldet-cursada__list strong { color: var(--pz-fg); }
 
   .niveldet-item {
     position: relative;
