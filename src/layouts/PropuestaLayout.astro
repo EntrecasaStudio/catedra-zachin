@@ -27,6 +27,10 @@ const {
         try {
           var t = localStorage.getItem('theme') || 'light';
           document.documentElement.setAttribute('data-theme', t);
+          // Reveal en cascada: marcar listo antes del paint (salvo reduced-motion).
+          if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.classList.add('pz-reveal-ready');
+          }
         } catch (e) {}
       })();
     </script>
@@ -57,11 +61,18 @@ const {
     <PropuestaFooter />
 
     <script>
-      // Persistir el tema a través de las View Transitions
+      import { initReveal } from '../scripts/reveal.js';
+
+      // Persistir tema + estado de reveal a través de las View Transitions
       document.addEventListener('astro:before-swap', (ev) => {
-        const theme = document.documentElement.getAttribute('data-theme') || 'light';
-        ev.newDocument.documentElement.setAttribute('data-theme', theme);
+        const root = document.documentElement;
+        ev.newDocument.documentElement.setAttribute('data-theme', root.getAttribute('data-theme') || 'light');
+        if (root.classList.contains('pz-reveal-ready')) {
+          ev.newDocument.documentElement.classList.add('pz-reveal-ready');
+        }
       });
+
+      document.addEventListener('astro:page-load', initReveal);
     </script>
   </body>
 </html>

@@ -20,11 +20,12 @@ interface Props {
   level?: 2 | 3 | 4 | 5 | 6;
   id?: string;
   flush?: boolean;
+  reveal?: boolean;
   class?: string;
   [key: string]: unknown;
 }
 
-const { eyebrow, title, lead, level = 2, id, flush = false, class: className, ...rest } = Astro.props;
+const { eyebrow, title, lead, level = 2, id, flush = false, reveal = false, class: className, ...rest } = Astro.props;
 const Heading = `h${level}` as unknown as keyof HTMLElementTagNameMap;
 const hasHeader = Boolean(eyebrow || title || lead) || Astro.slots.has('header');
 ---
@@ -32,7 +33,7 @@ const hasHeader = Boolean(eyebrow || title || lead) || Astro.slots.has('header')
 <section class:list={['pz-section', flush && 'pz-section--flush', className]} id={id} {...rest}>
   <div class="pz-container">
     {hasHeader && (
-      <header class="pz-section-head">
+      <header class="pz-section-head" data-reveal={reveal ? '' : undefined}>
         <slot name="header">
           {eyebrow && <span class="pz-eyebrow">{eyebrow}</span>}
           {title && <Heading class="pz-section-head__title">{title}</Heading>}

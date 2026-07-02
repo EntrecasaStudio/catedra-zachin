@@ -16,12 +16,13 @@ interface Props {
   desc: string;
   href: string;
   cta?: string;
+  [key: string]: unknown;
 }
-const { nivel, title, desc, href, cta = 'Ver programa' } = Astro.props;
+const { nivel, title, desc, href, cta = 'Ver programa', ...rest } = Astro.props;
 const num = nivel === 1 ? '01' : '02';
 ---
 
-<a href={href} class:list={['pz-nivel', `pz-nivel--n${nivel}`]}>
+<a href={href} class:list={['pz-nivel', `pz-nivel--n${nivel}`]} {...rest}>
   <span class="pz-nivel__num" aria-hidden="true">{num}</span>
   <Tag tone={nivel === 1 ? 'n1' : 'n2'}>Nivel {nivel}</Tag>
   <h3 class="pz-nivel__title">{title}</h3>
