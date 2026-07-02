@@ -12,6 +12,8 @@ interface Props {
   index: number;
 }
 const { item, index } = Astro.props;
+// Thumbnail (poster) generado con ffmpeg: mismo path con sufijo -thumb.jpg
+const poster = item.tipo === 'video' ? item.src.replace(/\.mp4$/, '-thumb.jpg') : undefined;
 ---
 
 <button
@@ -27,7 +29,7 @@ const { item, index } = Astro.props;
     <img src={item.src} alt={item.alt} loading="lazy" decoding="async" width="640" height="480" />
   ) : (
     <>
-      <video src={item.src} muted loop playsinline preload="metadata"><track kind="captions" /></video>
+      <video src={item.src} poster={poster} muted loop playsinline preload="none"><track kind="captions" /></video>
       <span class="pz-galitem__play" aria-hidden="true">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
       </span>
