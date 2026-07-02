@@ -13,10 +13,10 @@ interface Props {
 const { id = 'halftone-lab' } = Astro.props;
 
 const channels = [
-  { id: 'k', label: 'K', title: 'Negro · 45°' },
-  { id: 'c', label: 'C', title: 'Cyan · 15°' },
-  { id: 'm', label: 'M', title: 'Magenta · 75°' },
-  { id: 'y', label: 'Y', title: 'Amarillo · 0°' },
+  { id: 'k', label: 'K', rgb: 'W', title: 'Negro (K) / Blanco (W)' },
+  { id: 'c', label: 'C', rgb: 'B', title: 'Cyan (C) / Azul (B)' },
+  { id: 'm', label: 'M', rgb: 'R', title: 'Magenta (M) / Rojo (R)' },
+  { id: 'y', label: 'Y', rgb: 'G', title: 'Amarillo (Y) / Verde (G)' },
 ];
 ---
 
@@ -32,7 +32,7 @@ const channels = [
           title={ch.title}
           aria-label={`Canal ${ch.title}`}
           aria-pressed={ch.id === 'k' ? 'true' : 'false'}
-        >{ch.label}</button>
+        ><span class="lbl lbl--cmyk">{ch.label}</span><span class="lbl lbl--rgb">{ch.rgb}</span></button>
       ))}
     </div>
   </div>
@@ -98,6 +98,11 @@ const channels = [
   :global([data-theme='dark']) .pz-channel-btn--y.active { background: #22c55e; color: #fff; border-color: #22c55e; }
 
   .pz-channel-btn.selected { outline: 2px solid var(--pz-accent); outline-offset: 2px; }
+
+  /* Etiquetas: CMYK en claro, RGB en oscuro */
+  .lbl--rgb { display: none; }
+  :global([data-theme='dark']) .lbl--cmyk { display: none; }
+  :global([data-theme='dark']) .lbl--rgb { display: inline; }
 </style>
 
 <script>

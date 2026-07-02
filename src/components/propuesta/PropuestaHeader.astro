@@ -65,8 +65,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
     inset: 0 0 auto 0;
     z-index: 100;
     height: var(--pz-header-height);
-    background: color-mix(in srgb, var(--pz-bg) 92%, transparent);
-    backdrop-filter: blur(8px);
+    background: var(--pz-bg);
     border-bottom: var(--pz-border-width) solid var(--pz-fg);
   }
 
@@ -172,13 +171,16 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
     .pz-header__nav {
       position: fixed;
       inset: var(--pz-header-height) 0 auto 0;
+      z-index: 99;
       background: var(--pz-bg);
       border-bottom: var(--pz-border-width) solid var(--pz-fg);
       transform: translateY(-120%);
-      transition: transform var(--pz-transition-slow);
+      transition: transform var(--pz-transition-slow), visibility var(--pz-transition-slow);
       padding: var(--pz-space-lg);
+      visibility: hidden;
+      pointer-events: none;
     }
-    .pz-header__nav.is-open { transform: translateY(0); }
+    .pz-header__nav.is-open { transform: translateY(0); visibility: visible; pointer-events: auto; }
     .pz-header__list { flex-direction: column; gap: var(--pz-space-sm); height: auto; align-items: stretch; }
     .pz-header__link { font-size: 1.1rem; height: auto; }
     /* En el panel mobile no hay divisor compartido: sin línea inferior */
@@ -201,6 +203,13 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
           burger.setAttribute('aria-expanded', 'false');
         })
       );
+      // Al pasar a desktop, cerrar el menú para que no quede abierto tras un resize
+      window.matchMedia('(min-width: 861px)').addEventListener('change', (e) => {
+        if (e.matches) {
+          nav.classList.remove('is-open');
+          burger.setAttribute('aria-expanded', 'false');
+        }
+      });
     }
 
     const theme = document.getElementById('pz-theme-toggle');
