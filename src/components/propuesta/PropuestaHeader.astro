@@ -76,21 +76,42 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
   :global([data-theme='light']) .pz-header__logo--dark { display: none; }
   :global([data-theme='light']) .pz-header__logo--light { display: block; }
 
-  .pz-header__list { display: flex; gap: var(--pz-space-md); }
+  /* Nav a altura completa: el borde inferior del link coincide con el divisor */
+  .pz-header__nav { align-self: stretch; }
+  .pz-header__list { display: flex; gap: var(--pz-space-md); height: 100%; align-items: stretch; }
+  .pz-header__list li { display: flex; }
 
   .pz-header__link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
     font-family: var(--pz-font-mono);
     font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--pz-muted);
-    padding: var(--pz-space-2xs) 0;
-    border-bottom: var(--pz-border-width) solid transparent;
-    transition: color var(--pz-transition), border-color var(--pz-transition);
+    transition: color var(--pz-transition);
   }
+
+  /* La línea de color "prende" el divisor del nav, justo debajo del link */
+  .pz-header__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(-1 * var(--pz-border-width));
+    height: var(--pz-border-width);
+    background: var(--pz-accent);
+    transform: scaleX(0);
+    transition: transform var(--pz-transition);
+  }
+
   .pz-header__link:hover { color: var(--pz-fg); }
-  .pz-header__link.is-active { color: var(--pz-fg); border-bottom-color: var(--pz-accent); }
+  .pz-header__link:hover::after,
+  .pz-header__link.is-active::after { transform: scaleX(1); }
+  .pz-header__link.is-active { color: var(--pz-fg); }
 
   .pz-header__actions { display: flex; align-items: center; gap: var(--pz-space-xs); }
 
@@ -145,8 +166,10 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
       padding: var(--pz-space-lg);
     }
     .pz-header__nav.is-open { transform: translateY(0); }
-    .pz-header__list { flex-direction: column; gap: var(--pz-space-sm); }
-    .pz-header__link { font-size: 1.1rem; }
+    .pz-header__list { flex-direction: column; gap: var(--pz-space-sm); height: auto; align-items: stretch; }
+    .pz-header__link { font-size: 1.1rem; height: auto; }
+    /* En el panel mobile no hay divisor compartido: sin línea inferior */
+    .pz-header__link::after { display: none; }
   }
 </style>
 

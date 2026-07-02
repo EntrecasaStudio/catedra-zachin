@@ -54,11 +54,6 @@ const nivelClass = docente.nivel === 'Nivel 1' ? 'n1' : docente.nivel === 'Nivel
     overflow: hidden;
     display: grid;
     place-items: center;
-    transition: transform var(--pz-transition), box-shadow var(--pz-transition);
-  }
-  .pz-docente:hover .pz-docente__avatar {
-    transform: translate(var(--pz-lift), var(--pz-lift));
-    box-shadow: var(--pz-shadow-hover);
   }
 
   .pz-docente__initial {
