@@ -72,7 +72,7 @@ export function initHalftoneLab(root) {
         const y = rx * sinA + ry * cosA + h / 2;
 
         if (x >= -MAX_RADIUS && x <= w + MAX_RADIUS && y >= -MAX_RADIUS && y <= h + MAX_RADIUS) {
-          ch.dots.push({ x, y, current: BASE_RADIUS, target: BASE_RADIUS, frozen: false, maxR: MAX_RADIUS, baseR: BASE_RADIUS });
+          ch.dots.push({ x, y, current: BASE_RADIUS, target: BASE_RADIUS, frozen: false, fixedR: BASE_RADIUS, maxR: MAX_RADIUS, baseR: BASE_RADIUS });
         }
       }
     }
@@ -138,7 +138,13 @@ export function initHalftoneLab(root) {
       offCtx.globalCompositeOperation = 'source-over';
       offCtx.globalAlpha = 1;
       offCtx.clearRect(0, 0, displayW, displayH);
-      offCtx.fillStyle = ch.id === 'k' ? (isDark ? '#FFFFFF' : '#000000') : ch.color;
+      // Claro = CMYK (tintas); Oscuro = RGB aditivo (luz): C→azul, M→rojo, Y→verde, K→blanco
+      offCtx.fillStyle =
+        ch.id === 'k'
+          ? isDark ? '#FFFFFF' : '#000000'
+          : isDark
+            ? ch.id === 'c' ? '#2b7fff' : ch.id === 'm' ? '#ff3b3b' : '#22c55e'
+            : ch.color;
 
       for (const dot of ch.dots) {
         if (dot.maxR <= 0.1) continue;
@@ -147,7 +153,19 @@ export function initHalftoneLab(root) {
         if (sweepScale <= 0.01) continue;
 
         if (dot.frozen) {
-          // Congelado: queda inerte, no reacciona más al mouse
+          // Fijo: descansa en su tamaño fijado. Puede crecer por encima al pasar
+          // el mouse; al alejarse vuelve al tamaño fijado. Sólo un nuevo click re-fija.
+          let g = dot.fixedR;
+          if (isSelected && !reducedMotion) {
+            const dx = mouseX - dot.x;
+            const dy = mouseY - dot.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < INFLUENCE) {
+              const t = 1 - dist / INFLUENCE;
+              g = Math.max(dot.fixedR, dot.baseR + (dot.maxR - dot.baseR) * t);
+            }
+          }
+          dot.target = g;
         } else if (isSelected && !reducedMotion) {
           const dx = mouseX - dot.x;
           const dy = mouseY - dot.y;
@@ -172,9 +190,9 @@ export function initHalftoneLab(root) {
         offCtx.fill();
       }
 
-      // Multiply: los canales CMYK se superponen como tinta (sobreimpresión)
+      // Claro: multiply (tinta, sustractivo). Oscuro: lighter (luz, aditivo → suman a blanco)
       ctx.globalAlpha = CHANNEL_ALPHA;
-      ctx.globalCompositeOperation = 'multiply';
+      ctx.globalCompositeOperation = isDark ? 'lighter' : 'multiply';
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.drawImage(offscreen, 0, 0);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -215,17 +233,16 @@ export function initHalftoneLab(root) {
     const ch = channels.find((c) => c.id === selectedChannel);
     if (!ch || !ch.active) return;
     for (const dot of ch.dots) {
-      if (dot.frozen) continue;
       const dx = mx - dot.x;
       const dy = my - dot.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist < INFLUENCE) {
-        // "Estampa" el punto a un tamaño fijo según la distancia al click y lo congela
+        // Fija el punto al tamaño que tiene ahora (incluye lo que creció por el hover);
+        // un nuevo click re-fija a un tamaño mayor.
         const t = 1 - dist / INFLUENCE;
-        const size = dot.baseR + (dot.maxR - dot.baseR) * t;
+        const grown = dot.baseR + (dot.maxR - dot.baseR) * t;
         dot.frozen = true;
-        dot.current = size;
-        dot.target = size;
+        dot.fixedR = Math.max(dot.current, grown);
       }
     }
   }
