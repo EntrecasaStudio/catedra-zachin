@@ -147,10 +147,10 @@ export function initHalftoneLab(root) {
         k.active = false; k.sweep = 0; k.sweepTarget = 0; k.dots = [];
         const anyColor = channels.some((c) => c.id !== 'k' && c.active);
         if (!anyColor) {
-          for (const id of ['c', 'm', 'y']) {
-            const c = channels.find((x) => x.id === id);
-            c.active = true; c.sweep = 0; c.sweepTarget = 1;
-          }
+          // Arranca con UN solo color (no los tres). El usuario enciende los que quiera;
+          // se suman si activa varios (aditivo → blanco con R+G+B).
+          const first = channels.find((c) => c.id === 'm');
+          first.active = true; first.sweep = 0; first.sweepTarget = 1;
           selectedChannel = 'm';
         }
       } else {
