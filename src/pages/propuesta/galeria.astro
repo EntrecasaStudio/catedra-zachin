@@ -10,14 +10,14 @@ const label = (c) => (c === 'tps' ? 'TPs' : c.charAt(0).toUpperCase() + c.slice(
 ---
 
 <PropuestaLayout title="Galería | Propuesta Zachin" description="Fotos y videos de clases, talleres, jornadas y TPs de la Cátedra Zachin.">
-  <section class="gal-hero pz-container">
-    <span class="pz-eyebrow">Multimedia</span>
-    <h1 class="gal-hero__title">Galería</h1>
-    <p class="gal-hero__desc">Fotos y videos de clases, talleres, jornadas y TPs de la cátedra.</p>
+  <section class="gal-hero pz-container" data-reveal-group>
+    <span class="pz-eyebrow" data-reveal>Multimedia</span>
+    <h1 class="gal-hero__title" data-reveal>Galería</h1>
+    <p class="gal-hero__desc" data-reveal>Fotos y videos de clases, talleres, jornadas y TPs de la cátedra.</p>
   </section>
 
   <Section flush>
-    <div class="gal-filters" id="gal-filters" role="tablist" aria-label="Filtrar galería por categoría">
+    <div class="gal-filters" id="gal-filters" data-reveal role="tablist" aria-label="Filtrar galería por categoría">
       {categorias.map((cat, i) => (
         <button
           class:list={['pz-btn', 'pz-btn--secondary', 'pz-btn--sm', { 'is-active': i === 0 }]}
@@ -30,7 +30,7 @@ const label = (c) => (c === 'tps' ? 'TPs' : c.charAt(0).toUpperCase() + c.slice(
       ))}
     </div>
 
-    <Grid cols={3} colsMd={2} colsSm={1} id="gal-grid" isEmpty={items.length === 0} emptyText="No hay material cargado todavía.">
+    <Grid data-reveal cols={3} colsMd={2} colsSm={1} id="gal-grid" isEmpty={items.length === 0} emptyText="No hay material cargado todavía.">
       {items.map((item, i) => <GaleriaItem item={item} index={i} />)}
     </Grid>
   </Section>

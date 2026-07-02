@@ -12,29 +12,29 @@ const mails = [
 ---
 
 <PropuestaLayout title="Contacto | Propuesta Zachin" description="Información de contacto de la Cátedra Zachin.">
-  <section class="cont-hero pz-container">
-    <span class="pz-eyebrow">Contacto</span>
-    <h1 class="cont-hero__title">Escribinos</h1>
-    <p class="cont-hero__desc">Información de contacto de la cátedra.</p>
+  <section class="cont-hero pz-container" data-reveal-group>
+    <span class="pz-eyebrow" data-reveal>Contacto</span>
+    <h1 class="cont-hero__title" data-reveal>Escribinos</h1>
+    <p class="cont-hero__desc" data-reveal>Información de contacto de la cátedra.</p>
   </section>
 
   <Section flush>
-    <Grid cols={3} colsMd={2} colsSm={1}>
+    <Grid cols={3} colsMd={2} colsSm={1} data-reveal-group>
       {mails.map((m) => (
-        <article class="cont-card">
+        <article class="cont-card" data-reveal>
           <Tag tone={m.tone}>{m.titulo}</Tag>
           <a href={`mailto:${m.mail}`} class="cont-card__mail">{m.mail}</a>
           <p class="cont-card__desc">{m.desc}</p>
         </article>
       ))}
 
-      <article class="cont-card">
+      <article class="cont-card" data-reveal>
         <Tag tone="solid">Instagram</Tag>
         <a href="https://instagram.com/catedrazachin" target="_blank" rel="noopener noreferrer" class="cont-card__mail">@catedrazachin</a>
         <p class="cont-card__desc">Novedades, eventos y contenido de la cátedra.</p>
       </article>
 
-      <article class="cont-card cont-card--wide">
+      <article class="cont-card cont-card--wide" data-reveal>
         <Tag>Cursada</Tag>
         <div class="cont-card__info">
           <p><strong>Sede:</strong> FADU — UBA</p>

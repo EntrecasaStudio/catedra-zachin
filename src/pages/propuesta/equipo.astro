@@ -9,17 +9,17 @@ const grupos = groupDocentes(docentes);
 ---
 
 <PropuestaLayout title="Plantel docente | Propuesta Zachin" description="El plantel docente de la Cátedra Zachin.">
-  <section class="equipo-hero pz-container">
-    <span class="pz-eyebrow">La cátedra</span>
-    <h1 class="equipo-hero__title">Plantel docente</h1>
-    <p class="equipo-hero__desc">
+  <section class="equipo-hero pz-container" data-reveal-group>
+    <span class="pz-eyebrow" data-reveal>La cátedra</span>
+    <h1 class="equipo-hero__title" data-reveal>Plantel docente</h1>
+    <p class="equipo-hero__desc" data-reveal>
       Los docentes y ayudantes que componen la cátedra de Tecnología.
     </p>
   </section>
 
   {grupos.map((grupo) => (
-    <Section eyebrow={grupo.label} flush>
-      <Grid cols={6} colsMd={3} colsSm={2} isEmpty={grupo.members.length === 0}>
+    <Section reveal eyebrow={grupo.label} flush>
+      <Grid data-reveal cols={6} colsMd={3} colsSm={2} isEmpty={grupo.members.length === 0}>
         {grupo.members.map((d) => <DocenteCard docente={d} />)}
       </Grid>
     </Section>

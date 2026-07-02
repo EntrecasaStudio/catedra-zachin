@@ -23,16 +23,16 @@ const { nivel, desc, mail, programa, cursada = [] } = Astro.props;
 const accent = nivel === 1 ? 'n1' : 'n2';
 ---
 
-<section class:list={['niveldet-hero', 'pz-container']}>
-  <span class="pz-eyebrow">Tecnología</span>
-  <h1 class="niveldet-hero__title">
+<section class:list={['niveldet-hero', 'pz-container']} data-reveal-group>
+  <span class="pz-eyebrow" data-reveal>Tecnología</span>
+  <h1 class="niveldet-hero__title" data-reveal>
     Tecnología <span class={nivel === 1 ? 'text-n1' : 'text-n2'}>{nivel}</span>
   </h1>
-  <p class="niveldet-hero__desc">{desc}</p>
-  <Button href={`mailto:${mail}`} variant="secondary" size="sm">{mail}</Button>
+  <p class="niveldet-hero__desc" data-reveal>{desc}</p>
+  <Button href={`mailto:${mail}`} variant="secondary" size="sm" data-reveal>{mail}</Button>
 
   {cursada.length > 0 && (
-    <div class="niveldet-cursada">
+    <div class="niveldet-cursada" data-reveal>
       <span class="pz-eyebrow">Cursada</span>
       <ul class="niveldet-cursada__list">
         {cursada.map((c) => (
@@ -43,10 +43,10 @@ const accent = nivel === 1 ? 'n1' : 'n2';
   )}
 </section>
 
-<Section eyebrow="Contenidos" title="Programa">
-  <ol class:list={['niveldet-programa', `niveldet-programa--${accent}`]}>
+<Section reveal eyebrow="Contenidos" title="Programa">
+  <ol class:list={['niveldet-programa', `niveldet-programa--${accent}`]} data-reveal-group>
     {programa.map((item) => (
-      <li class="niveldet-prog">
+      <li class="niveldet-prog" data-reveal>
         <span class="niveldet-prog__num" aria-hidden="true">{item.num}</span>
         <div class="niveldet-prog__body">
           <h3 class="niveldet-prog__title">{item.titulo}</h3>
