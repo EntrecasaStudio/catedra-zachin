@@ -5,8 +5,8 @@
  * En mobile: menú fullscreen slide-in con entrada escalonada y toggle de tema adentro.
  */
 const nav = [
-  { href: '/propuesta/nivel-1', label: 'Tecnología 1' },
-  { href: '/propuesta/nivel-2', label: 'Tecnología 2' },
+  { href: '/propuesta/nivel-1', label: 'N1' },
+  { href: '/propuesta/nivel-2', label: 'N2' },
   { href: '/propuesta/equipo', label: 'Plantel' },
   { href: '/propuesta/galeria', label: 'Galería' },
   { href: '/propuesta/contacto', label: 'Contacto' },
@@ -188,31 +188,30 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
     display: none;
     flex-direction: column;
     justify-content: center;
-    align-items: stretch;
-    gap: 4px;
+    align-items: center;
+    gap: 6px;
     width: 2.25rem;
     height: 2.25rem;
-    border: var(--pz-border-width) solid var(--pz-fg);
-    border-radius: var(--pz-radius);
-    padding: 0 0.5rem;
     flex-shrink: 0;
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
-    line-height: 0;
+    border: none;
+    padding: 0;
   }
-  /* display:block + ancho explícito: Safari no dibuja spans vacíos como flex-items */
+  /* Líneas anchas y centradas; display:block para que Safari las dibuje */
   .pz-header__burger span {
     display: block;
-    width: 100%;
-    height: var(--pz-border-width);
+    width: 1.6rem;
+    height: 2px;
     background: var(--pz-fg);
-    border-radius: 1px;
+    border-radius: 2px;
     transition: transform var(--pz-transition), opacity var(--pz-transition);
   }
-  .pz-header__burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  /* X centrada: gap 6 + alto 2 → 8px centro a centro */
+  .pz-header__burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
   .pz-header__burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
-  .pz-header__burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .pz-header__burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
   /* ===========================
      Mobile: menú fullscreen slide-in (estilo del sitio original)
