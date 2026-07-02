@@ -12,8 +12,11 @@
  *   [data-stage] para medir, y botones [data-channel].
  * @returns {{ start: () => void, stop: () => void, destroy: () => void } | null}
  */
-export function initHalftoneLab(root) {
+export function initHalftoneLab(root, opts = {}) {
   if (!root) return null;
+  // Modo fondo (hero): sin botones, canales fijos por tema (K en claro; R+G+B en oscuro),
+  // sin fondo negro ni freeze; la opacidad baja se controla por CSS en el canvas.
+  const background = opts.background === true;
   const canvas = root.querySelector('canvas');
   const stage = root.querySelector('[data-stage]') || (canvas && canvas.parentElement);
   if (!canvas || !stage) return null;
@@ -141,7 +144,15 @@ export function initHalftoneLab(root) {
     // Cambió el tema → cambia el modelo (halftone ↔ subpíxeles): regenerar geometría.
     if (isDark !== lastIsDark) {
       lastIsDark = isDark;
-      if (isDark) {
+      if (background) {
+        // Fondo del hero: claro = sólo K; oscuro = R+G+B juntos (blanco)
+        for (const c of channels) {
+          const on = c.id === 'k' ? !isDark : isDark;
+          c.active = on; c.sweep = on ? 1 : 0; c.sweepTarget = on ? 1 : 0;
+          if (!on) c.dots = [];
+        }
+        selectedChannel = isDark ? 'm' : 'k';
+      } else if (isDark) {
         // RGB no tiene canal blanco: apagar K; si no hay color activo, encender R/G/B.
         const k = channels.find((c) => c.id === 'k');
         k.active = false; k.sweep = 0; k.sweepTarget = 0; k.dots = [];
@@ -183,8 +194,8 @@ export function initHalftoneLab(root) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Fondo negro puro para anclar la suma aditiva (sólo oscuro)
-    if (isDark) {
+    // Fondo negro puro para anclar la suma aditiva (sólo oscuro; no en modo fondo)
+    if (isDark && !background) {
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, displayW, displayH);
     }
@@ -300,7 +311,7 @@ export function initHalftoneLab(root) {
     autoMode = !reducedMotion;
   }
   function onClick(e) {
-    if (reducedMotion) return;
+    if (reducedMotion || background) return; // el fondo del hero no congela
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
