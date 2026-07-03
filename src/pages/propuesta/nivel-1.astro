@@ -3,13 +3,17 @@ import PropuestaLayout from '../../layouts/PropuestaLayout.astro';
 import NivelDetalle from '../../components/propuesta/NivelDetalle.astro';
 
 const programa = [
-  { num: '01', titulo: 'Color', desc: 'Teoría y principios de formación del color para gráfica virtual y material (RGB, CMYK, hexadecimal, Lab). Espacio, modelo y gama.' },
-  { num: '02', titulo: 'Tecnología y Diseño', desc: 'La producción del objeto de diseño y el rol del diseñador. Flujo de trabajo, estandarización, sustentabilidad, dispositivos y software.' },
-  { num: '03', titulo: 'La Imagen Digital', desc: 'Tipos de imágenes: obtención, generación y aplicación. Imagen pixelar y vectorial. Archivos de fuentes tipográficas.' },
-  { num: '04', titulo: 'Soportes Digitales', desc: 'Dispositivos y características: formación de imagen, resoluciones de pantalla. Diseño responsivo (adaptabilidad).' },
-  { num: '05', titulo: 'Generación Digital de Originales', desc: 'Destino virtual y material. Almacenamiento y traslado digital. Archivos y formatos. Periféricos de entrada y salida. Uso de fuentes.' },
-  { num: '06', titulo: 'Web', desc: 'Estándares, lenguajes e hipertexto. Interfaces, usabilidad y experiencia de usuario.' },
-  { num: '07', titulo: 'Introducción a la Industria Gráfica', desc: 'Reproducción masiva de piezas materiales. Introducción a los procesos de impresión convencional y digital.' },
+  { num: '01', titulo: '10/04 · Presentación', desc: 'Presentación de la cátedra, requerimientos y condiciones de cursada.' },
+  { num: '02', titulo: '17/04 · Color', desc: 'Formación del color para gráfica virtual y material (RGB, CMYK, hexadecimal). Práctica con la App de Color y filminas.' },
+  { num: '03', titulo: '24/04 · Imagen Digital y Web', desc: 'Imagen pixelar y vectorial, modos y modelos de imagen. Estándares y lenguajes web. Práctica de modos y lanzamiento del TP Final. (Clase virtual)' },
+  { num: '04', titulo: '08/05 · Imagen Digital II — Originales', desc: 'Generación digital de originales para destino virtual y material. Esquicio de Impresos. 1.ª corrección del TP.' },
+  { num: '05', titulo: '15/05 · Papel, sistemas y CTP', desc: 'Papel: características y fabricación. Computer-to-plate e introducción a los sistemas de impresión. Esquicio de Papel. 2.ª corrección del TP.' },
+  { num: '06', titulo: '22/05 · Flexografía y rotograbado', desc: 'Sistemas de impresión en relieve y en profundidad. Entrega del Esquicio de Papel. 3.ª corrección del TP.' },
+  { num: '07', titulo: '29/05 · Offset', desc: 'Impresión planográfica. Esquicio de Sistemas. 4.ª corrección del TP.' },
+  { num: '08', titulo: '05/06 · Serigrafía e híbridos', desc: 'Impresión permeográfica y sistemas híbridos y digitales. Preentrega del TP Final.' },
+  { num: '09', titulo: '12/06 · Repaso', desc: 'Integración de contenidos y entrega del TP Final — Sistemas.' },
+  { num: '10', titulo: '19/06 · Jornada de impresión', desc: 'Jornada práctica de serigrafía en el taller.' },
+  { num: '11', titulo: '26/06 · Parcial', desc: 'Examen parcial, cierre de cursada y encuesta.' },
 ];
 
 ---
@@ -17,7 +21,7 @@ const programa = [
 <PropuestaLayout title="Tecnología 1 | Propuesta Zachin" description="Tecnología 1 — Introducción a los procesos de producción gráfica.">
   <NivelDetalle
     nivel={1}
-    desc="Reproducción del diseño: color, imagen digital, soportes, generación de originales, web e introducción a la industria gráfica."
+    desc="Reproducción del diseño: color, imagen digital y web, generación de originales, papel y los sistemas de impresión (flexografía, rotograbado, offset, serigrafía e híbridos)."
     mail="cat.zachin.tecno1@gmail.com"
     programa={programa}
     cursada={[

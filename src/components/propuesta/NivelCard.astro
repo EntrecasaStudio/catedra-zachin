@@ -19,7 +19,7 @@ interface Props {
   [key: string]: unknown;
 }
 const { nivel, title, desc, href, cta = 'Ver programa', ...rest } = Astro.props;
-const num = nivel === 1 ? '01' : '02';
+const num = nivel === 1 ? 'N1' : 'N2';
 ---
 
 <a href={href} class:list={['pz-nivel', `pz-nivel--n${nivel}`]} {...rest}>

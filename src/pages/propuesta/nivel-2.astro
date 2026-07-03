@@ -3,11 +3,17 @@ import PropuestaLayout from '../../layouts/PropuestaLayout.astro';
 import NivelDetalle from '../../components/propuesta/NivelDetalle.astro';
 
 const programa = [
-  { num: '01', titulo: 'Industria Gráfica', desc: 'Reproducción masiva y bajo demanda. Traslado digital (concepto computer-to).' },
-  { num: '02', titulo: 'Soportes e Insumos', desc: 'Papel: características y fabricación. Otros soportes: plástico, metal, vidrio. Pigmentos y tintas.' },
-  { num: '03', titulo: 'Pre-impresión', desc: 'Lenguaje de transmisión de datos (PDL). Transformaciones, tramados, fotocromía y rango dinámico.' },
-  { num: '04', titulo: 'Impresión', desc: 'Controles, pie de máquina y aprobación de pliego. Sistemas en relieve, superficie, profundidad, híbridos y digitales. Impresión bajo demanda.' },
-  { num: '05', titulo: 'Postimpresión', desc: 'Impresiones especiales, tratamientos superficiales, cortes y dobleces. Packaging y encuadernación.' },
+  { num: '01', titulo: '10/04 · Presentación y dos tintas', desc: 'Presentación de la cátedra. Diseño de original a dos tintas. Lanzamiento del TP1.' },
+  { num: '02', titulo: '17/04 · Industria Gráfica', desc: 'Reproducción masiva y bajo demanda. Traslado digital (concepto computer-to). Esquicio del TP1. (Clase virtual)' },
+  { num: '03', titulo: '24/04 · Archivos y original gráfico', desc: 'Preparación del original gráfico y formatos de archivo. 2.ª corrección del TP1.' },
+  { num: '04', titulo: '08/05 · Pre-impresión — Tramados', desc: 'Tramados y medición de lineaturas. Entrega del TP1 y lanzamiento del TP2.' },
+  { num: '05', titulo: '15/05 · Post-impresión', desc: 'Tratamientos superficiales, cortes, dobleces, packaging y encuadernación. Entrega del TP2 y lanzamiento del TP3.' },
+  { num: '06', titulo: '22/05 · Papel', desc: 'Papel: características, fabricación y otros soportes. 1.ª corrección del TP3.' },
+  { num: '07', titulo: '29/05 · Productos digitales y Web', desc: 'Productos digitales y web como destino de producción. 2.ª corrección del TP3. (Clase virtual)' },
+  { num: '08', titulo: '05/06 · Gestión de color', desc: 'Gestión de color en el flujo de producción. Corrección final del TP3.' },
+  { num: '09', titulo: '12/06 · Coloquio TP3', desc: 'Coloquio del TP3 — Gestión de la producción.' },
+  { num: '10', titulo: '19/06 · Jornada de impresión', desc: 'Jornada práctica de impresión en el taller.' },
+  { num: '11', titulo: '26/06 · Parcial', desc: 'Examen parcial, entrega de notas y cierre de cursada.' },
 ];
 
 ---
@@ -15,7 +21,7 @@ const programa = [
 <PropuestaLayout title="Tecnología 2 | Propuesta Zachin" description="Tecnología 2 — Tecnologías avanzadas de producción gráfica.">
   <NivelDetalle
     nivel={2}
-    desc="Replicación del diseño material: industria gráfica, soportes e insumos, pre-impresión, impresión y postimpresión."
+    desc="Replicación del diseño material: industria gráfica, archivos, pre y post-impresión, papel, productos digitales y gestión de color."
     mail="cat.zachin.tecno2@gmail.com"
     programa={programa}
     cursada={[
