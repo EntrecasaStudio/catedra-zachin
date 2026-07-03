@@ -356,12 +356,14 @@ button {
 
 .pz-btn:active { transform: translate(0, 0); box-shadow: var(--pz-shadow); }
 
-/* Primary = CTA general (para ambos niveles): gradiente magenta → cyan */
+/* Primary = CTA general (para ambos niveles): gradiente magenta → cyan.
+   Borde transparente: el gradiente pinta borde-a-borde (background-clip
+   border-box) y se lee como un solo bloque, igual que .pz-tag--solid. */
 .pz-btn--primary {
   --_fg: #fff;
   background: var(--pz-duo);
   color: #fff;
-  border-color: var(--pz-fg);
+  border-color: transparent;
 }
 
 .pz-btn--secondary { --_bg: transparent; --_fg: var(--pz-fg); }
