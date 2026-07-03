@@ -155,11 +155,13 @@ const channels = [
   .pz-halftone__expand.is-fullscreen .icon-expand { display: none; }
   .pz-halftone__expand.is-fullscreen .icon-compress { display: block; }
 
-  /* Pantalla completa: el stage llena la pantalla, sin borde ni ratio */
-  .pz-halftone__stage:fullscreen,
-  .pz-halftone__stage:-webkit-full-screen {
-    width: 100vw;
-    height: 100vh;
+  /* Expandido: el stage llena la ventana del browser (overlay), sin borde ni ratio */
+  .pz-halftone__stage.is-expanded {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    height: auto;
+    z-index: 1000;
     aspect-ratio: auto;
     min-height: 0;
     border: none;
@@ -167,8 +169,7 @@ const channels = [
     box-shadow: none;
     background: var(--pz-surface);
   }
-  :global([data-theme='dark']) .pz-halftone__stage:fullscreen,
-  :global([data-theme='dark']) .pz-halftone__stage:-webkit-full-screen { background: #000; }
+  :global([data-theme='dark']) .pz-halftone__stage.is-expanded { background: #000; }
 
   /* Etiquetas: CMYK en claro, RGB en oscuro */
   .lbl--rgb { display: none; }
@@ -195,30 +196,28 @@ const channels = [
       );
       io.observe(el);
 
-      // Expandir a pantalla completa
+      // Expandir dentro de la ventana del browser (overlay, no fullscreen del SO)
       const stage = el.querySelector('[data-stage]');
       const expandBtn = el.querySelector('[data-expand]');
-      const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
-      const onFsChange = () => {
-        const active = fsEl() === stage;
+      const setExpanded = (active) => {
+        stage.classList.toggle('is-expanded', active);
+        document.body.style.overflow = active ? 'hidden' : '';
         if (expandBtn) {
           expandBtn.classList.toggle('is-fullscreen', active);
-          expandBtn.setAttribute('aria-label', active ? 'Salir de pantalla completa' : 'Pantalla completa');
-          expandBtn.setAttribute('title', active ? 'Salir de pantalla completa' : 'Pantalla completa');
+          const label = active ? 'Contraer' : 'Expandir';
+          expandBtn.setAttribute('aria-label', label);
+          expandBtn.setAttribute('title', label);
         }
         lab.start();
         window.dispatchEvent(new Event('resize')); // reajusta el canvas al nuevo tamaño
       };
-      const onExpand = () => {
-        const req = fsEl()
-          ? (document.exitFullscreen || document.webkitExitFullscreen)?.call(document)
-          : stage && (stage.requestFullscreen || stage.webkitRequestFullscreen)?.call(stage);
-        if (req && typeof req.catch === 'function') req.catch(() => {});
+      const onExpand = () => setExpanded(!stage.classList.contains('is-expanded'));
+      const onKey = (e) => {
+        if (e.key === 'Escape' && stage.classList.contains('is-expanded')) setExpanded(false);
       };
       if (expandBtn && stage) {
         expandBtn.addEventListener('click', onExpand);
-        document.addEventListener('fullscreenchange', onFsChange);
-        document.addEventListener('webkitfullscreenchange', onFsChange);
+        document.addEventListener('keydown', onKey);
       }
 
       document.addEventListener(
@@ -226,8 +225,8 @@ const channels = [
         () => {
           io.disconnect();
           lab.destroy();
-          document.removeEventListener('fullscreenchange', onFsChange);
-          document.removeEventListener('webkitfullscreenchange', onFsChange);
+          document.removeEventListener('keydown', onKey);
+          document.body.style.overflow = '';
         },
         { once: true }
       );
