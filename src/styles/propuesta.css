@@ -144,6 +144,9 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
+  /* Reserva el gutter del scrollbar para que el header fijo y el contenido
+     scrolleable compartan el mismo ancho → margen derecho = margen izquierdo. */
+  scrollbar-gutter: stable;
 }
 
 body {

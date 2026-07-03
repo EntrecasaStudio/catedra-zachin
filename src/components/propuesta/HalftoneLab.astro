@@ -174,12 +174,15 @@ const channels = [
   }
   :global([data-theme='dark']) .pz-halftone__stage.is-expanded { background: #000; }
 
-  /* Mobile: proporción portrait (más alto que ancho) */
-  @media (max-width: 640px) {
+  /* Mobile (mismo umbral que el nav): proporción portrait (más alto que ancho) */
+  @media (max-width: 860px) {
     .pz-halftone__stage:not(.is-expanded) {
-      aspect-ratio: 3 / 4;
+      aspect-ratio: 4 / 5;
       min-height: 0;
     }
+  }
+  @media (max-width: 560px) {
+    .pz-halftone__stage:not(.is-expanded) { aspect-ratio: 3 / 4; }
   }
 
   /* Etiquetas: CMYK en claro, RGB en oscuro */
