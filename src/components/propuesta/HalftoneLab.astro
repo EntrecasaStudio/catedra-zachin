@@ -25,6 +25,16 @@ const channels = [
 <div class="pz-halftone" id={id} data-halftone-lab data-brush={brush}>
   <div class="pz-halftone__stage" data-stage>
     <canvas class="pz-halftone__canvas" id={`${id}-canvas`} aria-hidden="true"></canvas>
+    <button type="button" class="pz-halftone__expand" data-expand title="Pantalla completa" aria-label="Pantalla completa">
+      <svg class="icon-expand" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 3 21 3 21 9" /><polyline points="9 21 3 21 3 15" />
+        <line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" />
+      </svg>
+      <svg class="icon-compress" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="4 14 10 14 10 20" /><polyline points="20 10 14 10 14 4" />
+        <line x1="14" y1="10" x2="21" y2="3" /><line x1="3" y1="21" x2="10" y2="14" />
+      </svg>
+    </button>
     <div class="pz-halftone__controls" role="group" aria-label="Canales CMYK">
       {channels.map((ch) => (
         <button
@@ -110,8 +120,55 @@ const channels = [
      currentColor = color de texto del botón activo → siempre contrasta con su fondo. */
   .pz-channel-btn.selected { box-shadow: var(--pz-shadow), inset 0 0 0 var(--pz-border-width) currentColor; }
 
-  /* Botón reset: separado de los canales, glifo neutro */
-  .pz-channel-btn--reset { margin-left: var(--pz-space-xs); font-size: 1.1rem; }
+  /* Botón reset: contenedor circular, glifo un poco más grande y centrado */
+  .pz-channel-btn--reset {
+    margin-left: var(--pz-space-xs);
+    border-radius: 50%;
+    font-size: 1.4rem;
+    line-height: 1;
+    padding-bottom: 0.12em; /* ajuste óptico del glifo ↺ */
+  }
+
+  /* Botón expand → pantalla completa (arriba a la derecha) */
+  .pz-halftone__expand {
+    position: absolute;
+    top: var(--pz-space-md);
+    right: var(--pz-space-md);
+    z-index: 1;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: grid;
+    place-items: center;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    background: var(--pz-bg);
+    color: var(--pz-fg);
+    box-shadow: var(--pz-shadow);
+    transition: transform var(--pz-transition), box-shadow var(--pz-transition), color var(--pz-transition);
+  }
+  .pz-halftone__expand:hover {
+    transform: translate(var(--pz-lift), var(--pz-lift));
+    box-shadow: var(--pz-shadow-hover);
+  }
+  .pz-halftone__expand svg { width: 1.15rem; height: 1.15rem; }
+  .pz-halftone__expand .icon-compress { display: none; }
+  .pz-halftone__expand.is-fullscreen .icon-expand { display: none; }
+  .pz-halftone__expand.is-fullscreen .icon-compress { display: block; }
+
+  /* Pantalla completa: el stage llena la pantalla, sin borde ni ratio */
+  .pz-halftone__stage:fullscreen,
+  .pz-halftone__stage:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    aspect-ratio: auto;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--pz-surface);
+  }
+  :global([data-theme='dark']) .pz-halftone__stage:fullscreen,
+  :global([data-theme='dark']) .pz-halftone__stage:-webkit-full-screen { background: #000; }
 
   /* Etiquetas: CMYK en claro, RGB en oscuro */
   .lbl--rgb { display: none; }
@@ -138,9 +195,40 @@ const channels = [
       );
       io.observe(el);
 
+      // Expandir a pantalla completa
+      const stage = el.querySelector('[data-stage]');
+      const expandBtn = el.querySelector('[data-expand]');
+      const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+      const onFsChange = () => {
+        const active = fsEl() === stage;
+        if (expandBtn) {
+          expandBtn.classList.toggle('is-fullscreen', active);
+          expandBtn.setAttribute('aria-label', active ? 'Salir de pantalla completa' : 'Pantalla completa');
+          expandBtn.setAttribute('title', active ? 'Salir de pantalla completa' : 'Pantalla completa');
+        }
+        lab.start();
+        window.dispatchEvent(new Event('resize')); // reajusta el canvas al nuevo tamaño
+      };
+      const onExpand = () => {
+        const req = fsEl()
+          ? (document.exitFullscreen || document.webkitExitFullscreen)?.call(document)
+          : stage && (stage.requestFullscreen || stage.webkitRequestFullscreen)?.call(stage);
+        if (req && typeof req.catch === 'function') req.catch(() => {});
+      };
+      if (expandBtn && stage) {
+        expandBtn.addEventListener('click', onExpand);
+        document.addEventListener('fullscreenchange', onFsChange);
+        document.addEventListener('webkitfullscreenchange', onFsChange);
+      }
+
       document.addEventListener(
         'astro:before-swap',
-        () => { io.disconnect(); lab.destroy(); },
+        () => {
+          io.disconnect();
+          lab.destroy();
+          document.removeEventListener('fullscreenchange', onFsChange);
+          document.removeEventListener('webkitfullscreenchange', onFsChange);
+        },
         { once: true }
       );
     });
