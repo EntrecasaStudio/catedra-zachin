@@ -357,14 +357,19 @@ button {
 .pz-btn:active { transform: translate(0, 0); box-shadow: var(--pz-shadow); }
 
 /* Primary = CTA general (para ambos niveles): gradiente magenta → cyan.
-   Borde transparente: el gradiente pinta borde-a-borde (background-clip
-   border-box) y se lee como un solo bloque, igual que .pz-tag--solid. */
+   Fill plano como .pz-tag--solid y los chips del nav: borde transparente y
+   SIN sombra offset (esa sombra dura negra se leía como un borde ajeno al
+   gradiente). El hover da feedback con un brillo sutil. */
 .pz-btn--primary {
   --_fg: #fff;
   background: var(--pz-duo);
   color: #fff;
   border-color: transparent;
+  box-shadow: none;
+  transition: transform var(--pz-transition), filter var(--pz-transition);
 }
+.pz-btn--primary:hover { box-shadow: none; filter: brightness(1.07); }
+.pz-btn--primary:active { filter: brightness(0.96); }
 
 .pz-btn--secondary { --_bg: transparent; --_fg: var(--pz-fg); }
 
