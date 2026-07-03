@@ -69,8 +69,16 @@
    Lo común a ambos niveles usa el gradiente (nunca un solo color de nivel);
    los acentos neutros usan el color de texto. */
 :root {
+  /* Fallback sRGB (interpola por un violeta apagado en el medio). */
   --pz-duo: linear-gradient(120deg, var(--pz-n1), var(--pz-n2));
   --pz-accent: var(--pz-fg);
+}
+/* En navegadores modernos, interpolar en OKLCH: el medio queda vívido (violeta
+   brillante) en vez de un violeta oscuro/apagado que se leía como sombra/borde. */
+@supports (background: linear-gradient(in oklch, red, blue)) {
+  :root {
+    --pz-duo: linear-gradient(120deg in oklch, var(--pz-n1), var(--pz-n2));
+  }
 }
 
 /* ------------------------------------------------------------------ *
