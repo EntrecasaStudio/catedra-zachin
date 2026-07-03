@@ -206,19 +206,30 @@ button {
 /* ------------------------------------------------------------------ *
  * 5. Layout + utilidades                                              *
  * ------------------------------------------------------------------ */
+:root { --pz-container-pad: clamp(1rem, 4vw, 2.5rem); }
+
 .pz-container {
   width: 100%;
   max-width: var(--pz-max-width);
   margin-inline: auto;
-  padding-inline: clamp(1rem, 4vw, 2.5rem);
+  padding-inline: var(--pz-container-pad);
 }
 
+/* La línea divisoria va al ancho del contenido (no full-bleed) */
 .pz-section {
+  position: relative;
   padding-block: var(--pz-space-2xl);
-  border-top: var(--pz-border-width) solid var(--pz-fg);
 }
-
-.pz-section--flush { border-top: 0; }
+.pz-section:not(.pz-section--flush)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(min(100%, var(--pz-max-width)) - 2 * var(--pz-container-pad));
+  height: var(--pz-border-width);
+  background: var(--pz-fg);
+}
 
 .pz-sr-only {
   position: absolute;
