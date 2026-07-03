@@ -17,6 +17,9 @@ export function initHalftoneLab(root, opts = {}) {
   // Modo fondo (hero): sin botones, canales fijos por tema (K en claro; R+G+B en oscuro),
   // sin fondo negro ni freeze; la opacidad baja se controla por CSS en el canvas.
   const background = opts.background === true;
+  // Brush (mantener presionado para seguir pintando): 'area' crece el radio;
+  // 'both' crece radio + intensidad del punto. Sin brush → click-freeze clásico.
+  const brushMode = opts.brush === 'area' || opts.brush === 'both' ? opts.brush : null;
   const canvas = root.querySelector('canvas');
   const stage = root.querySelector('[data-stage]') || (canvas && canvas.parentElement);
   if (!canvas || !stage) return null;
@@ -40,6 +43,13 @@ export function initHalftoneLab(root, opts = {}) {
   const SWEEP_DURATION = 800;
   const SWEEP_SOFT = 100;
 
+  // Brush: crecimiento del radio con el tiempo de presión (px/ms) y tope.
+  const BRUSH_GROW = 0.22;
+  const BRUSH_MAX = 520;
+  // 'both': ganancia extra sobre el tamaño máximo del punto (satura donde se mantiene).
+  const BRUSH_BOOST_RATE = 1 / 2000; // alcanza el tope a ~1.2s
+  const BRUSH_BOOST_MAX = 0.6;
+
   // Subpíxeles RGB (modo oscuro / aditivo): cada celda = rayas R|G|B sobre negro.
   const CELL = 21;            // divisible por 3 → rayas de 7px
   const SEAM = 1;             // matriz negra entre subpíxeles
@@ -59,6 +69,8 @@ export function initHalftoneLab(root, opts = {}) {
 
   let mouseX = -9999;
   let mouseY = -9999;
+  let pressing = false;
+  let pressStart = 0;
   let displayW = 0;
   let displayH = 0;
   let autoMode = !reducedMotion;
@@ -137,6 +149,7 @@ export function initHalftoneLab(root, opts = {}) {
     lastFrameTime = now;
 
     updateAutoCursor();
+    if (pressing && brushMode && !reducedMotion) paintBrush(now);
 
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     const dpr = window.devicePixelRatio || 1;
@@ -335,9 +348,52 @@ export function initHalftoneLab(root, opts = {}) {
     }
   }
 
+  // Brush: mientras se mantiene presionado, el radio crece con el tiempo; los puntos
+  // dentro quedan fijos (frozen). 'both' además sube el tamaño máximo → tono más denso.
+  function paintBrush(now) {
+    if (background) return;
+    const held = now - pressStart;
+    const brushR = Math.min(INFLUENCE + held * BRUSH_GROW, BRUSH_MAX);
+    const boost = brushMode === 'both' ? 1 + Math.min(held * BRUSH_BOOST_RATE, BRUSH_BOOST_MAX) : 1;
+    const targets = isDarkNow()
+      ? channels.filter((c) => c.active)
+      : channels.filter((c) => c.id === selectedChannel && c.active);
+    for (const ch of targets) {
+      for (const dot of ch.dots) {
+        const dx = mouseX - dot.x;
+        const dy = mouseY - dot.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < brushR) {
+          const t = 1 - dist / brushR;
+          const maxR = dot.maxR * boost;
+          const grown = dot.baseR + (maxR - dot.baseR) * t;
+          dot.frozen = true;
+          dot.fixedR = Math.max(dot.fixedR, grown);
+        }
+      }
+    }
+  }
+  function onDown(e) {
+    if (reducedMotion || background) return;
+    autoMode = false;
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+    pressing = true;
+    pressStart = performance.now();
+  }
+  function onUp() {
+    pressing = false;
+  }
+
   stage.addEventListener('mousemove', onMove);
   stage.addEventListener('mouseleave', onLeave);
-  stage.addEventListener('click', onClick);
+  if (brushMode && !background) {
+    stage.addEventListener('mousedown', onDown);
+    window.addEventListener('mouseup', onUp);
+  } else {
+    stage.addEventListener('click', onClick);
+  }
 
   const btnHandlers = [];
   root.querySelectorAll('[data-channel]').forEach((btn) => {
@@ -404,7 +460,12 @@ export function initHalftoneLab(root, opts = {}) {
       window.removeEventListener('resize', onResize);
       stage.removeEventListener('mousemove', onMove);
       stage.removeEventListener('mouseleave', onLeave);
-      stage.removeEventListener('click', onClick);
+      if (brushMode && !background) {
+        stage.removeEventListener('mousedown', onDown);
+        window.removeEventListener('mouseup', onUp);
+      } else {
+        stage.removeEventListener('click', onClick);
+      }
       btnHandlers.forEach(([btn, handler]) => btn.removeEventListener('click', handler));
     },
   };

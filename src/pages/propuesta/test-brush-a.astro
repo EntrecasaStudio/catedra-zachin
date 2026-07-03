@@ -1,0 +1,31 @@
+---
+/**
+ * Ruta de test (temporal) — Brush variante A: "área".
+ * Mantener presionado agranda el radio del brush con el tiempo; los puntos
+ * llegan a su tamaño máximo normal. Se compara contra /propuesta/test-brush-b.
+ */
+import PropuestaLayout from '../../layouts/PropuestaLayout.astro';
+import Section from '../../components/propuesta/Section.astro';
+import HalftoneLab from '../../components/propuesta/HalftoneLab.astro';
+---
+
+<PropuestaLayout title="Test brush A (área) | Propuesta Zachin" description="Prueba de brush del experimento — variante área.">
+  <section class="tb-hero pz-container" data-reveal-group>
+    <span class="pz-eyebrow" data-reveal>Test · variante A</span>
+    <h1 class="tb-hero__title" data-reveal>Brush: área</h1>
+    <p class="tb-hero__desc" data-reveal>
+      Mantené presionado el mouse: el brush crece de tamaño con el tiempo y los
+      puntos llegan a su tono máximo estándar. Lo pintado queda fijo al soltar.
+    </p>
+  </section>
+
+  <Section>
+    <HalftoneLab id="halftone-test-a" brush="area" />
+  </Section>
+</PropuestaLayout>
+
+<style>
+  .tb-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
+  .tb-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
+  .tb-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin-top: var(--pz-space-md); max-width: 60ch; }
+</style>

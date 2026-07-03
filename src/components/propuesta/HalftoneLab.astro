@@ -9,8 +9,10 @@
  */
 interface Props {
   id?: string;
+  /** Brush al mantener presionado: 'area' (crece radio) o 'both' (radio + intensidad). */
+  brush?: 'area' | 'both';
 }
-const { id = 'halftone-lab' } = Astro.props;
+const { id = 'halftone-lab', brush } = Astro.props;
 
 const channels = [
   { id: 'k', label: 'K', rgb: 'W', title: 'Negro (K) / Blanco (W)' },
@@ -20,7 +22,7 @@ const channels = [
 ];
 ---
 
-<div class="pz-halftone" id={id} data-halftone-lab>
+<div class="pz-halftone" id={id} data-halftone-lab data-brush={brush}>
   <div class="pz-halftone__stage" data-stage>
     <canvas class="pz-halftone__canvas" id={`${id}-canvas`} aria-hidden="true"></canvas>
     <div class="pz-halftone__controls" role="group" aria-label="Canales CMYK">
@@ -113,7 +115,8 @@ const channels = [
 
   document.addEventListener('astro:page-load', () => {
     document.querySelectorAll('[data-halftone-lab]').forEach((el) => {
-      const lab = initHalftoneLab(el);
+      const brush = el.dataset.brush === 'area' || el.dataset.brush === 'both' ? el.dataset.brush : undefined;
+      const lab = initHalftoneLab(el, { brush });
       if (!lab) return;
 
       // Corre sólo cuando la sección está en pantalla (ahorra CPU)
