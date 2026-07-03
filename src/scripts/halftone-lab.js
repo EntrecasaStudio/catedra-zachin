@@ -44,11 +44,13 @@ export function initHalftoneLab(root, opts = {}) {
   const SWEEP_SOFT = 100;
 
   // Brush: crecimiento del radio con el tiempo de presión (px/ms) y tope.
-  const BRUSH_GROW = 0.22;
+  const BRUSH_GROW = 0.09;
   const BRUSH_MAX = 520;
   // 'both': ganancia extra sobre el tamaño máximo del punto (satura donde se mantiene).
-  const BRUSH_BOOST_RATE = 1 / 2000; // alcanza el tope a ~1.2s
+  const BRUSH_BOOST_RATE = 1 / 4500; // alcanza el tope a ~2.7s
   const BRUSH_BOOST_MAX = 0.6;
+  // Suba gradual del tono pintado: el punto no salta al máximo, sube de a poco.
+  const PAINT_LERP = 0.06;
 
   // Subpíxeles RGB (modo oscuro / aditivo): cada celda = rayas R|G|B sobre negro.
   const CELL = 21;            // divisible por 3 → rayas de 7px
@@ -366,9 +368,11 @@ export function initHalftoneLab(root, opts = {}) {
         if (dist < brushR) {
           const t = 1 - dist / brushR;
           const maxR = dot.maxR * boost;
-          const grown = dot.baseR + (maxR - dot.baseR) * t;
-          dot.frozen = true;
-          dot.fixedR = Math.max(dot.fixedR, grown);
+          const ceil = dot.baseR + (maxR - dot.baseR) * t; // techo por distancia/intensidad
+          if (ceil > dot.fixedR) {
+            dot.frozen = true;
+            dot.fixedR += (ceil - dot.fixedR) * PAINT_LERP; // sube de a poco (pintada lenta)
+          }
         }
       }
     }
@@ -386,6 +390,31 @@ export function initHalftoneLab(root, opts = {}) {
     pressing = false;
   }
 
+  // Touch (mobile): tap/hold para pintar; drag revela y pinta.
+  function touchXY(e) {
+    const t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+    if (!t) return null;
+    const rect = canvas.getBoundingClientRect();
+    return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+  }
+  function onTouchStart(e) {
+    if (reducedMotion || background) return;
+    autoMode = false;
+    const p = touchXY(e);
+    if (p) { mouseX = p.x; mouseY = p.y; }
+    if (brushMode) { pressing = true; pressStart = performance.now(); }
+  }
+  function onTouchMove(e) {
+    if (reducedMotion || background) return;
+    const p = touchXY(e);
+    if (p) { mouseX = p.x; mouseY = p.y; }
+    if (pressing) e.preventDefault(); // pinta en vez de scrollear mientras se mantiene
+  }
+  function onTouchEnd() {
+    pressing = false;
+    autoMode = !reducedMotion; // sin cursor persistente en mobile → vuelve el auto
+  }
+
   stage.addEventListener('mousemove', onMove);
   stage.addEventListener('mouseleave', onLeave);
   if (brushMode && !background) {
@@ -393,6 +422,12 @@ export function initHalftoneLab(root, opts = {}) {
     window.addEventListener('mouseup', onUp);
   } else {
     stage.addEventListener('click', onClick);
+  }
+  if (!background) {
+    stage.addEventListener('touchstart', onTouchStart, { passive: true });
+    stage.addEventListener('touchmove', onTouchMove, { passive: false });
+    stage.addEventListener('touchend', onTouchEnd);
+    stage.addEventListener('touchcancel', onTouchEnd);
   }
 
   const btnHandlers = [];
@@ -486,6 +521,12 @@ export function initHalftoneLab(root, opts = {}) {
         window.removeEventListener('mouseup', onUp);
       } else {
         stage.removeEventListener('click', onClick);
+      }
+      if (!background) {
+        stage.removeEventListener('touchstart', onTouchStart);
+        stage.removeEventListener('touchmove', onTouchMove);
+        stage.removeEventListener('touchend', onTouchEnd);
+        stage.removeEventListener('touchcancel', onTouchEnd);
       }
       btnHandlers.forEach(([btn, handler]) => btn.removeEventListener('click', handler));
       if (resetBtn) resetBtn.removeEventListener('click', onReset);

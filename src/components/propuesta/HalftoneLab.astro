@@ -83,6 +83,7 @@ const channels = [
     left: var(--pz-space-md);
     bottom: var(--pz-space-md);
     display: flex;
+    align-items: center;
     gap: var(--pz-space-xs);
     z-index: 1;
   }
@@ -120,13 +121,15 @@ const channels = [
      currentColor = color de texto del botón activo → siempre contrasta con su fondo. */
   .pz-channel-btn.selected { box-shadow: var(--pz-shadow), inset 0 0 0 var(--pz-border-width) currentColor; }
 
-  /* Botón reset: contenedor circular, glifo un poco más grande y centrado */
+  /* Botón reset: circular y más chico que los toggles de canal */
   .pz-channel-btn--reset {
-    margin-left: var(--pz-space-xs);
+    margin-left: var(--pz-space-2xs);
+    width: 1.9rem;
+    height: 1.9rem;
     border-radius: 50%;
-    font-size: 1.4rem;
+    font-size: 1.05rem;
     line-height: 1;
-    padding-bottom: 0.12em; /* ajuste óptico del glifo ↺ */
+    padding-bottom: 0.1em; /* ajuste óptico del glifo ↺ */
   }
 
   /* Botón expand → pantalla completa (arriba a la derecha) */
@@ -170,6 +173,14 @@ const channels = [
     background: var(--pz-surface);
   }
   :global([data-theme='dark']) .pz-halftone__stage.is-expanded { background: #000; }
+
+  /* Mobile: proporción portrait (más alto que ancho) */
+  @media (max-width: 640px) {
+    .pz-halftone__stage:not(.is-expanded) {
+      aspect-ratio: 3 / 4;
+      min-height: 0;
+    }
+  }
 
   /* Etiquetas: CMYK en claro, RGB en oscuro */
   .lbl--rgb { display: none; }
