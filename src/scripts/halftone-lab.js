@@ -421,6 +421,27 @@ export function initHalftoneLab(root, opts = {}) {
     btnHandlers.push([btn, handler]);
   });
 
+  // Reset: limpia lo pintado (frozen) de un canal → vuelve a su reposo.
+  function resetChannel(chId) {
+    const ch = channels.find((c) => c.id === chId);
+    if (!ch) return;
+    for (const dot of ch.dots) {
+      dot.frozen = false;
+      dot.fixedR = dot.baseR;
+      dot.current = dot.baseR;
+      dot.target = dot.baseR;
+    }
+    if (reducedMotion) drawStaticFrame();
+  }
+  const resetBtn = root.querySelector('[data-reset]');
+  const onReset = (e) => {
+    e.stopPropagation();
+    // Resetea el canal seleccionado; si no hay, todos los activos.
+    if (selectedChannel) resetChannel(selectedChannel);
+    else channels.filter((c) => c.active).forEach((c) => resetChannel(c.id));
+  };
+  if (resetBtn) resetBtn.addEventListener('click', onReset);
+
   function drawStaticFrame() {
     // Un solo cuadro con los canales activos totalmente presentes.
     for (const ch of channels) {
@@ -467,6 +488,7 @@ export function initHalftoneLab(root, opts = {}) {
         stage.removeEventListener('click', onClick);
       }
       btnHandlers.forEach(([btn, handler]) => btn.removeEventListener('click', handler));
+      if (resetBtn) resetBtn.removeEventListener('click', onReset);
     },
   };
 }

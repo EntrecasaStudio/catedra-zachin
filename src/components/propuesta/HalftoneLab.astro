@@ -36,6 +36,13 @@ const channels = [
           aria-pressed={ch.id === 'k' ? 'true' : 'false'}
         ><span class="lbl lbl--cmyk">{ch.label}</span><span class="lbl lbl--rgb">{ch.rgb}</span></button>
       ))}
+      <button
+        type="button"
+        class="pz-channel-btn pz-channel-btn--reset"
+        data-reset
+        title="Resetear el canal seleccionado"
+        aria-label="Resetear el canal seleccionado"
+      >↺</button>
     </div>
   </div>
 </div>
@@ -99,7 +106,12 @@ const channels = [
   :global([data-theme='dark']) .pz-channel-btn--m.active { background: #ff3b3b; color: #fff; border-color: #ff3b3b; }
   :global([data-theme='dark']) .pz-channel-btn--y.active { background: #22c55e; color: #fff; border-color: #22c55e; }
 
-  .pz-channel-btn.selected { outline: 2px solid var(--pz-accent); outline-offset: 2px; }
+  /* Selección: anillo interior (no choca con la sombra offset del brutalismo).
+     currentColor = color de texto del botón activo → siempre contrasta con su fondo. */
+  .pz-channel-btn.selected { box-shadow: var(--pz-shadow), inset 0 0 0 var(--pz-border-width) currentColor; }
+
+  /* Botón reset: separado de los canales, glifo neutro */
+  .pz-channel-btn--reset { margin-left: var(--pz-space-xs); font-size: 1.1rem; }
 
   /* Etiquetas: CMYK en claro, RGB en oscuro */
   .lbl--rgb { display: none; }
