@@ -5,11 +5,11 @@
  * En mobile: menú fullscreen slide-in con entrada escalonada y toggle de tema adentro.
  */
 const nav = [
-  { href: '/propuesta/nivel-1', label: 'N1' },
-  { href: '/propuesta/nivel-2', label: 'N2' },
-  { href: '/propuesta/equipo', label: 'Plantel' },
-  { href: '/propuesta/galeria', label: 'Galería' },
-  { href: '/propuesta/contacto', label: 'Contacto' },
+  { href: '/propuesta/nivel-1', label: 'N1', tone: 'n1' },
+  { href: '/propuesta/nivel-2', label: 'N2', tone: 'n2' },
+  { href: '/propuesta/equipo', label: 'Plantel', tone: 'duo' },
+  { href: '/propuesta/galeria', label: 'Galería', tone: 'duo' },
+  { href: '/propuesta/contacto', label: 'Contacto', tone: 'duo' },
 ];
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
@@ -28,7 +28,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
           <li class="pz-header__item" style={`--i: ${i}`}>
             <a
               href={l.href}
-              class:list={['pz-header__link', { 'is-active': path === l.href }]}
+              class:list={['pz-header__link', { 'is-active': path === l.href, [`is-active--${l.tone}`]: path === l.href }]}
               aria-current={path === l.href ? 'page' : undefined}
             >
               <svg class="pz-header__arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -116,42 +116,43 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
   :global([data-theme='light']) .pz-header__logo--dark { display: none; }
   :global([data-theme='light']) .pz-header__logo--light { display: block; }
 
-  /* Nav a altura completa: el borde inferior del link coincide con el divisor */
-  .pz-header__nav { align-self: stretch; }
-  .pz-header__list { display: flex; gap: var(--pz-space-md); height: 100%; align-items: stretch; }
+  /* Nav: chips con fill en el active (como los tags de galería) */
+  .pz-header__nav { align-self: center; }
+  .pz-header__list { display: flex; gap: var(--pz-space-sm); align-items: center; }
   .pz-header__item { display: flex; }
 
   .pz-header__link {
     position: relative;
     display: flex;
     align-items: center;
-    height: 100%;
+    padding: 0.32rem var(--pz-space-sm);
+    border: var(--pz-border-width) solid transparent;
+    border-radius: var(--pz-radius);
     font-family: var(--pz-font-mono);
     font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--pz-muted);
-    transition: color var(--pz-transition);
+    transition: background var(--pz-transition), color var(--pz-transition);
   }
 
-  /* La línea de color "prende" el divisor del nav, justo debajo del link */
-  .pz-header__link::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: calc(-1 * var(--pz-border-width));
-    height: var(--pz-border-width);
-    background: var(--pz-duo);
-    transform: scaleX(0);
-    transition: transform var(--pz-transition);
-  }
+  /* Hover neutro (calmo) — el fill de color queda reservado al active */
+  .pz-header__link:hover { background: var(--pz-surface); color: var(--pz-fg); }
 
-  .pz-header__link:hover { color: var(--pz-fg); }
-  .pz-header__link:hover::after,
-  .pz-header__link.is-active::after { transform: scaleX(1); }
-  .pz-header__link.is-active { color: var(--pz-fg); }
+  /* Active: fill tipo tag según el nivel; texto blanco por defecto */
+  .pz-header__link.is-active { color: #fff; }
+  .pz-header__link.is-active--n1 { background: var(--pz-n1); }
+  .pz-header__link.is-active--n2 { background: var(--pz-n2); }
+  .pz-header__link.is-active--duo { background: var(--pz-duo); }
+
+  /* Contraste AA: donde el blanco no llega, texto oscuro.
+     Claro: cyan (n2) es claro → texto negro. Oscuro: --pz-fg es blanco,
+     así que los fills saturados llevan negro explícito. */
+  :global([data-theme='light']) .pz-header__link.is-active--n2 { color: #000; }
+  :global([data-theme='dark']) .pz-header__link.is-active--n1,
+  :global([data-theme='dark']) .pz-header__link.is-active--n2,
+  :global([data-theme='dark']) .pz-header__link.is-active--duo { color: #000; }
 
   /* Flecha (sólo mobile) */
   .pz-header__arrow { display: none; }
@@ -272,9 +273,14 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
       font-size: clamp(1.6rem, 7vw, 2.4rem);
       color: var(--pz-fg);
       padding: var(--pz-space-2xs) 0;
+      border: none;
       overflow: hidden;
     }
-    .pz-header__link::after { display: none; }
+    /* En mobile el active se comunica con la flecha, no con el fill */
+    .pz-header__link:hover,
+    .pz-header__link.is-active--n1,
+    .pz-header__link.is-active--n2,
+    .pz-header__link.is-active--duo { background: transparent; color: var(--pz-fg); }
 
     .pz-header__arrow {
       display: block;
