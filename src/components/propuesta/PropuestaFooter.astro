@@ -9,7 +9,11 @@ const year = 2026; // fijo: Date no disponible en algunos entornos de build
   <div class="pz-container">
     <div class="pz-footer__grid">
       <div class="pz-footer__brand">
-        <p class="pz-footer__mark">◉ Cátedra Zachin</p>
+        <p class="pz-footer__mark">
+          <img src="/images/logo-iso-white-bold.svg" alt="" class="pz-footer__logo pz-footer__logo--dark" width="28" height="28" />
+          <img src="/images/logo-iso-black-bold.svg" alt="" class="pz-footer__logo pz-footer__logo--light" width="28" height="28" />
+          Cátedra Zachin
+        </p>
         <p class="pz-footer__tag">Tecnología · Niveles 1 &amp; 2<br />FADU — UBA</p>
       </div>
 
@@ -50,9 +54,20 @@ const year = 2026; // fijo: Date no disponible en algunos entornos de build
 
 <style>
   .pz-footer {
-    border-top: var(--pz-border-width) solid var(--pz-fg);
+    position: relative;
     padding-block: var(--pz-space-2xl) var(--pz-space-lg);
     margin-top: var(--pz-space-2xl);
+  }
+  /* Divisor superior al ancho del contenido (no full-bleed) */
+  .pz-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(min(100%, var(--pz-max-width)) - 2 * var(--pz-container-pad));
+    height: var(--pz-border-width);
+    background: var(--pz-fg);
   }
 
   .pz-footer__grid {
@@ -62,11 +77,19 @@ const year = 2026; // fijo: Date no disponible en algunos entornos de build
   }
 
   .pz-footer__mark {
+    display: flex;
+    align-items: center;
+    gap: var(--pz-space-xs);
     font-family: var(--pz-font-display);
     font-weight: var(--pz-display-weight);
     font-size: 1.25rem;
     letter-spacing: var(--pz-display-tracking);
   }
+  .pz-footer__logo { width: 1.75rem; height: 1.75rem; object-fit: contain; }
+  :global([data-theme='dark']) .pz-footer__logo--dark { display: block; }
+  :global([data-theme='dark']) .pz-footer__logo--light { display: none; }
+  :global([data-theme='light']) .pz-footer__logo--dark { display: none; }
+  :global([data-theme='light']) .pz-footer__logo--light { display: block; }
   .pz-footer__tag { color: var(--pz-muted); font-size: 0.85rem; margin-top: var(--pz-space-xs); }
 
   .pz-footer__heading {
