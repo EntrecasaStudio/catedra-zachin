@@ -23,7 +23,7 @@ const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=FADU+UBA+Intend
 
   <!-- Zona 1: Correo (3 canales iguales, diferenciados por color) -->
   <Section eyebrow="Correo" flush>
-    <Grid cols={3} colsMd={3} colsSm={1} data-reveal-group>
+    <Grid cols={3} colsMd={1} colsSm={1} data-reveal-group>
       {mails.map((m) => (
         <a
           class:list={['cmail', `cmail--${m.accent}`]}

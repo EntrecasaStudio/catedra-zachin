@@ -277,12 +277,15 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
-      transition: opacity var(--pz-transition-slow), visibility var(--pz-transition-slow);
+      /* Cierre (estado base): un toque más lento que la apertura. */
+      transition: opacity 0.6s ease, visibility 0.6s ease;
     }
     .pz-header__nav.is-open {
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
+      /* Apertura: más ágil. */
+      transition: opacity var(--pz-transition-slow), visibility var(--pz-transition-slow);
     }
 
     /* Línea que "baja": el divider del tope de la nav se desplaza hasta el footer
@@ -297,10 +300,13 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       background: var(--pz-fg);
       z-index: 3;
       transform: translateY(0);
-      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      /* Reversión (cierre): más lenta. */
+      transition: transform 0.72s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .pz-header__nav.is-open .pz-header__sweep {
       transform: translateY(var(--pz-sweep-travel, calc(100dvh - var(--pz-header-height) - 6rem)));
+      /* Bajada (apertura). */
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .pz-header__list {
@@ -341,9 +347,13 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     .pz-header__link--n2 { --_tone: var(--pz-n2); }
     .pz-header__link--duo { --_tone: var(--pz-duo); }
 
-    /* Etiqueta: en mobile el nombre completo */
+    /* Etiqueta: en mobile el nombre completo (se corre para hacerle lugar a la flecha) */
     .pz-header__label { display: none; }
-    .pz-header__label-full { display: block; }
+    .pz-header__label-full {
+      display: block;
+      transform: translateX(calc(-1.3rem - var(--pz-space-sm)));
+      transition: transform 0.3s ease-out;
+    }
 
     /* Anula el fill de chip del desktop en mobile (sin fill → texto en --pz-fg,
        no el #000 que usa el chip lleno; si no, el activo queda negro sobre negro). */
@@ -354,15 +364,22 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     :global([data-theme='dark']) .pz-header__link.is-active--n2,
     :global([data-theme='dark']) .pz-header__link.is-active--duo { color: var(--pz-fg); }
 
-    /* Activo: flecha teñida del color del nivel (sin barras verticales) */
+    /* Flecha con reveal en hover/activo (como estaba): entra desde la izquierda. */
     .pz-header__arrow {
-      display: none;
+      display: block;
       width: 1.3rem;
       height: 1.3rem;
       flex-shrink: 0;
-      color: var(--_tone, var(--pz-fg));
+      color: var(--pz-muted);
+      opacity: 0;
+      transform: translateX(-120%);
+      transition: opacity 0.3s ease-out, transform 0.3s ease-out;
     }
-    .pz-header__link.is-active .pz-header__arrow { display: block; }
+    .pz-header__link:hover .pz-header__arrow,
+    .pz-header__link.is-active .pz-header__arrow { opacity: 1; transform: translateX(0); }
+    .pz-header__link:hover .pz-header__label-full,
+    .pz-header__link.is-active .pz-header__label-full { transform: translateX(0); }
+    .pz-header__link.is-active .pz-header__arrow { color: var(--pz-fg); }
 
     .pz-header__menu-footer {
       display: flex;
