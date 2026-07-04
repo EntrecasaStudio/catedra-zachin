@@ -66,6 +66,13 @@ const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=FADU+UBA+Intend
   <!-- Zona 3: Redes (banda de cierre) -->
   <Section>
     <a class="cont-social" href="https://instagram.com/catedrazachin" target="_blank" rel="noopener noreferrer" data-reveal>
+      <span class="cont-social__icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+        </svg>
+      </span>
       <Tag tone="solid">Instagram</Tag>
       <span class="cont-social__handle">@catedrazachin</span>
       <span class="cont-social__desc">Novedades, eventos y contenido de la cátedra.</span>
@@ -223,6 +230,17 @@ const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=FADU+UBA+Intend
     transition: box-shadow var(--pz-transition);
   }
   .cont-social:hover { box-shadow: var(--pz-shadow-hover); }
+  .cont-social__icon {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    color: var(--pz-fg);
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+  }
+  .cont-social__icon svg { width: 1.4rem; height: 1.4rem; }
   .cont-social__handle {
     font-family: var(--pz-font-display);
     font-weight: 800;
