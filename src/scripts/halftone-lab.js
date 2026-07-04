@@ -81,7 +81,6 @@ export function initHalftoneLab(root, opts = {}) {
   let lastFrameTime = performance.now();
   let rafId = null;
   let running = false;
-  let startRetries = 0; // iOS Safari: el layout (100dvh) puede no estar listo al primer start()
   let lastIsDark = null; // detecta cambio de tema para regenerar la geometría
 
   function generateDotsForChannel(ch) {
@@ -503,33 +502,37 @@ export function initHalftoneLab(root, opts = {}) {
   }
   window.addEventListener('resize', onResize);
 
-  return {
+  let wantRun = false;
+  let ro = null;
+
+  function beginLoop() {
+    if (running) return;
+    resize();
+    if (displayW === 0) return; // sin medir todavía; el ResizeObserver reintenta al aparecer
+    running = true;
+    updateButtonStates();
+    if (reducedMotion) {
+      drawStaticFrame();
+    } else {
+      lastFrameTime = performance.now();
+      rafId = requestAnimationFrame(draw);
+    }
+  }
+
+  const api = {
     start() {
-      if (running) return;
-      resize();
-      if (displayW === 0) {
-        // Layout aún sin medir (típico en iOS Safari al cargar): reintentar en el
-        // próximo frame en vez de abandonar para siempre.
-        if (startRetries++ < 90) requestAnimationFrame(() => { if (!running) this.start(); });
-        return;
-      }
-      startRetries = 0;
-      running = true;
-      updateButtonStates();
-      if (reducedMotion) {
-        drawStaticFrame();
-      } else {
-        lastFrameTime = performance.now();
-        rafId = requestAnimationFrame(draw);
-      }
+      wantRun = true;
+      beginLoop();
     },
     stop() {
+      wantRun = false;
       running = false;
       if (rafId) cancelAnimationFrame(rafId);
       rafId = null;
     },
     destroy() {
       this.stop();
+      if (ro) ro.disconnect();
       window.removeEventListener('resize', onResize);
       stage.removeEventListener('mousemove', onMove);
       stage.removeEventListener('mouseleave', onLeave);
@@ -549,4 +552,22 @@ export function initHalftoneLab(root, opts = {}) {
       if (resetBtn) resetBtn.removeEventListener('click', onReset);
     },
   };
+
+  // iOS Safari: el layout puede tardar en medirse (100dvh / aspect-ratio). Un
+  // ResizeObserver arranca el lab en cuanto el stage tiene tamaño real, y reajusta
+  // ante cambios — más confiable que reintentar por frames y abandonar.
+  if (typeof ResizeObserver !== 'undefined') {
+    ro = new ResizeObserver(() => {
+      const rect = stage.getBoundingClientRect();
+      if (rect.width < 1 || rect.height < 1) return;
+      if (Math.abs(rect.width - displayW) > 0.5 || Math.abs(rect.height - displayH) > 0.5) {
+        resize();
+        if (reducedMotion && running) drawStaticFrame();
+      }
+      if (wantRun && !running) beginLoop();
+    });
+    ro.observe(stage);
+  }
+
+  return api;
 }
