@@ -1,142 +1,263 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import PropuestaLayout from '../layouts/PropuestaLayout.astro';
+import Section from '../components/propuesta/Section.astro';
+import Grid from '../components/propuesta/Grid.astro';
+import Tag from '../components/propuesta/Tag.astro';
+import Button from '../components/propuesta/Button.astro';
+
+// Correo: 3 canales paralelos. General sirve a ambos niveles → acento duo.
+const mails = [
+  { titulo: 'General', mail: 'cat.zachin@fadu.uba.ar', desc: 'Consultas generales de la cátedra.', tone: 'default', accent: 'duo' },
+  { titulo: 'Nivel 1', mail: 'cat.zachin.tecno1@gmail.com', desc: 'Programa y cursada de Nivel 1.', tone: 'n1', accent: 'n1' },
+  { titulo: 'Nivel 2', mail: 'cat.zachin.tecno2@gmail.com', desc: 'Programa y cursada de Nivel 2.', tone: 'n2', accent: 'n2' },
+];
+const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=FADU+UBA+Intendente+Güiraldes+2160';
 ---
 
-<BaseLayout title="Contacto | Cátedra Zachin" description="Información de contacto de la Cátedra Zachin.">
-  <section class="page-header">
-    <div class="container">
-      <span class="page-header__label">Contacto</span>
-      <h1>Contacto</h1>
-      <p class="page-header__desc">Información de contacto de la cátedra.</p>
-    </div>
+<PropuestaLayout title="Contacto | Propuesta Zachin" description="Información de contacto de la Cátedra Zachin.">
+  <section class="cont-hero pz-container" data-reveal-group>
+    <span class="pz-eyebrow" data-reveal>Contacto</span>
+    <h1 class="cont-hero__title" data-reveal>Escribinos</h1>
+    <p class="cont-hero__desc" data-reveal>Elegí el canal según tu consulta.</p>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <div class="contacto-grid">
-        <!-- Mails -->
-        <div class="contacto-card">
-          <h3>General</h3>
-          <a href="mailto:cat.zachin@fadu.uba.ar" class="contacto-mail">cat.zachin@fadu.uba.ar</a>
-          <p class="contacto-card__desc">Consultas generales de la cátedra.</p>
-        </div>
+  <!-- Zona 1: Correo (3 canales iguales, diferenciados por color) -->
+  <Section eyebrow="Correo" flush>
+    <Grid cols={3} colsMd={3} colsSm={1} data-reveal-group>
+      {mails.map((m) => (
+        <a
+          class:list={['cmail', `cmail--${m.accent}`]}
+          href={`mailto:${m.mail}`}
+          data-reveal
+          aria-label={`Escribir a ${m.titulo}: ${m.mail}`}
+        >
+          <span class="cmail__kicker">Correo</span>
+          <Tag tone={m.tone}>{m.titulo}</Tag>
+          <span class="cmail__addr">{m.mail}</span>
+          <span class="cmail__desc">{m.desc}</span>
+          <span class="cmail__cta">Escribir →</span>
+        </a>
+      ))}
+    </Grid>
+  </Section>
 
-        <div class="contacto-card">
-          <h3>Nivel 1</h3>
-          <a href="mailto:cat.zachin.tecno1@gmail.com" class="contacto-mail">cat.zachin.tecno1@gmail.com</a>
-          <p class="contacto-card__desc">Consultas sobre programa y cursada de Nivel 1.</p>
-        </div>
-
-        <div class="contacto-card">
-          <h3>Nivel 2</h3>
-          <a href="mailto:cat.zachin.tecno2@gmail.com" class="contacto-mail">cat.zachin.tecno2@gmail.com</a>
-          <p class="contacto-card__desc">Consultas sobre programa y cursada de Nivel 2.</p>
-        </div>
-
-        <!-- Instagram -->
-        <div class="contacto-card">
-          <h3>Instagram</h3>
-          <a href="https://instagram.com/catedrazachin" target="_blank" rel="noopener noreferrer" class="contacto-instagram">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-            </svg>
-            @catedrazachin
-          </a>
-          <p class="contacto-card__desc">Seguinos para novedades, eventos y contenido de la cátedra.</p>
-        </div>
-
-        <!-- Cursada -->
-        <div class="contacto-card">
-          <h3>Cursada</h3>
-          <div class="contacto-info">
-            <p><strong>Sede:</strong> FADU - UBA</p>
-            <p><strong>Dirección:</strong> Intendente Güiraldes 2160, CABA</p>
-            <p><strong>Horarios:</strong> Consultar por mail según nivel</p>
-          </div>
-        </div>
+  <!-- Zona 2: Cursada (dato de referencia, un slab, no card) -->
+  <Section eyebrow="Cursada" title="Cuándo y dónde">
+    <div class="cursada" data-reveal>
+      <div class="cursada__col">
+        <span class="cursada__kicker">Horarios · Viernes</span>
+        <dl class="timetable">
+          <div class="turno"><dt>Mañana</dt><dd class="turno__time">09:00–13:00</dd></div>
+          <div class="turno"><dt>Noche</dt><dd class="turno__time">19:00–23:00</dd></div>
+        </dl>
+      </div>
+      <div class="cursada__col cursada__sede">
+        <span class="cursada__kicker">Sede</span>
+        <address class="cursada__addr">
+          <strong>FADU — UBA</strong>
+          Intendente Güiraldes 2160<br />
+          Ciudad Universitaria, CABA
+        </address>
+        <Button href={mapsUrl} variant="secondary" size="sm" target="_blank" rel="noopener noreferrer">Cómo llegar →</Button>
       </div>
     </div>
-  </section>
-</BaseLayout>
+  </Section>
+
+  <!-- Zona 3: Redes (banda de cierre) -->
+  <Section>
+    <a class="cont-social" href="https://instagram.com/catedrazachin" target="_blank" rel="noopener noreferrer" data-reveal>
+      <span class="cont-social__icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+        </svg>
+      </span>
+      <Tag tone="solid">Instagram</Tag>
+      <span class="cont-social__handle">@catedrazachin</span>
+      <span class="cont-social__desc">Novedades, eventos y contenido de la cátedra.</span>
+      <span class="cont-social__cta">Seguinos →</span>
+    </a>
+  </Section>
+</PropuestaLayout>
 
 <style>
-  .page-header {
-    padding-top: calc(var(--header-height) + var(--space-2xl));
-    padding-bottom: var(--space-xl);
-    
-  }
+  .cont-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
+  .cont-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
+  .cont-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin-top: var(--pz-space-md); }
 
-  .page-header__label {
-    font-size: 0.75rem;
+  /* --- Zona 1: cards de correo (misma geometría, color por acento) --- */
+  .cmail {
+    --_accent: var(--pz-fg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--pz-space-xs);
+    height: 100%;
+    padding: var(--pz-space-lg);
+    padding-top: calc(var(--pz-space-lg) + 6px);
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-bg);
+    color: var(--pz-fg);
+    transition: box-shadow var(--pz-transition);
+  }
+  .cmail::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 6px;
+    background: var(--_accent);
+  }
+  .cmail--duo { --_accent: var(--pz-duo); }
+  .cmail--n1 { --_accent: var(--pz-n1); }
+  .cmail--n2 { --_accent: var(--pz-n2); }
+  .cmail:hover { box-shadow: var(--pz-shadow-hover); }
+  .cmail:active { box-shadow: var(--pz-shadow); }
+  .cmail__kicker {
+    font-family: var(--pz-font-mono);
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--color-text-secondary);
-    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--pz-muted);
+  }
+  .cmail__addr {
+    font-family: var(--pz-font-display);
+    font-weight: 800;
+    font-size: 1.05rem;
+    word-break: break-word;
+  }
+  .cmail:hover .cmail__addr { text-decoration: underline; }
+  .cmail__desc { color: var(--pz-muted); font-size: 0.85rem; }
+  .cmail__cta {
+    margin-top: auto;
+    padding-top: var(--pz-space-sm);
+    font-family: var(--pz-font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
-  .page-header h1 {
-    font-size: clamp(2.5rem, 8vw, 5rem);
-    margin-top: var(--space-sm);
-  }
-
-  .page-header__desc {
-    margin-top: var(--space-md);
-    color: var(--color-text-secondary);
-    font-size: 1.125rem;
-  }
-
-  .contacto-grid {
+  /* --- Zona 2: slab de cursada --- */
+  .cursada {
+    position: relative;
+    overflow: hidden;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-lg);
+    grid-template-columns: 1.4fr 1fr;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-bg);
   }
-
-  .contacto-card {
-    padding: var(--space-xl);
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
+  .cursada__col { padding: var(--pz-space-xl); }
+  .cursada__sede {
+    border-left: var(--pz-border-width) solid var(--pz-fg);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--pz-space-md);
   }
-
-  .contacto-card h3 {
-    margin-bottom: var(--space-md);
-    font-size: 1.25rem;
-  }
-
-  .contacto-mail {
-    font-size: 1.125rem;
-    font-weight: 600;
+  .cursada__kicker {
     display: block;
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--pz-space-md);
+    font-family: var(--pz-font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--pz-muted);
+  }
+  .timetable { display: flex; flex-direction: column; }
+  .turno {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: var(--pz-space-md);
+    padding-block: var(--pz-space-sm);
+    border-bottom: 1px solid var(--pz-muted);
+  }
+  .turno:last-child { border-bottom: 0; }
+  .turno dt {
+    font-family: var(--pz-font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .turno__time {
+    justify-self: end;
+    font-family: var(--pz-font-mono);
+    font-weight: 700;
+    font-size: clamp(1.4rem, 4vw, 2.1rem);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .cursada__addr {
+    font-style: normal;
+    color: var(--pz-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .cursada__addr strong {
+    display: block;
+    margin-bottom: var(--pz-space-2xs);
+    font-family: var(--pz-font-display);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--pz-fg);
   }
 
-  .contacto-card__desc {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
+  @media (max-width: 760px) {
+    .cursada { grid-template-columns: 1fr; }
+    .cursada__sede { border-left: 0; border-top: var(--pz-border-width) solid var(--pz-fg); }
   }
 
-  .contacto-instagram {
-    display: inline-flex;
+  /* --- Zona 3: banda social --- */
+  .cont-social {
+    display: flex;
     align-items: center;
-    gap: var(--space-sm);
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: var(--space-sm);
+    gap: var(--pz-space-md);
+    flex-wrap: wrap;
+    padding: var(--pz-space-lg) var(--pz-space-xl);
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-bg);
+    color: var(--pz-fg);
+    transition: box-shadow var(--pz-transition);
   }
-
-  .contacto-info p {
-    font-size: 0.9375rem;
-    margin-bottom: var(--space-xs);
+  .cont-social:hover { box-shadow: var(--pz-shadow-hover); }
+  .cont-social__icon {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    color: var(--pz-fg);
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
   }
-
-  .contacto-info strong {
-    color: var(--color-text);
+  .cont-social__icon svg { width: 1.4rem; height: 1.4rem; }
+  .cont-social__handle {
+    font-family: var(--pz-font-display);
+    font-weight: 800;
+    font-size: clamp(1.3rem, 4vw, 2rem);
   }
-
-  @media (max-width: 768px) {
-    .contacto-grid {
-      grid-template-columns: 1fr;
-    }
+  .cont-social:hover .cont-social__handle { text-decoration: underline; }
+  .cont-social__desc { color: var(--pz-muted); font-size: 0.9rem; }
+  .cont-social__cta {
+    margin-left: auto;
+    font-family: var(--pz-font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  @media (max-width: 620px) {
+    .cont-social__desc { flex-basis: 100%; order: 3; }
+    .cont-social__cta { margin-left: 0; }
   }
 </style>

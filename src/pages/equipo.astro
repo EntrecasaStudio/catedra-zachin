@@ -1,210 +1,33 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import PropuestaLayout from '../layouts/PropuestaLayout.astro';
+import Section from '../components/propuesta/Section.astro';
+import Grid from '../components/propuesta/Grid.astro';
+import DocenteCard from '../components/propuesta/DocenteCard.astro';
+import { docentes, groupDocentes } from '../data/docentes.js';
 
-type Docente = { nombre: string; rol: string; nivel: string; foto: string };
-
-const docentes: Docente[] = [
-  // Adjuntos
-  { nombre: 'Daniela Vulcano', rol: 'Adjunta', nivel: 'Nivel 1', foto: '/images/docentes/Adjunta-Daniela-Vulcano.png' },
-  { nombre: 'Leandro Barales', rol: 'Adjunto', nivel: 'Nivel 2', foto: '/images/docentes/Adjunto-Leandro-Barales.png' },
-  // JTPs
-  { nombre: 'Paula Rincón', rol: 'JTP', nivel: 'Nivel 1', foto: '/images/docentes/JTP-Paula-Rincon.png' },
-  { nombre: 'Gabriel Gutiérrez', rol: 'JTP', nivel: 'Nivel 1', foto: '/images/docentes/JTP-Gabriel-Gutierrez.jpg' },
-  { nombre: 'Julieta Casela', rol: 'JTP', nivel: 'Nivel 2', foto: '/images/docentes/JTP-Julieta-Casela.png' },
-  { nombre: 'Karina Kusner', rol: 'JTP', nivel: 'Nivel 2', foto: '/images/docentes/JTP-Karina-Kusner.png' },
-  // Docentes - Nivel 1
-  { nombre: 'Azul Moreno', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Azul-Moreno.png' },
-  { nombre: 'Camila Vidal Cabrera', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Camila-Vidal-Cabrera.png' },
-  { nombre: 'Juan Hileger', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Juan-Hileger.png' },
-  { nombre: 'Juan Maffeo', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Juan-Maffeo.png' },
-  { nombre: 'Laura Romano', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Laura-Romano.png' },
-  { nombre: 'Lucas Belfiore', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Lucas-Belfiore.png' },
-  { nombre: 'Valentina Scarfo', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Valentina-Scarfo.png' },
-  // Docentes - Nivel 2
-  { nombre: 'Antonella Scardino', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Antonella-Scardino.png' },
-  { nombre: 'Catalina Somoza', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Catalina-Somoza.png' },
-  { nombre: 'Emilia Madroñal', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Emilia-Madroñal.png' },
-  { nombre: 'Fiorella Nucara', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Fiorella-Nucara.png' },
-  { nombre: 'Greta Marazzi', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Greta-Marazzi.png' },
-  { nombre: 'Josefina Calvo', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Josefina-Calvo.png' },
-  { nombre: 'Josefina Tamargo', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Josefina-Tamargo.png' },
-  { nombre: 'Lucía Tievoli', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Lucía-Tievoli.png' },
-  { nombre: 'Noelia Fortunato', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Noelia-Fortunato.png' },
-  { nombre: 'Rocío López Ortiz', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Rocío-Lopez-Ortiz.png' },
-  { nombre: 'Romina Molina', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Romina-Molina.png' },
-  // Ayudantes - Nivel 1
-  { nombre: 'Alondra Márquez', rol: 'Ayudante', nivel: 'Nivel 1', foto: '/images/docentes/AYUDANTE-Alondra-Marquez.png' },
-  { nombre: 'Charo Hardouin', rol: 'Ayudante', nivel: 'Nivel 1', foto: '/images/docentes/AYUDANTE-Charo-Hardouin.png' },
-  { nombre: 'Iara Pizarro', rol: 'Ayudante', nivel: 'Nivel 1', foto: '/images/docentes/AYUDANTE-Iara-Pizarro.png' },
-  { nombre: 'Leila Moreno', rol: 'Ayudante', nivel: 'Nivel 1', foto: '/images/docentes/AYUDANTE-Leila-Moreno.png' },
-  { nombre: 'Lucía De Barbieri', rol: 'Ayudante', nivel: 'Nivel 1', foto: '/images/docentes/AYUDANTE-Lucia-DeBarbieri.png' },
-  { nombre: 'Luciana Billoni', rol: 'Ayudante', nivel: 'Nivel 1', foto: '/images/docentes/AYUDANTE-Luciana-Billoni.png' },
-  { nombre: 'Luis Sánchez', rol: 'Ayudante', nivel: 'Nivel 1', foto: '/images/docentes/AYUDANTE-Luis-Sanchez.png' },
-  { nombre: 'Maite Primante', rol: 'Ayudante', nivel: 'Nivel 1', foto: '/images/docentes/AYUDANTE-Maite-Primante.png' },
-  { nombre: 'Valeria López Matos', rol: 'Ayudante', nivel: 'Nivel 1', foto: '/images/docentes/AYUDANTE-Valeria-Lopez-Matos.png' },
-  // Ayudantes - Nivel 2
-  { nombre: 'Ana Álvarez', rol: 'Ayudante', nivel: 'Nivel 2', foto: '/images/docentes/AYUDANTE-Ana-Alvarez.png' },
-  { nombre: 'Celeste Díaz', rol: 'Ayudante', nivel: 'Nivel 2', foto: '/images/docentes/AYUDANTE-Celeste-Diaz.png' },
-  { nombre: 'César Flores', rol: 'Ayudante', nivel: 'Nivel 2', foto: '/images/docentes/AYUDANTE-Cesar-Flores.png' },
-  { nombre: 'Francisco Bontempi', rol: 'Ayudante', nivel: 'Nivel 2', foto: '/images/docentes/AYUDANTE-Francisco-Bontempi.png' },
-  { nombre: 'Guadalupe Silva', rol: 'Ayudante', nivel: 'Nivel 2', foto: '/images/docentes/AYUDANTE-Guadalupe-Silva.png' },
-  { nombre: 'Julieta Rotman', rol: 'Ayudante', nivel: 'Nivel 2', foto: '/images/docentes/AYUDANTE-julieta-Rotman.png' },
-  { nombre: 'Sofía Giuliano', rol: 'Ayudante', nivel: 'Nivel 2', foto: '/images/docentes/AYUDANTE-Sofía-Giuliano.png' },
-];
-
-// Group by role
-const groups = [
-  { label: 'Adjuntos', members: docentes.filter(d => d.rol.startsWith('Adjunt')) },
-  { label: 'Jefes de Trabajos Prácticos', members: docentes.filter(d => d.rol === 'JTP') },
-  { label: 'Docentes', members: docentes.filter(d => d.rol === 'Docente') },
-  { label: 'Ayudantes', members: docentes.filter(d => d.rol === 'Ayudante') },
-];
+const grupos = groupDocentes(docentes);
 ---
 
-<BaseLayout title="Plantel Docente | Cátedra Zachin" description="Conocé al plantel docente de la Cátedra Zachin.">
-  <section class="page-header">
-    <div class="container">
-      <span class="page-header__label">La cátedra</span>
-      <h1>Plantel Docente</h1>
-      <p class="page-header__desc">Los docentes y ayudantes que componen la cátedra de Tecnología.</p>
-    </div>
+<PropuestaLayout title="Plantel docente | Propuesta Zachin" description="El plantel docente de la Cátedra Zachin.">
+  <section class="equipo-hero pz-container" data-reveal-group>
+    <span class="pz-eyebrow" data-reveal>La cátedra</span>
+    <h1 class="equipo-hero__title" data-reveal>Plantel docente</h1>
+    <p class="equipo-hero__desc" data-reveal>
+      Los docentes y ayudantes que componen la cátedra de Tecnología.
+    </p>
   </section>
 
-  {groups.map(group => (
-    <section class="section equipo-section">
-      <div class="container">
-        <h2 class="equipo-section__title" data-animate>{group.label}</h2>
-        <div class="equipo-grid" data-animate-stagger>
-          {group.members.map(d => (
-            <div class="docente-card">
-              <div class="docente-card__avatar">
-                {d.foto
-                  ? <img src={d.foto} alt={`Foto de ${d.nombre}`} />
-                  : <span class="docente-card__initial">{d.nombre[0]}</span>
-                }
-              </div>
-              <h3 class="docente-card__nombre">{d.nombre}</h3>
-              <span class="docente-card__rol">{d.rol}</span>
-              <span class:list={['docente-card__nivel', { 'nivel--1': d.nivel === 'Nivel 1', 'nivel--2': d.nivel === 'Nivel 2' }]}>{d.nivel}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+  {grupos.map((grupo) => (
+    <Section reveal eyebrow={grupo.label} flush>
+      <Grid data-reveal cols={6} colsMd={3} colsSm={2} isEmpty={grupo.members.length === 0}>
+        {grupo.members.map((d) => <DocenteCard docente={d} />)}
+      </Grid>
+    </Section>
   ))}
-</BaseLayout>
+</PropuestaLayout>
 
 <style>
-  .page-header {
-    padding-top: calc(var(--header-height) + var(--space-2xl));
-    padding-bottom: var(--space-xl);
-  }
-
-  .page-header__label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--color-text-secondary);
-    font-weight: 600;
-  }
-
-  .page-header h1 {
-    font-size: clamp(2.5rem, 8vw, 5rem);
-    margin-top: var(--space-sm);
-  }
-
-  .page-header__desc {
-    margin-top: var(--space-md);
-    color: var(--color-text-secondary);
-    font-size: 1.125rem;
-  }
-
-  .equipo-section {
-    padding-block: var(--space-lg);
-  }
-
-  .equipo-section:first-of-type {
-    padding-top: 0;
-  }
-
-  .equipo-section__title {
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-lg);
-    padding-bottom: var(--space-sm);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .equipo-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-lg);
-  }
-
-  .docente-card {
-    text-align: center;
-    padding: var(--space-lg);
-  }
-
-  .docente-card__avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background-color: var(--color-surface);
-    border: 2px solid var(--color-border);
-    margin: 0 auto var(--space-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  .docente-card__avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .docente-card__initial {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--color-text-muted);
-  }
-
-  .docente-card__nombre {
-    font-size: 1rem;
-    margin-bottom: var(--space-xs);
-  }
-
-  .docente-card__rol {
-    font-size: 0.8125rem;
-    color: var(--color-text-secondary);
-    font-weight: 600;
-    display: block;
-  }
-
-  .docente-card__nivel {
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    display: block;
-    margin-top: var(--space-xs);
-    font-weight: 600;
-  }
-
-  .nivel--1 { color: var(--color-magenta); }
-  .nivel--2 { color: var(--color-cyan); }
-
-  @media (max-width: 768px) {
-    .equipo-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 480px) {
-    .equipo-grid {
-      grid-template-columns: 1fr;
-    }
-  }
+  .equipo-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
+  .equipo-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
+  .equipo-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin-top: var(--pz-space-md); max-width: 55ch; }
 </style>

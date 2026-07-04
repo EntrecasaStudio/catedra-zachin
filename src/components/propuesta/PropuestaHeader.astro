@@ -5,19 +5,19 @@
  * En mobile: menú fullscreen slide-in con entrada escalonada y toggle de tema adentro.
  */
 const nav = [
-  { href: '/propuesta/nivel-1', label: 'N1', tone: 'n1' },
-  { href: '/propuesta/nivel-2', label: 'N2', tone: 'n2' },
-  { href: '/propuesta/equipo', label: 'Plantel', tone: 'duo' },
-  { href: '/propuesta/galeria', label: 'Galería', tone: 'duo' },
-  { href: '/propuesta/contacto', label: 'Contacto', tone: 'duo' },
+  { href: '/nivel-1', label: 'N1', tone: 'n1' },
+  { href: '/nivel-2', label: 'N2', tone: 'n2' },
+  { href: '/equipo', label: 'Plantel', tone: 'duo' },
+  { href: '/galeria', label: 'Galería', tone: 'duo' },
+  { href: '/contacto', label: 'Contacto', tone: 'duo' },
 ];
 
-const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
 <header class="pz-header">
   <div class="pz-header__inner pz-container">
-    <a href="/propuesta" class="pz-header__brand" aria-label="Cátedra Zachin — Inicio">
+    <a href="/" class="pz-header__brand" aria-label="Cátedra Zachin — Inicio">
       <img src="/images/logo-iso-white-bold.svg" alt="Cátedra Zachin" class="pz-header__logo pz-header__logo--dark" width="40" height="40" />
       <img src="/images/logo-iso-black-bold.svg" alt="Cátedra Zachin" class="pz-header__logo pz-header__logo--light" width="40" height="40" />
     </a>

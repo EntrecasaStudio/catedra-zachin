@@ -1,592 +1,189 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import PropuestaLayout from '../layouts/PropuestaLayout.astro';
+import Section from '../components/propuesta/Section.astro';
+import Grid from '../components/propuesta/Grid.astro';
+import GaleriaItem from '../components/propuesta/GaleriaItem.astro';
+import { items, categorias, countByCategoria } from '../data/galeria.js';
 
-const items = [
-  // Jornada - fotos
-  { tipo: 'foto', src: '/images/galeria/jornada/IMG_3863.jpg', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'foto', src: '/images/galeria/jornada/IMG_3868.jpg', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'foto', src: '/images/galeria/jornada/IMG_3874.jpg', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'foto', src: '/images/galeria/jornada/IMG_4007.jpg', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'foto', src: '/images/galeria/jornada/IMG_1481.jpg', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'foto', src: '/images/galeria/jornada/IMG_1531.jpg', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'foto', src: '/images/galeria/jornada/IMG_4279.jpg', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'foto', src: '/images/galeria/jornada/IMG_4296.jpg', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'foto', src: '/images/galeria/jornada/IMG_9721.jpg', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'foto', src: '/images/galeria/jornada/IMG_9739.jpg', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  // Jornada - videos
-  { tipo: 'video', src: '/images/galeria/jornada/IMG_0024.mp4', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'video', src: '/images/galeria/jornada/IMG_0028.mp4', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'video', src: '/images/galeria/jornada/IMG_0036.mp4', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'video', src: '/images/galeria/jornada/IMG_0038.mp4', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'video', src: '/images/galeria/jornada/IMG_4326.mp4', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'video', src: '/images/galeria/jornada/IMG_4461.mp4', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'video', src: '/images/galeria/jornada/IMG_4477.mp4', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  { tipo: 'video', src: '/images/galeria/jornada/IMG_9852.mp4', alt: 'Jornada Zachin Live', categoria: 'jornada' },
-  // Taller - fotos
-  { tipo: 'foto', src: '/images/galeria/taller/IMG_2825.jpg', alt: 'Taller de producción', categoria: 'taller' },
-  { tipo: 'foto', src: '/images/galeria/taller/IMG_5407.jpg', alt: 'Taller de producción', categoria: 'taller' },
-  { tipo: 'foto', src: '/images/galeria/taller/taller.jpg', alt: 'Taller de producción', categoria: 'taller' },
-  // Taller - videos
-  { tipo: 'video', src: '/images/galeria/taller/IMG_3201.mp4', alt: 'Taller de producción', categoria: 'taller' },
-  { tipo: 'video', src: '/images/galeria/taller/IMG_4056.mp4', alt: 'Taller de producción', categoria: 'taller' },
-  { tipo: 'video', src: '/images/galeria/taller/IMG_8964.mp4', alt: 'Taller de producción', categoria: 'taller' },
-  // Clase - fotos
-  { tipo: 'foto', src: '/images/galeria/clase/IMG_4048.jpg', alt: 'Clase de tecnología', categoria: 'clase' },
-  { tipo: 'foto', src: '/images/galeria/clase/lean.jpg', alt: 'Clase de tecnología', categoria: 'clase' },
-  // Clase - videos
-  { tipo: 'video', src: '/images/galeria/clase/IMG_1042.mp4', alt: 'Clase de tecnología', categoria: 'clase' },
-  { tipo: 'video', src: '/images/galeria/clase/IMG_9965.mp4', alt: 'Clase de tecnología', categoria: 'clase' },
-  // TPs - fotos
-  { tipo: 'foto', src: '/images/galeria/tps/IMG_3529.jpg', alt: 'Trabajos prácticos', categoria: 'tps' },
-  { tipo: 'foto', src: '/images/galeria/tps/IMG_4073.jpg', alt: 'Trabajos prácticos', categoria: 'tps' },
-  { tipo: 'foto', src: '/images/galeria/tps/IMG_4087.jpg', alt: 'Trabajos prácticos', categoria: 'tps' },
-  { tipo: 'foto', src: '/images/galeria/tps/IMG_4130.jpg', alt: 'Trabajos prácticos', categoria: 'tps' },
-  { tipo: 'foto', src: '/images/galeria/tps/IMG_4131.jpg', alt: 'Trabajos prácticos', categoria: 'tps' },
-  { tipo: 'foto', src: '/images/galeria/tps/IMG_5138.jpg', alt: 'Trabajos prácticos', categoria: 'tps' },
-  // TPs - videos
-  { tipo: 'video', src: '/images/galeria/tps/IMG_0764.mp4', alt: 'Trabajos prácticos', categoria: 'tps' },
-  { tipo: 'video', src: '/images/galeria/tps/IMG_0776.mp4', alt: 'Trabajos prácticos', categoria: 'tps' },
-  { tipo: 'video', src: '/images/galeria/tps/IMG_0780.mp4', alt: 'Trabajos prácticos', categoria: 'tps' },
-  { tipo: 'video', src: '/images/galeria/tps/IMG_0841.mp4', alt: 'Trabajos prácticos', categoria: 'tps' },
-  { tipo: 'video', src: '/images/galeria/tps/IMG_9443.mp4', alt: 'Trabajos prácticos', categoria: 'tps' },
-];
-
-const categorias = ['todas', 'jornada', 'taller', 'clase', 'tps'];
-
-// Count items per category
-const counts: Record<string, number> = { todas: items.length };
-for (const cat of categorias.filter(c => c !== 'todas')) {
-  counts[cat] = items.filter(i => i.categoria === cat).length;
-}
+const counts = countByCategoria(items);
+const label = (c) => (c === 'tps' ? 'TPs' : c.charAt(0).toUpperCase() + c.slice(1));
 ---
 
-<BaseLayout title="Galería | Cátedra Zachin" description="Fotos y videos de clases, talleres, jornadas y TPs de la Cátedra Zachin.">
-  <section class="page-header">
-    <div class="container">
-      <span class="page-header__label">Multimedia</span>
-      <h1>Galería</h1>
-      <p class="page-header__desc">Fotos y videos de clases, talleres, jornadas y TPs de la cátedra.</p>
-    </div>
+<PropuestaLayout title="Galería | Propuesta Zachin" description="Fotos y videos de clases, talleres, jornadas y TPs de la Cátedra Zachin.">
+  <section class="gal-hero pz-container" data-reveal-group>
+    <span class="pz-eyebrow" data-reveal>Multimedia</span>
+    <h1 class="gal-hero__title" data-reveal>Galería</h1>
+    <p class="gal-hero__desc" data-reveal>Fotos y videos de clases, talleres, jornadas y TPs de la cátedra.</p>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <div class="galeria-filters" id="galeria-filters" role="tablist" aria-label="Filtrar galería por categoría">
-        {categorias.map(cat => (
-          <button
-            class:list={['filter-btn', { active: cat === 'todas' }]}
-            data-filter={cat}
-            role="tab"
-            aria-selected={cat === 'todas' ? 'true' : 'false'}
-          >
-            {cat === 'tps' ? 'TPs' : cat.charAt(0).toUpperCase() + cat.slice(1)}
-            <span class="filter-btn__count">{counts[cat]}</span>
-          </button>
-        ))}
-      </div>
-
-      <div class="galeria-grid" id="galeria-grid">
-        {items.map((item, i) => (
-          <div class="galeria-item" data-categoria={item.categoria} data-index={i} data-tipo={item.tipo} data-src={item.src} data-alt={item.alt}>
-            {item.tipo === 'foto' ? (
-              <div class="galeria-item__img">
-                <img src={item.src} alt={item.alt} loading="lazy" />
-              </div>
-            ) : (
-              <div class="galeria-item__video">
-                <video src={item.src} muted loop playsinline preload="metadata">
-                  <track kind="captions" />
-                </video>
-                <div class="galeria-item__play">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-                    <polygon points="5 3 19 12 5 21 5 3"/>
-                  </svg>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+  <Section flush>
+    <div class="gal-filters" id="gal-filters" data-reveal role="tablist" aria-label="Filtrar galería por categoría">
+      {categorias.map((cat, i) => (
+        <button
+          class:list={['pz-btn', 'pz-btn--secondary', 'pz-btn--sm', { 'is-active': i === 0 }]}
+          data-filter={cat}
+          role="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+        >
+          {label(cat)}<span class="gal-filters__count">{counts[cat]}</span>
+        </button>
+      ))}
     </div>
-  </section>
+
+    <Grid data-reveal cols={3} colsMd={2} colsSm={1} id="gal-grid" isEmpty={items.length === 0} emptyText="No hay material cargado todavía.">
+      {items.map((item, i) => <GaleriaItem item={item} index={i} />)}
+    </Grid>
+  </Section>
 
   <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" aria-hidden="true">
-    <button class="lightbox__close" id="lightbox-close" aria-label="Cerrar">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
-    </button>
-    <button class="lightbox__nav lightbox__prev" id="lightbox-prev" aria-label="Anterior">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <polyline points="15 18 9 12 15 6"/>
-      </svg>
-    </button>
-    <button class="lightbox__nav lightbox__next" id="lightbox-next" aria-label="Siguiente">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <polyline points="9 18 15 12 9 6"/>
-      </svg>
-    </button>
-    <div class="lightbox__content" id="lightbox-content"></div>
-    <div class="lightbox__info">
-      <span class="lightbox__counter" id="lightbox-counter"></span>
-      <span class="lightbox__alt" id="lightbox-alt"></span>
-    </div>
+  <div class="gal-lightbox" id="gal-lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Vista ampliada">
+    <button class="gal-lightbox__btn gal-lightbox__close" id="gal-close" aria-label="Cerrar">✕</button>
+    <button class="gal-lightbox__btn gal-lightbox__nav gal-lightbox__prev" id="gal-prev" aria-label="Anterior">‹</button>
+    <button class="gal-lightbox__btn gal-lightbox__nav gal-lightbox__next" id="gal-next" aria-label="Siguiente">›</button>
+    <div class="gal-lightbox__content" id="gal-content"></div>
+    <div class="gal-lightbox__info"><span id="gal-counter"></span> · <span id="gal-alt"></span></div>
   </div>
-</BaseLayout>
+</PropuestaLayout>
 
 <style>
-  .page-header {
-    padding-top: calc(var(--header-height) + var(--space-2xl));
-    padding-bottom: var(--space-xl);
-    
-  }
+  .gal-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
+  .gal-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
+  .gal-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin-top: var(--pz-space-md); }
 
-  .page-header__label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--color-text-secondary);
-    font-weight: 600;
-  }
+  .gal-filters { display: flex; flex-wrap: wrap; gap: var(--pz-space-xs); margin-bottom: var(--pz-space-xl); }
+  .gal-filters .is-active { background: var(--pz-duo); color: var(--pz-on-accent); border-color: transparent; box-shadow: none; }
+  .gal-filters__count { margin-left: 0.35rem; opacity: 0.6; }
 
-  .page-header h1 {
-    font-size: clamp(2.5rem, 8vw, 5rem);
-    margin-top: var(--space-sm);
-  }
-
-  .page-header__desc {
-    margin-top: var(--space-md);
-    color: var(--color-text-secondary);
-    font-size: 1.125rem;
-  }
-
-  .galeria-filters {
-    display: flex;
-    gap: var(--space-sm);
-    margin-bottom: var(--space-xl);
-    flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    padding: var(--space-sm) var(--space-md);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border: 1px solid var(--color-border);
-    border-radius: 2px;
-    color: var(--color-text-secondary);
-    transition: all var(--transition-fast);
-  }
-
-  .filter-btn__count {
-    font-size: 0.6875rem;
-    opacity: 0.5;
-    margin-left: 2px;
-  }
-
-  .filter-btn:hover,
-  .filter-btn.active {
-    border-color: var(--color-text);
-    color: var(--color-text);
-  }
-
-  .galeria-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-md);
-  }
-
-  .galeria-item {
-    cursor: pointer;
-  }
-
-  .galeria-item__img,
-  .galeria-item__video {
-    aspect-ratio: 4/3;
-    border-radius: 4px;
-    overflow: hidden;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    position: relative;
-  }
-
-  .galeria-item__img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--transition-base);
-  }
-
-  .galeria-item__img:hover img {
-    transform: scale(1.05);
-  }
-
-  .galeria-item__video video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--transition-base);
-  }
-
-  .galeria-item__video:hover video {
-    transform: scale(1.05);
-  }
-
-  .galeria-item__play {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.2);
-    color: white;
-    transition: background var(--transition-fast);
-    pointer-events: none;
-  }
-
-  .galeria-item__video:hover .galeria-item__play {
-    background: rgba(0, 0, 0, 0.1);
-  }
-
-  .galeria-item[hidden] {
-    display: none;
-  }
-
-  /* Lightbox */
-  .lightbox {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .gal-lightbox {
+    position: fixed; inset: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
     background: rgba(0, 0, 0, 0.96);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    opacity: 0; visibility: hidden;
+    transition: opacity var(--pz-transition), visibility var(--pz-transition);
   }
-
-  .lightbox.active {
-    opacity: 1;
-    visibility: visible;
+  .gal-lightbox.is-open { opacity: 1; visibility: visible; }
+  .gal-lightbox__content { max-width: 90vw; max-height: 82vh; display: flex; }
+  .gal-lightbox__content :global(img),
+  .gal-lightbox__content :global(video) {
+    max-width: 90vw; max-height: 82vh; object-fit: contain;
+    border: var(--pz-border-width) solid #fff;
   }
-
-  /* Hide everything when lightbox is open */
-  :global(body.lightbox-open > *:not(.lightbox):not(script):not(astro-dev-toolbar)) {
-    visibility: hidden !important;
-    pointer-events: none !important;
+  /* Botones brutalistas: caja blanca sólida, glifo negro; hover → gradiente */
+  .gal-lightbox__btn {
+    position: absolute; z-index: 2;
+    width: 3rem; height: 3rem; display: grid; place-items: center;
+    font-size: 1.4rem; line-height: 1;
+    color: #000; background: #fff;
+    border: var(--pz-border-width) solid #fff;
+    transition: background var(--pz-transition), color var(--pz-transition);
   }
-
-  .lightbox__content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    max-width: 90vw;
-    max-height: 80vh;
+  .gal-lightbox__btn:hover { background: var(--pz-duo); color: #fff; border-color: transparent; }
+  .gal-lightbox__close { top: 1rem; right: 1rem; }
+  .gal-lightbox__nav { top: 50%; transform: translateY(-50%); }
+  .gal-lightbox__prev { left: 1rem; }
+  .gal-lightbox__next { right: 1rem; }
+  /* Info como chip mono sólido */
+  .gal-lightbox__info {
+    position: absolute; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
+    padding: 0.3rem 0.7rem;
+    background: #fff; color: #000;
+    font-family: var(--pz-font-mono); font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
   }
-
-  .lightbox__content :global(img) {
-    max-width: 90vw;
-    max-height: 80vh;
-    object-fit: contain;
-    border-radius: 4px;
-    animation: lbFadeIn 0.25s ease;
-  }
-
-  .lightbox__content :global(video) {
-    max-width: 90vw;
-    max-height: 80vh;
-    object-fit: contain;
-    border-radius: 4px;
-    animation: lbFadeIn 0.25s ease;
-  }
-
-  @keyframes lbFadeIn {
-    from { opacity: 0; transform: scale(0.96); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .lightbox__close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 2;
-    color: rgba(255, 255, 255, 0.7);
-    background: none;
-    border: none;
-    cursor: pointer;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: color 0.2s ease, background 0.2s ease;
-  }
-
-  .lightbox__close:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .lightbox__nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 2;
-    color: rgba(255, 255, 255, 0.7);
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    cursor: pointer;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-  }
-
-  .lightbox__nav:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
-  .lightbox__prev { left: 1rem; }
-  .lightbox__next { right: 1rem; }
-
-  .lightbox__info {
-    position: absolute;
-    bottom: 1.25rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  .lightbox__counter {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-
-  .lightbox__alt {
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 0.75rem;
-  }
-
-  @media (max-width: 768px) {
-    .galeria-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .lightbox__nav {
-      width: 40px;
-      height: 40px;
-    }
-
-    .lightbox__prev { left: 0.5rem; }
-    .lightbox__next { right: 0.5rem; }
-
-    .lightbox__content :global(img),
-    .lightbox__content :global(video) {
-      max-width: 96vw;
-      max-height: 75vh;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .galeria-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .lightbox__nav {
-      top: auto;
-      bottom: 4rem;
-      transform: none;
-    }
-
-    .lightbox__prev { left: 1.5rem; }
-    .lightbox__next { right: 1.5rem; }
+  @media (max-width: 560px) {
+    .gal-lightbox__nav { top: auto; bottom: 4.5rem; transform: none; }
+    .gal-lightbox__prev { left: 1.5rem; }
+    .gal-lightbox__next { right: 1.5rem; }
   }
 </style>
 
 <script>
   document.addEventListener('astro:page-load', () => {
-    const filters = document.getElementById('galeria-filters');
-    const grid = document.getElementById('galeria-grid');
-    const lightbox = document.getElementById('lightbox');
-    const lbContent = document.getElementById('lightbox-content');
-    const lbCounter = document.getElementById('lightbox-counter');
-    const lbAlt = document.getElementById('lightbox-alt');
-    const lbClose = document.getElementById('lightbox-close');
-    const lbPrev = document.getElementById('lightbox-prev');
-    const lbNext = document.getElementById('lightbox-next');
-    if (!filters || !grid || !lightbox || !lbContent) return;
+    const filters = document.getElementById('gal-filters');
+    const grid = document.getElementById('gal-grid');
+    const lb = document.getElementById('gal-lightbox');
+    const content = document.getElementById('gal-content');
+    const counter = document.getElementById('gal-counter');
+    const altEl = document.getElementById('gal-alt');
+    if (!filters || !grid || !lb || !content) return;
 
-    // Move lightbox to body to ensure it's above the fixed header
-    document.body.appendChild(lightbox);
+    document.body.appendChild(lb);
 
-    let currentIndex = -1;
-    let visibleItems: HTMLElement[] = [];
+    let index = -1;
+    let visible = [];
+    const getVisible = () => Array.from(grid.querySelectorAll('.pz-galitem:not([hidden])'));
 
-    function getVisibleItems(): HTMLElement[] {
-      return Array.from(grid.querySelectorAll('.galeria-item:not([hidden])')) as HTMLElement[];
-    }
-
-    // Filter buttons
     filters.addEventListener('click', (e) => {
-      const btn = (e.target as HTMLElement).closest('.filter-btn');
+      const btn = e.target.closest('[data-filter]');
       if (!btn) return;
-
-      filters.querySelectorAll('.filter-btn').forEach(b => {
-        b.classList.remove('active');
+      filters.querySelectorAll('[data-filter]').forEach((b) => {
+        b.classList.remove('is-active');
         b.setAttribute('aria-selected', 'false');
       });
-      btn.classList.add('active');
+      btn.classList.add('is-active');
       btn.setAttribute('aria-selected', 'true');
-
-      const filter = btn.getAttribute('data-filter');
-      grid.querySelectorAll('.galeria-item').forEach(item => {
-        if (filter === 'todas' || item.getAttribute('data-categoria') === filter) {
-          (item as HTMLElement).hidden = false;
-        } else {
-          (item as HTMLElement).hidden = true;
-        }
+      const f = btn.getAttribute('data-filter');
+      grid.querySelectorAll('.pz-galitem').forEach((it) => {
+        it.hidden = !(f === 'todas' || it.getAttribute('data-categoria') === f);
       });
     });
 
-    // Open lightbox on item click
     grid.addEventListener('click', (e) => {
-      const item = (e.target as HTMLElement).closest('.galeria-item') as HTMLElement;
-      if (!item) return;
-
-      visibleItems = getVisibleItems();
-      const idx = visibleItems.indexOf(item);
-      if (idx === -1) return;
-
-      openLightbox(idx);
+      const it = e.target.closest('.pz-galitem');
+      if (!it) return;
+      visible = getVisible();
+      const i = visible.indexOf(it);
+      if (i > -1) open(i);
     });
 
-    function openLightbox(idx: number) {
-      currentIndex = idx;
-      showItem(idx);
-      lightbox.classList.add('active');
-      lightbox.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-      document.body.classList.add('lightbox-open');
-      window.scrollTo(0, 0);
-    }
-
-    function closeLightbox() {
-      lightbox.classList.remove('active');
-      lightbox.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-      document.body.classList.remove('lightbox-open');
-
-      // Pause any playing video in lightbox
-      const vid = lbContent.querySelector('video');
-      if (vid) vid.pause();
-
-      // Also pause grid videos
-      grid.querySelectorAll('video').forEach(v => {
-        (v as HTMLVideoElement).pause();
-        v.closest('.galeria-item__video')?.classList.remove('playing');
-      });
-    }
-
-    function showItem(idx: number) {
-      const item = visibleItems[idx];
-      if (!item) return;
-
-      const tipo = item.getAttribute('data-tipo');
-      const src = item.getAttribute('data-src') || '';
-      const alt = item.getAttribute('data-alt') || '';
-
-      lbContent.innerHTML = '';
-
+    function show(i) {
+      const it = visible[i];
+      if (!it) return;
+      const tipo = it.getAttribute('data-tipo');
+      const src = it.getAttribute('data-src') || '';
+      const alt = it.getAttribute('data-alt') || '';
+      content.innerHTML = '';
       if (tipo === 'foto') {
         const img = document.createElement('img');
-        img.src = src;
-        img.alt = alt;
-        lbContent.appendChild(img);
+        img.src = src; img.alt = alt;
+        content.appendChild(img);
       } else {
-        const video = document.createElement('video');
-        video.src = src;
-        video.controls = true;
-        video.autoplay = true;
-        video.playsInline = true;
-        video.loop = true;
-        lbContent.appendChild(video);
+        const v = document.createElement('video');
+        v.src = src; v.controls = true; v.autoplay = true; v.loop = true; v.playsInline = true;
+        content.appendChild(v);
       }
-
-      if (lbCounter) lbCounter.textContent = `${idx + 1} / ${visibleItems.length}`;
-      if (lbAlt) lbAlt.textContent = alt;
-
-      // Update nav visibility
-      if (lbPrev) lbPrev.style.display = idx > 0 ? '' : 'none';
-      if (lbNext) lbNext.style.display = idx < visibleItems.length - 1 ? '' : 'none';
+      if (counter) counter.textContent = `${i + 1} / ${visible.length}`;
+      if (altEl) altEl.textContent = alt;
     }
 
-    function navigate(dir: number) {
-      const newIdx = currentIndex + dir;
-      if (newIdx < 0 || newIdx >= visibleItems.length) return;
-
-      // Pause current video if any
-      const vid = lbContent.querySelector('video');
-      if (vid) vid.pause();
-
-      currentIndex = newIdx;
-      showItem(newIdx);
+    function open(i) {
+      index = i;
+      show(i);
+      lb.classList.add('is-open');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lb.classList.remove('is-open');
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      content.querySelector('video')?.pause();
+    }
+    function nav(d) {
+      const n = index + d;
+      if (n < 0 || n >= visible.length) return;
+      index = n; show(n);
     }
 
-    // Event listeners
-    lbClose?.addEventListener('click', closeLightbox);
-    // Close on click outside the content
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
-    });
-    lbPrev?.addEventListener('click', () => navigate(-1));
-    lbNext?.addEventListener('click', () => navigate(1));
-
-    // Keyboard navigation
+    document.getElementById('gal-close')?.addEventListener('click', close);
+    document.getElementById('gal-prev')?.addEventListener('click', () => nav(-1));
+    document.getElementById('gal-next')?.addEventListener('click', () => nav(1));
+    lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
     document.addEventListener('keydown', (e) => {
-      if (!lightbox.classList.contains('active')) return;
-
-      switch (e.key) {
-        case 'Escape': closeLightbox(); break;
-        case 'ArrowLeft': navigate(-1); break;
-        case 'ArrowRight': navigate(1); break;
-      }
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') nav(-1);
+      else if (e.key === 'ArrowRight') nav(1);
     });
-
-    // Touch swipe
-    let touchStartX = 0;
-    let touchStartY = 0;
-
-    lightbox.addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    lightbox.addEventListener('touchend', (e) => {
-      const dx = e.changedTouches[0].clientX - touchStartX;
-      const dy = e.changedTouches[0].clientY - touchStartY;
-
-      // Only trigger if horizontal swipe is dominant and > 50px
-      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
-        if (dx > 0) navigate(-1);
-        else navigate(1);
-      }
-    }, { passive: true });
   });
 </script>
