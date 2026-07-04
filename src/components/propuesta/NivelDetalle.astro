@@ -78,23 +78,25 @@ const accent = nivel === 1 ? 'n1' : 'n2';
      Número como índice quieto a la izquierda; título dominante. */
   .niveldet-programa {
     list-style: none;
-    border-top: var(--pz-border-width) solid var(--pz-fg);
+    border-top: var(--pz-border-width) solid var(--_rule, var(--pz-fg));
   }
   .niveldet-prog {
     display: grid;
     grid-template-columns: clamp(2.5rem, 5vw, 3.5rem) minmax(0, 1fr);
     column-gap: var(--pz-space-lg);
-    align-items: start;
+    align-items: baseline; /* el nº queda sobre la baseline del título de la derecha */
     padding: var(--pz-space-lg) 0;
-    border-bottom: var(--pz-border-width) solid var(--pz-fg);
+    border-bottom: var(--pz-border-width) solid var(--_rule, var(--pz-fg));
   }
+  /* Reglas divisorias teñidas del color del nivel */
+  .niveldet-programa--n1 { --_rule: var(--pz-n1); }
+  .niveldet-programa--n2 { --_rule: var(--pz-n2); }
 
   .niveldet-prog__num {
     font-family: var(--pz-font-mono);
     font-weight: 700;
     font-size: 1.05rem;
-    line-height: 1.25;
-    padding-top: 0.15rem;
+    line-height: 1;
   }
   .niveldet-programa--n1 .niveldet-prog__num { color: var(--pz-n1); }
   .niveldet-programa--n2 .niveldet-prog__num { color: var(--pz-n2); }
