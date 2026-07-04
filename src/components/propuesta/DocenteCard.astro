@@ -13,7 +13,7 @@ const inicial = docente.nombre.charAt(0).toUpperCase();
 const nivelClass = docente.nivel === 'Nivel 1' ? 'n1' : docente.nivel === 'Nivel 2' ? 'n2' : '';
 ---
 
-<article class="pz-docente">
+<article class="pz-docente" data-nivel={docente.nivel}>
   <div class="pz-docente__avatar">
     <span class="pz-docente__initial" aria-hidden="true">{inicial}</span>
     {docente.foto && (

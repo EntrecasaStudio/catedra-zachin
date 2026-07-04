@@ -60,7 +60,9 @@
   --pz-fg: var(--pz-white);
   --pz-muted: #bdbdbd;
   --pz-surface: #191919;
-  --pz-shadow-color: #000000;
+  /* Sombra offset clara en oscuro (la negra era invisible sobre el fondo casi
+     negro → el hover no mostraba profundidad ni movimiento). */
+  --pz-shadow-color: var(--pz-white);
   --pz-on-accent: var(--pz-bg);
   /* Color por nivel — oscuro/RGB: N1 rojo · N2 azul */
   --pz-n1: var(--pz-red);
