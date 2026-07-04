@@ -77,7 +77,7 @@ const accent = nivel === 1 ? 'n1' : 'n2';
   }
   .niveldet-cursada__list strong { color: var(--pz-fg); }
 
-  /* Programa apilado (stacked) */
+  /* Programa: filas full-width tipo índice editorial (índice | título | descripción) */
   .niveldet-programa {
     display: flex;
     flex-direction: column;
@@ -85,15 +85,18 @@ const accent = nivel === 1 ? 'n1' : 'n2';
   }
   .niveldet-prog {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--pz-space-lg);
-    align-items: start;
-    padding: var(--pz-space-lg);
+    grid-template-columns: clamp(4.5rem, 7vw, 6rem) minmax(8rem, 15rem) minmax(0, 1fr);
+    column-gap: var(--pz-space-xl);
+    align-items: baseline;
+    padding: var(--pz-space-lg) var(--pz-space-xl);
     border: var(--pz-border-width) solid var(--pz-fg);
     border-radius: var(--pz-radius);
     box-shadow: var(--pz-shadow);
     background: var(--pz-bg);
   }
+  /* title + desc pasan a ser celdas directas de la grilla en desktop */
+  .niveldet-prog__body { display: contents; }
+
   .niveldet-prog__index { display: flex; flex-direction: column; gap: 0.15rem; }
   .niveldet-prog__label {
     font-family: var(--pz-font-mono);
@@ -106,14 +109,30 @@ const accent = nivel === 1 ? 'n1' : 'n2';
   .niveldet-prog__num {
     font-family: var(--pz-font-display);
     font-weight: 800;
-    font-size: clamp(2rem, 6vw, 3.25rem);
+    font-size: clamp(1.9rem, 3.6vw, 2.6rem);
     line-height: 1;
   }
   .niveldet-programa--n1 .niveldet-prog__num { color: var(--pz-n1); }
   .niveldet-programa--n2 .niveldet-prog__num { color: var(--pz-n2); }
-  .niveldet-prog__title { font-size: 1.25rem; margin-bottom: var(--pz-space-2xs); }
-  .niveldet-prog__desc { color: var(--pz-muted); font-size: 0.92rem; }
+  .niveldet-prog__title { font-size: 1.4rem; font-weight: 700; line-height: 1.15; }
+  .niveldet-prog__desc {
+    color: var(--pz-muted);
+    font-size: 0.95rem;
+    line-height: 1.45;
+    max-width: 62ch;
+  }
 
+  /* Tablet: vuelve a 2 zonas (índice | cuerpo apilado) */
+  @media (max-width: 880px) {
+    .niveldet-prog {
+      grid-template-columns: clamp(4rem, 12vw, 5.5rem) 1fr;
+      column-gap: var(--pz-space-lg);
+      align-items: start;
+    }
+    .niveldet-prog__body { display: block; }
+    .niveldet-prog__title { margin-bottom: var(--pz-space-2xs); }
+  }
+  /* Mobile: una columna */
   @media (max-width: 560px) {
     .niveldet-prog { grid-template-columns: 1fr; gap: var(--pz-space-xs); }
   }
