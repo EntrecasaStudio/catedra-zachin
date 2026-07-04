@@ -287,6 +287,14 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       /* Apertura: más ágil. */
       transition: opacity var(--pz-transition-slow), visibility var(--pz-transition-slow);
     }
+    /* Cierre coreografiado: el overlay acelera hacia afuera (ease-in) y queda
+       visible hasta el final para no cortar la salida de los items. */
+    .pz-header__nav.is-closing {
+      opacity: 0;
+      visibility: visible;
+      pointer-events: none;
+      transition: opacity 0.46s cubic-bezier(0.4, 0, 1, 1), visibility 0s linear 0.46s;
+    }
 
     /* Línea que "baja": el divider del tope de la nav se desplaza hasta el footer
        al abrir el menú (transform animado; el recorrido exacto lo mide el JS). */
@@ -307,6 +315,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       transform: translateY(var(--pz-sweep-travel, calc(100dvh - var(--pz-header-height) - 6rem)));
       /* Bajada (apertura). */
       transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    /* Retracción (cierre): la línea sube acelerando, sin rebote. */
+    .pz-header__nav.is-closing .pz-header__sweep {
+      transform: translateY(0);
+      transition: transform 0.42s cubic-bezier(0.5, 0, 0.75, 0);
     }
 
     .pz-header__list {
@@ -329,6 +342,22 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     @keyframes pzMenuIn {
       from { opacity: 0; transform: translateX(30px); }
       to { opacity: 1; transform: translateX(0); }
+    }
+    /* Salida en cascada inversa: el último item se va primero, acelerando. */
+    .pz-header__nav.is-closing .pz-header__item {
+      opacity: 1;
+      transform: translateX(0);
+      animation: pzMenuOut 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+      animation-delay: calc((4 - var(--i)) * 0.035s);
+    }
+    @keyframes pzMenuOut {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(24px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pz-header__nav.is-closing { transition-duration: 0.001s, 0s; }
+      .pz-header__nav.is-closing .pz-header__item,
+      .pz-header__nav.is-closing .pz-header__sweep { animation: none; transition: none; }
     }
 
     .pz-header__link {
@@ -436,7 +465,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
         const travel = footer.getBoundingClientRect().top - sweep.getBoundingClientRect().top;
         if (travel > 0) nav.style.setProperty('--pz-sweep-travel', `${travel}px`);
       };
+      let closeTimer;
+      const CLOSE_MS = 480; // ventana del cierre coreografiado (>= 0.46s del overlay)
       const open = () => {
+        clearTimeout(closeTimer);
+        nav.classList.remove('is-closing');
         setSweepTravel(); // medir antes de animar (recorrido exacto)
         nav.classList.add('is-open');
         burger.setAttribute('aria-expanded', 'true');
@@ -445,8 +478,13 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       const close = () => {
         if (!nav.classList.contains('is-open')) return;
         nav.classList.remove('is-open');
+        nav.classList.add('is-closing'); // dispara la salida (cascada inversa + retracción)
         burger.setAttribute('aria-expanded', 'false');
-        unlock();
+        clearTimeout(closeTimer);
+        closeTimer = setTimeout(() => {
+          nav.classList.remove('is-closing');
+          unlock(); // diferido: el scroll se restaura recién cuando el panel ya se fue
+        }, CLOSE_MS);
       };
       burger.addEventListener('click', () => {
         nav.classList.contains('is-open') ? close() : open();
