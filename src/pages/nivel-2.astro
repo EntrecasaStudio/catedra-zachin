@@ -3,12 +3,12 @@ import PropuestaLayout from '../layouts/PropuestaLayout.astro';
 import NivelDetalle from '../components/propuesta/NivelDetalle.astro';
 
 const programa = [
-  { num: '01', titulo: 'Industria gráfica', desc: 'Panorama de la industria gráfica: producción masiva frente a bajo demanda, sus lógicas y escalas. El traslado digital del original a la máquina (concepto computer-to).' },
-  { num: '02', titulo: 'Pre-impresión', desc: 'Etapas previas a la impresión: tramados y semitonos, tipos de trama y medición de lineaturas. Control de calidad del archivo antes de la salida.' },
-  { num: '03', titulo: 'Post-impresión', desc: 'Terminaciones y acabados que completan la pieza: tratamientos superficiales, cortes, dobleces, encuadernación y packaging, y su impacto en el resultado final.' },
-  { num: '04', titulo: 'Papel y soportes', desc: 'El papel y otros soportes de producción: características, gramajes, fabricación y comportamiento frente a cada sistema. Criterios de selección según la pieza.' },
-  { num: '05', titulo: 'Productos digitales y web', desc: 'Los productos digitales y la web como destino de producción. Especificaciones, formatos y diferencias respecto de la salida material.' },
-  { num: '06', titulo: 'Gestión de color', desc: 'Gestión de color a lo largo del flujo de producción: perfiles, espacios de color y consistencia entre pantalla, prueba de color e impresión final.' },
+  { num: '1', titulo: 'Industria gráfica', desc: 'Panorama de la industria gráfica: producción masiva frente a bajo demanda, sus lógicas y escalas. El traslado digital del original a la máquina (computer-to).' },
+  { num: '2', titulo: 'Soportes e insumos', desc: 'Los materiales de la producción: el papel y otros soportes (plástico, metal, vidrio), sus características y fabricación, y los insumos —pigmentos y tintas—.' },
+  { num: '3', titulo: 'Pre-impresión', desc: 'Etapas previas a la impresión: lenguajes de descripción de página (PDL), tramados y semitonos, fotocromía y rango dinámico. Control de calidad del archivo.' },
+  { num: '4', titulo: 'Impresión', desc: 'El acto de imprimir: controles, pie de máquina y aprobación de pliego. Los sistemas según cómo transfieren la tinta —relieve, superficie, profundidad, híbridos y digitales— y la impresión bajo demanda.' },
+  { num: '5', titulo: 'Postimpresión', desc: 'Terminaciones y acabados que completan la pieza: tratamientos superficiales, cortes, dobleces, packaging y encuadernación.' },
+  { num: '6', titulo: 'Productos digitales', desc: 'Los productos digitales como destino de producción: especificaciones, formatos y publicación. Sus diferencias frente a la salida material y su lugar en el flujo de trabajo actual.' },
 ];
 
 ---
@@ -16,7 +16,7 @@ const programa = [
 <PropuestaLayout title="Tecnología 2 | Propuesta Zachin" description="Tecnología 2 — Tecnologías avanzadas de producción gráfica.">
   <NivelDetalle
     nivel={2}
-    desc="Replicación del diseño material: industria gráfica, archivos, pre y post-impresión, papel, productos digitales y gestión de color."
+    desc="La producción del diseño en soporte material: industria gráfica, soportes e insumos, pre-impresión, impresión, postimpresión y productos digitales."
     mail="cat.zachin.tecno2@gmail.com"
     programa={programa}
     cursada={[
