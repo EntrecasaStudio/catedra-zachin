@@ -275,7 +275,7 @@ button {
   content: '';
   width: 1.75rem;
   height: var(--pz-border-width);
-  background: var(--pz-duo);
+  background: var(--pz-fg);
 }
 
 /* ------------------------------------------------------------------ *

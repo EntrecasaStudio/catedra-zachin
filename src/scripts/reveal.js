@@ -31,7 +31,9 @@ export function initReveal() {
         obs.unobserve(e.target); // se revela una vez
       });
     },
-    { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+    // threshold 0: revela apenas cualquier parte entra (los elementos altos,
+    // como el grid de galería, con 0.15 no llegaban al umbral hasta scrollear).
+    { threshold: 0, rootMargin: '0px 0px -10% 0px' }
   );
 
   els.forEach((el) => io.observe(el));
