@@ -47,13 +47,12 @@
   --pz-muted: #4f4f4f;
   --pz-surface: #f4f4f2;
   --pz-shadow-color: var(--pz-black);
-  --pz-on-accent: var(--pz-white);
+  --pz-on-accent: var(--pz-bg);
   /* Color por nivel — claro/CMYK: N1 magenta · N2 cyan */
   --pz-n1: var(--pz-magenta);
   --pz-n2: var(--pz-cyan);
-  /* duo: gradiente magenta→cyan con stops vívidos (evita el violeta oscuro del
-     medio en sRGB). Funciona en todos los browsers. */
-  --pz-duo: linear-gradient(120deg, var(--pz-n1) 0%, #c81c9e 30%, #5b6fd6 70%, var(--pz-n2) 100%);
+  /* duo (común a ambos niveles): fill sólido neutro (--pz-fg) en vez de gradiente. */
+  --pz-duo: var(--pz-fg);
 }
 
 [data-theme='dark'] {
@@ -62,12 +61,12 @@
   --pz-muted: #bdbdbd;
   --pz-surface: #191919;
   --pz-shadow-color: #000000;
-  --pz-on-accent: var(--pz-white);
+  --pz-on-accent: var(--pz-bg);
   /* Color por nivel — oscuro/RGB: N1 rojo · N2 azul */
   --pz-n1: var(--pz-red);
   --pz-n2: var(--pz-blue);
-  /* duo: gradiente rojo→azul con stops vívidos (mismo criterio que en claro). */
-  --pz-duo: linear-gradient(120deg, var(--pz-n1) 0%, #ff4a9e 30%, #6d78ff 70%, var(--pz-n2) 100%);
+  /* duo (común a ambos niveles): fill sólido neutro (--pz-fg) en vez de gradiente. */
+  --pz-duo: var(--pz-fg);
 }
 
 /* Tokens comunes (referencian n1/n2/fg → se adaptan solos al tema).
@@ -363,14 +362,12 @@ button {
 
 .pz-btn:active { transform: translate(0, 0); box-shadow: var(--pz-shadow); }
 
-/* Primary = CTA general (para ambos niveles): gradiente magenta → cyan.
-   Fill plano como .pz-tag--solid y los chips del nav: borde transparente y
-   SIN sombra offset (esa sombra dura negra se leía como un borde ajeno al
-   gradiente). El hover da feedback con un brillo sutil. */
+/* Primary = CTA general (para ambos niveles): fill sólido neutro (--pz-duo=fg).
+   Borde transparente y sin sombra offset; hover con brillo sutil. */
 .pz-btn--primary {
-  --_fg: #fff;
+  --_fg: var(--pz-on-accent);
   background: var(--pz-duo);
-  color: #fff;
+  color: var(--pz-on-accent);
   border-color: transparent;
   box-shadow: none;
   transition: transform var(--pz-transition), filter var(--pz-transition);
