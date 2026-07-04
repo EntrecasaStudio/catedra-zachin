@@ -60,6 +60,10 @@ export function initHalftoneLab(root, opts = {}) {
   const RGB_EMIT = { m: '#ff1a1a', y: '#22ff22', c: '#1a6bff' }; // rojo / verde / azul puros
   const RGB_SLOT = { m: 0, y: 1, c: 2 }; // posición de la raya dentro de la celda
 
+  // Moiré (sólo light): colapso animado de los ángulos de trama para exhibir la
+  // interferencia. C y M se acercan; K y Y quedan como pantallas de referencia.
+  const MSPACING = 12; // celda del campo de moiré (más grande = patrón más visible)
+
   const isDarkNow = () => document.documentElement.getAttribute('data-theme') === 'dark';
 
   const channels = [
@@ -82,6 +86,8 @@ export function initHalftoneLab(root, opts = {}) {
   let rafId = null;
   let running = false;
   let lastIsDark = null; // detecta cambio de tema para regenerar la geometría
+  let moireT = 0; // 0 = halftone normal; >0 = moiré (colapso de ángulos). Sólo light.
+  let moireTile = null, moireTileCtx = null, moireTileSize = 0, moireTileKey = '';
 
   function generateDotsForChannel(ch) {
     ch.dots = [];
@@ -145,13 +151,108 @@ export function initHalftoneLab(root, opts = {}) {
     mouseY = displayH * 0.4 + displayH * 0.25 * Math.sin(autoTime * 0.9 + 1.5);
   }
 
+  // --- Moiré (sólo light) ------------------------------------------------------
+  const deg = (d) => (d * Math.PI) / 180;
+  const mix = (a, b, t) => a + (b - a) * t;
+
+  // Ángulo efectivo por canal según el colapso t (0→1). C y M se acercan; K y Y
+  // quedan fijos como pantallas de referencia. wob = respiración temporal (rad).
+  function moireAngle(id, t, wob) {
+    if (id === 'c') return deg(mix(15, 19, t));
+    if (id === 'm') return deg(mix(75, 23, t)) + wob;
+    if (id === 'k') return deg(45);
+    return 0; // y
+  }
+
+  // Tile de trama blanca (una sola vez por tamaño): se dibuja rotado y teñido por
+  // canal → el moiré es la interferencia real entre las grillas superpuestas.
+  function buildMoireTile(dpr) {
+    const diag = Math.sqrt(displayW * displayW + displayH * displayH);
+    const size = Math.ceil(diag + MSPACING * 4);
+    if (!moireTile) {
+      moireTile = document.createElement('canvas');
+      moireTileCtx = moireTile.getContext('2d');
+    }
+    moireTile.width = size * dpr;
+    moireTile.height = size * dpr;
+    const c = moireTileCtx;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.clearRect(0, 0, size, size);
+    c.fillStyle = '#fff';
+    const r = MSPACING * 0.36;
+    c.beginPath();
+    for (let x = 0; x <= size; x += MSPACING) {
+      for (let y = 0; y <= size; y += MSPACING) {
+        c.moveTo(x + r, y);
+        c.arc(x, y, r, 0, Math.PI * 2);
+      }
+    }
+    c.fill();
+    moireTileSize = size;
+    moireTileKey = `${displayW}x${displayH}x${dpr}`;
+  }
+
+  function drawMoireFrame(now, dpr) {
+    if (moireTileKey !== `${displayW}x${displayH}x${dpr}`) buildMoireTile(dpr);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const cx = displayW / 2;
+    const cy = displayH / 2;
+    const t = moireT * moireT; // ease-in: el caos vive en el tramo alto del slider
+    const wob = deg(2) * moireT * Math.sin(now / 2600); // respiración temporal
+    const half = moireTileSize / 2;
+    for (const ch of channels) {
+      if (!ch.active) continue;
+      const ang = moireAngle(ch.id, t, wob);
+      offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      offCtx.globalCompositeOperation = 'source-over';
+      offCtx.globalAlpha = 1;
+      offCtx.clearRect(0, 0, displayW, displayH);
+      offCtx.save();
+      offCtx.translate(cx, cy);
+      offCtx.rotate(ang);
+      offCtx.drawImage(moireTile, -half, -half, moireTileSize, moireTileSize);
+      offCtx.restore();
+      // Teñir la trama blanca con el color del canal
+      offCtx.globalCompositeOperation = 'source-in';
+      offCtx.fillStyle = ch.color;
+      offCtx.fillRect(0, 0, displayW, displayH);
+      offCtx.globalCompositeOperation = 'source-over';
+      // Componer con multiply (tinta sustractiva)
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.drawImage(offscreen, 0, 0);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  // Al engancharse el moiré hace falta un par que bata: asegura C y M activos.
+  function ensureMoireChannels() {
+    const colorsOn = channels.filter((c) => c.id !== 'k' && c.active).length;
+    if (colorsOn >= 2) return;
+    for (const id of ['c', 'm']) {
+      const c = channels.find((x) => x.id === id);
+      if (!c.active) {
+        c.active = true;
+        c.sweep = 1;
+        c.sweepTarget = 1;
+        if (c.dots.length === 0) generateDotsForChannel(c);
+      }
+    }
+    updateButtonStates();
+  }
+
   function draw() {
     const now = performance.now();
     const dt = now - lastFrameTime;
     lastFrameTime = now;
 
     updateAutoCursor();
-    if (pressing && brushMode && !reducedMotion) paintBrush(now);
+    if (pressing && brushMode && !reducedMotion && moireT === 0) paintBrush(now);
 
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     const dpr = window.devicePixelRatio || 1;
@@ -203,6 +304,14 @@ export function initHalftoneLab(root, opts = {}) {
           ch.dots = [];
         }
       }
+    }
+
+    // Moiré (sólo light): camino de render propio (rotación al dibujar) que exhibe
+    // la interferencia. El halftone interactivo normal queda intacto (moireT === 0).
+    if (moireT > 0 && !isDark && !background) {
+      drawMoireFrame(now, dpr);
+      if (running && !reducedMotion) rafId = requestAnimationFrame(draw);
+      return;
     }
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -487,6 +596,27 @@ export function initHalftoneLab(root, opts = {}) {
   };
   if (resetBtn) resetBtn.addEventListener('click', onReset);
 
+  // Slider de moiré (sólo light): 0 = halftone normal; >0 = colapso de ángulos.
+  const moireSlider = root.querySelector('[data-moire]');
+  const moireVal = root.querySelector('[data-moire-val]');
+  function updateMoireReadout() {
+    if (!moireVal) return;
+    const t = moireT * moireT;
+    const gap = Math.abs(mix(75, 23, t) - mix(15, 19, t)); // separación C/M en grados
+    moireVal.textContent = `Δ ${Math.round(gap)}°`;
+  }
+  const onMoire = () => {
+    const prev = moireT;
+    moireT = Math.max(0, Math.min(1, (parseFloat(moireSlider.value) || 0) / 100));
+    if (prev === 0 && moireT > 0) ensureMoireChannels();
+    updateMoireReadout();
+    if (reducedMotion) drawStaticFrame();
+  };
+  if (moireSlider) {
+    moireSlider.addEventListener('input', onMoire);
+    updateMoireReadout();
+  }
+
   function drawStaticFrame() {
     // Un solo cuadro con los canales activos totalmente presentes.
     for (const ch of channels) {
@@ -550,6 +680,7 @@ export function initHalftoneLab(root, opts = {}) {
       }
       btnHandlers.forEach(([btn, handler]) => btn.removeEventListener('click', handler));
       if (resetBtn) resetBtn.removeEventListener('click', onReset);
+      if (moireSlider) moireSlider.removeEventListener('input', onMoire);
     },
   };
 

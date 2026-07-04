@@ -35,6 +35,13 @@ const channels = [
         <line x1="14" y1="10" x2="21" y2="3" /><line x1="3" y1="21" x2="10" y2="14" />
       </svg>
     </button>
+    <div class="pz-halftone__moire" data-moire-ctl>
+      <label class="pz-halftone__moire-label" for={`${id}-moire`}>Desalinear tramas</label>
+      <div class="pz-halftone__moire-row">
+        <input class="pz-halftone__moire-range" id={`${id}-moire`} type="range" min="0" max="100" value="0" step="1" data-moire aria-label="Desalinear tramas — moiré" />
+        <span class="pz-halftone__moire-val" data-moire-val>Δ 60°</span>
+      </div>
+    </div>
     <div class="pz-halftone__controls" role="group" aria-label="Canales CMYK">
       {channels.map((ch) => (
         <button
@@ -89,6 +96,70 @@ const channels = [
     gap: var(--pz-space-xs);
     z-index: 1;
   }
+
+  /* Control de moiré (sólo light): slider que colapsa los ángulos de trama */
+  .pz-halftone__moire {
+    position: absolute;
+    left: var(--pz-space-md);
+    top: var(--pz-space-md);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+  .pz-halftone__moire-label {
+    font-family: var(--pz-font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--pz-fg);
+    background: var(--pz-bg);
+    padding: 3px 6px;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+  }
+  .pz-halftone__moire-row { display: flex; align-items: center; gap: var(--pz-space-xs); }
+  .pz-halftone__moire-val {
+    font-family: var(--pz-font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--pz-fg);
+    background: var(--pz-bg);
+    padding: 2px 5px;
+    border-radius: var(--pz-radius);
+  }
+  /* Range brutalista: riel fino fg, thumb cuadrado fg */
+  .pz-halftone__moire-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 118px;
+    height: var(--pz-border-width);
+    background: var(--pz-fg);
+    outline: none;
+    cursor: pointer;
+  }
+  .pz-halftone__moire-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 1rem;
+    height: 1rem;
+    background: var(--pz-fg);
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+  }
+  .pz-halftone__moire-range::-moz-range-thumb {
+    width: 1rem;
+    height: 1rem;
+    background: var(--pz-fg);
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+  }
+  .pz-halftone__moire-range::-moz-range-track { height: var(--pz-border-width); background: var(--pz-fg); }
+  /* Sólo tiene sentido en light (CMYK/tinta): oculto en dark */
+  :global([data-theme='dark']) .pz-halftone__moire { display: none; }
 
   .pz-channel-btn {
     width: 2.5rem;
