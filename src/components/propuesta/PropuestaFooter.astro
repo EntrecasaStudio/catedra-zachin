@@ -20,8 +20,8 @@ const year = 2026; // fijo: Date no disponible en algunos entornos de build
       <nav class="pz-footer__col" aria-label="Cátedra">
         <h2 class="pz-footer__heading">Cátedra</h2>
         <ul>
-          <li><a href="/nivel-1">Tecnología 1</a></li>
-          <li><a href="/nivel-2">Tecnología 2</a></li>
+          <li><a href="/nivel-1">Nivel 1</a></li>
+          <li><a href="/nivel-2">Nivel 2</a></li>
           <li><a href="/equipo">Plantel docente</a></li>
         </ul>
       </nav>
@@ -40,7 +40,15 @@ const year = 2026; // fijo: Date no disponible en algunos entornos de build
           <li><a href="mailto:cat.zachin@fadu.uba.ar">cat.zachin@fadu.uba.ar</a></li>
           <li><a href="mailto:cat.zachin.tecno1@gmail.com">cat.zachin.tecno1@gmail.com</a></li>
           <li><a href="mailto:cat.zachin.tecno2@gmail.com">cat.zachin.tecno2@gmail.com</a></li>
-          <li><a href="https://instagram.com/catedrazachin" target="_blank" rel="noopener noreferrer">@catedrazachin</a></li>
+          <li>
+            <a href="https://instagram.com/catedrazachin" class="pz-footer__ig" target="_blank" rel="noopener noreferrer" aria-label="Instagram @catedrazachin">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -103,6 +111,7 @@ const year = 2026; // fijo: Date no disponible en algunos entornos de build
   .pz-footer__col ul { display: flex; flex-direction: column; gap: var(--pz-space-xs); }
   .pz-footer__col a { font-size: 0.9rem; color: var(--pz-fg); }
   .pz-footer__col a:hover { color: var(--pz-accent); }
+  .pz-footer__ig { display: inline-flex; align-items: center; }
 
   .pz-footer__bottom {
     display: flex;
