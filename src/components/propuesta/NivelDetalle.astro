@@ -25,8 +25,8 @@ const accent = nivel === 1 ? 'n1' : 'n2';
 
 <section class:list={['niveldet-hero', 'pz-container']} data-reveal-group>
   <span class="pz-eyebrow" data-reveal>Tecnología | DG | FADU | UBA</span>
-  <h1 class="niveldet-hero__title" data-reveal>
-    Nivel <span class={nivel === 1 ? 'text-n1' : 'text-n2'}>{nivel}</span>
+  <h1 class:list={['niveldet-hero__title', nivel === 1 ? 'text-n1' : 'text-n2']} data-reveal>
+    Nivel {nivel}
   </h1>
   <p class="niveldet-hero__desc" data-reveal>{desc}</p>
   <Button href={`mailto:${mail}`} variant="secondary" size="sm" data-reveal>{mail}</Button>
@@ -47,7 +47,10 @@ const accent = nivel === 1 ? 'n1' : 'n2';
   <ol class:list={['niveldet-programa', `niveldet-programa--${accent}`]} data-reveal-group>
     {programa.map((item) => (
       <li class="niveldet-prog" data-reveal>
-        <span class="niveldet-prog__num" aria-hidden="true">{item.num}</span>
+        <div class="niveldet-prog__index" aria-hidden="true">
+          <span class="niveldet-prog__label">Unidad</span>
+          <span class="niveldet-prog__num">{item.num}</span>
+        </div>
         <div class="niveldet-prog__body">
           <h3 class="niveldet-prog__title">{item.titulo}</h3>
           <p class="niveldet-prog__desc">{item.desc}</p>
@@ -90,6 +93,15 @@ const accent = nivel === 1 ? 'n1' : 'n2';
     border-radius: var(--pz-radius);
     box-shadow: var(--pz-shadow);
     background: var(--pz-bg);
+  }
+  .niveldet-prog__index { display: flex; flex-direction: column; gap: 0.15rem; }
+  .niveldet-prog__label {
+    font-family: var(--pz-font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--pz-muted);
   }
   .niveldet-prog__num {
     font-family: var(--pz-font-display);
