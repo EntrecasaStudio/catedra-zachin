@@ -47,10 +47,7 @@ const accent = nivel === 1 ? 'n1' : 'n2';
   <ol class:list={['niveldet-programa', `niveldet-programa--${accent}`]} data-reveal-group>
     {programa.map((item) => (
       <li class="niveldet-prog" data-reveal>
-        <div class="niveldet-prog__index" aria-hidden="true">
-          <span class="niveldet-prog__label">Unidad</span>
-          <span class="niveldet-prog__num">{item.num}</span>
-        </div>
+        <span class="niveldet-prog__num" aria-hidden="true">{item.num}</span>
         <div class="niveldet-prog__body">
           <h3 class="niveldet-prog__title">{item.titulo}</h3>
           <p class="niveldet-prog__desc">{item.desc}</p>
@@ -77,63 +74,55 @@ const accent = nivel === 1 ? 'n1' : 'n2';
   }
   .niveldet-cursada__list strong { color: var(--pz-fg); }
 
-  /* Programa: filas full-width tipo índice editorial (índice | título | descripción) */
+  /* Programa: índice editorial — un marco, filas separadas por regla fina.
+     Número como índice quieto a la izquierda; título dominante. */
   .niveldet-programa {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pz-space-md);
-  }
-  .niveldet-prog {
-    display: grid;
-    grid-template-columns: clamp(4.5rem, 7vw, 6rem) minmax(8rem, 15rem) minmax(0, 1fr);
-    column-gap: var(--pz-space-xl);
-    align-items: baseline;
-    padding: var(--pz-space-lg) var(--pz-space-xl);
+    list-style: none;
     border: var(--pz-border-width) solid var(--pz-fg);
     border-radius: var(--pz-radius);
     box-shadow: var(--pz-shadow);
     background: var(--pz-bg);
+    overflow: hidden; /* recorta las reglas a las esquinas redondeadas */
   }
-  /* title + desc pasan a ser celdas directas de la grilla en desktop */
-  .niveldet-prog__body { display: contents; }
+  .niveldet-prog {
+    display: grid;
+    grid-template-columns: clamp(2.5rem, 5vw, 3.5rem) minmax(0, 1fr);
+    column-gap: var(--pz-space-lg);
+    align-items: start;
+    padding: var(--pz-space-lg) var(--pz-space-xl);
+    border-top: var(--pz-border-width) solid var(--pz-fg);
+  }
+  .niveldet-prog:first-child { border-top: none; }
 
-  .niveldet-prog__index { display: flex; flex-direction: column; gap: 0.15rem; }
-  .niveldet-prog__label {
-    font-family: var(--pz-font-mono);
-    font-size: 0.62rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--pz-muted);
-  }
   .niveldet-prog__num {
-    font-family: var(--pz-font-display);
-    font-weight: 800;
-    font-size: clamp(1.9rem, 3.6vw, 2.6rem);
-    line-height: 1;
+    font-family: var(--pz-font-mono);
+    font-weight: 700;
+    font-size: 1.05rem;
+    line-height: 1.3;
+    padding-top: 0.1rem;
   }
   .niveldet-programa--n1 .niveldet-prog__num { color: var(--pz-n1); }
   .niveldet-programa--n2 .niveldet-prog__num { color: var(--pz-n2); }
-  .niveldet-prog__title { font-size: 1.4rem; font-weight: 700; line-height: 1.15; }
+
+  .niveldet-prog__title {
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.15;
+  }
   .niveldet-prog__desc {
     color: var(--pz-muted);
     font-size: 0.95rem;
-    line-height: 1.45;
-    max-width: 62ch;
+    line-height: 1.5;
+    margin-top: var(--pz-space-2xs);
+    max-width: 68ch;
   }
 
-  /* Tablet: vuelve a 2 zonas (índice | cuerpo apilado) */
-  @media (max-width: 880px) {
-    .niveldet-prog {
-      grid-template-columns: clamp(4rem, 12vw, 5.5rem) 1fr;
-      column-gap: var(--pz-space-lg);
-      align-items: start;
-    }
-    .niveldet-prog__body { display: block; }
-    .niveldet-prog__title { margin-bottom: var(--pz-space-2xs); }
-  }
-  /* Mobile: una columna */
+  /* Mobile: índice más ajustado */
   @media (max-width: 560px) {
-    .niveldet-prog { grid-template-columns: 1fr; gap: var(--pz-space-xs); }
+    .niveldet-prog {
+      grid-template-columns: clamp(1.75rem, 8vw, 2.5rem) minmax(0, 1fr);
+      column-gap: var(--pz-space-md);
+      padding: var(--pz-space-md) var(--pz-space-lg);
+    }
   }
 </style>
