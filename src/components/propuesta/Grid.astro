@@ -1,0 +1,42 @@
+---
+/**
+ * Grid — grilla responsiva con columnas por breakpoint y empty-state.
+ *
+ * @prop {number} cols - Columnas en desktop. Default 3.
+ * @prop {number} [colsMd] - Columnas <=900px. Default 2.
+ * @prop {number} [colsSm] - Columnas <=560px. Default 1.
+ * @prop {boolean} isEmpty - Si true, renderiza el empty-state en lugar del slot. Default false.
+ * @prop {string} emptyText - Texto del empty-state. Default 'Sin resultados.'
+ *
+ * @slot default - Ítems de la grilla.
+ * @slot empty - Contenido custom para el estado vacío (opcional).
+ */
+interface Props {
+  cols?: number;
+  colsMd?: number;
+  colsSm?: number;
+  isEmpty?: boolean;
+  emptyText?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  cols = 3,
+  colsMd = 2,
+  colsSm = 1,
+  isEmpty = false,
+  emptyText = 'Sin resultados.',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const style = `--pz-grid-cols:${cols};--pz-grid-cols-md:${colsMd};--pz-grid-cols-sm:${colsSm};`;
+---
+
+<div class:list={['pz-grid', className]} style={style} {...rest}>
+  {isEmpty
+    ? <div class="pz-grid__empty"><slot name="empty">{emptyText}</slot></div>
+    : <slot />
+  }
+</div>

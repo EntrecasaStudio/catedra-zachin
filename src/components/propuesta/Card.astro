@@ -1,0 +1,34 @@
+---
+/**
+ * Card — contenedor compositivo. Renderiza <a> si recibe `href`.
+ *
+ * @prop {string} [href] - Convierte la card en enlace interactivo.
+ * @prop {boolean} interactive - Fuerza estilo hover interactivo aunque no haya href. Default = !!href.
+ *
+ * @slot media - Zona superior (imagen/video/canvas). Se envuelve en .pz-card__media.
+ * @slot default - Cuerpo. Se envuelve en .pz-card__body.
+ * @slot footer - Pie opcional. Se envuelve en .pz-card__footer.
+ */
+interface Props {
+  href?: string;
+  interactive?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { href, interactive = Boolean(href), class: className, ...rest } = Astro.props;
+const Tag = href ? 'a' : 'div';
+
+const hasMedia = Astro.slots.has('media');
+const hasFooter = Astro.slots.has('footer');
+---
+
+<Tag
+  class:list={['pz-card', interactive && 'pz-card--interactive', className]}
+  href={href}
+  {...rest}
+>
+  {hasMedia && <div class="pz-card__media"><slot name="media" /></div>}
+  <div class="pz-card__body"><slot /></div>
+  {hasFooter && <div class="pz-card__footer"><slot name="footer" /></div>}
+</Tag>

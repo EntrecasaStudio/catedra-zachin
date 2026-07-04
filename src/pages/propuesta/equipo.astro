@@ -1,0 +1,33 @@
+---
+import PropuestaLayout from '../../layouts/PropuestaLayout.astro';
+import Section from '../../components/propuesta/Section.astro';
+import Grid from '../../components/propuesta/Grid.astro';
+import DocenteCard from '../../components/propuesta/DocenteCard.astro';
+import { docentes, groupDocentes } from '../../data/docentes.js';
+
+const grupos = groupDocentes(docentes);
+---
+
+<PropuestaLayout title="Plantel docente | Propuesta Zachin" description="El plantel docente de la Cátedra Zachin.">
+  <section class="equipo-hero pz-container" data-reveal-group>
+    <span class="pz-eyebrow" data-reveal>La cátedra</span>
+    <h1 class="equipo-hero__title" data-reveal>Plantel docente</h1>
+    <p class="equipo-hero__desc" data-reveal>
+      Los docentes y ayudantes que componen la cátedra de Tecnología.
+    </p>
+  </section>
+
+  {grupos.map((grupo) => (
+    <Section reveal eyebrow={grupo.label} flush>
+      <Grid data-reveal cols={6} colsMd={3} colsSm={2} isEmpty={grupo.members.length === 0}>
+        {grupo.members.map((d) => <DocenteCard docente={d} />)}
+      </Grid>
+    </Section>
+  ))}
+</PropuestaLayout>
+
+<style>
+  .equipo-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
+  .equipo-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
+  .equipo-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin-top: var(--pz-space-md); max-width: 55ch; }
+</style>

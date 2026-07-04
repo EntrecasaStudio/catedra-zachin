@@ -1,0 +1,21 @@
+---
+/**
+ * Tag — etiqueta / chip tipo "system".
+ *
+ * @prop {'default'|'n1'|'n2'|'solid'} tone - Variante de color. Default 'default'.
+ *        n1 = magenta (Nivel 1), n2 = cyan (Nivel 2), solid = fondo acento.
+ * @prop {string} [as] - Etiqueta HTML a renderizar. Default 'span'.
+ */
+interface Props {
+  tone?: 'default' | 'n1' | 'n2' | 'solid';
+  as?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { tone = 'default', as: Tag = 'span', class: className, ...rest } = Astro.props;
+
+const classes = ['pz-tag', tone !== 'default' && `pz-tag--${tone}`, className];
+---
+
+<Tag class:list={classes} {...rest}><slot /></Tag>

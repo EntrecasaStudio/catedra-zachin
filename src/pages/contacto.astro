@@ -2,28 +2,18 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Contacto | Cátedra Zachin" description="Información de contacto e inscripciones de la Cátedra Zachin.">
+<BaseLayout title="Contacto | Cátedra Zachin" description="Información de contacto de la Cátedra Zachin.">
   <section class="page-header">
     <div class="container">
       <span class="page-header__label">Contacto</span>
       <h1>Contacto</h1>
-      <p class="page-header__desc">Información de inscripciones y contacto de la cátedra.</p>
+      <p class="page-header__desc">Información de contacto de la cátedra.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
       <div class="contacto-grid">
-        <!-- Inscripciones -->
-        <div class="contacto-card contacto-card--highlight">
-          <h2>Inscripciones</h2>
-          <p>Las inscripciones para el primer cuatrimestre 2026 están abiertas.</p>
-          <div class="contacto-card__buttons">
-            <a href="#" class="btn btn-primary">Inscripción Nivel 1</a>
-            <a href="#" class="btn btn-primary">Inscripción Nivel 2</a>
-          </div>
-        </div>
-
         <!-- Mails -->
         <div class="contacto-card">
           <h3>General</h3>
@@ -34,13 +24,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="contacto-card">
           <h3>Nivel 1</h3>
           <a href="mailto:cat.zachin.tecno1@gmail.com" class="contacto-mail">cat.zachin.tecno1@gmail.com</a>
-          <p class="contacto-card__desc">Consultas sobre inscripción, programa y cursada de Nivel 1.</p>
+          <p class="contacto-card__desc">Consultas sobre programa y cursada de Nivel 1.</p>
         </div>
 
         <div class="contacto-card">
           <h3>Nivel 2</h3>
           <a href="mailto:cat.zachin.tecno2@gmail.com" class="contacto-mail">cat.zachin.tecno2@gmail.com</a>
-          <p class="contacto-card__desc">Consultas sobre inscripción, programa y cursada de Nivel 2.</p>
+          <p class="contacto-card__desc">Consultas sobre programa y cursada de Nivel 2.</p>
         </div>
 
         <!-- Instagram -->
@@ -107,52 +97,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     padding: var(--space-xl);
     border: 1px solid var(--color-border);
     border-radius: 4px;
-  }
-
-  .contacto-card--highlight {
-    grid-column: 1 / -1;
-    background-color: var(--color-text);
-    color: var(--color-bg);
-    text-align: center;
-    padding: var(--space-2xl);
-  }
-
-  .contacto-card--highlight h2 {
-    margin-bottom: var(--space-md);
-    color: var(--color-bg);
-  }
-
-  .contacto-card--highlight p {
-    margin-bottom: var(--space-lg);
-    color: color-mix(in srgb, var(--color-bg) 70%, transparent);
-    max-width: 100%;
-  }
-
-  .contacto-card__buttons {
-    display: flex;
-    gap: var(--space-md);
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .contacto-card__buttons .btn-primary:first-child {
-    background-color: var(--color-magenta);
-    color: var(--color-white);
-  }
-
-  .contacto-card__buttons .btn-primary:first-child:hover {
-    background-color: #c4006a;
-    color: var(--color-white);
-  }
-
-  .contacto-card__buttons .btn-primary:last-child {
-    background-color: var(--color-cyan);
-    color: var(--color-white);
-  }
-
-  .contacto-card__buttons .btn-primary:last-child:hover {
-    background-color: #0080b8;
-    color: var(--color-white);
   }
 
   .contacto-card h3 {

@@ -1,0 +1,94 @@
+---
+/**
+ * DocenteCard — ficha de un integrante del plantel.
+ * Maneja imagen faltante (onerror → inicial) y carga diferida.
+ *
+ * @prop {{nombre:string, rol:string, nivel:string, foto?:string}} docente
+ */
+interface Props {
+  docente: { nombre: string; rol: string; nivel: string; foto?: string };
+}
+const { docente } = Astro.props;
+const inicial = docente.nombre.charAt(0).toUpperCase();
+const nivelClass = docente.nivel === 'Nivel 1' ? 'n1' : docente.nivel === 'Nivel 2' ? 'n2' : '';
+---
+
+<article class="pz-docente">
+  <div class="pz-docente__avatar">
+    <span class="pz-docente__initial" aria-hidden="true">{inicial}</span>
+    {docente.foto && (
+      <img
+        src={docente.foto}
+        alt={`Foto de ${docente.nombre}`}
+        loading="lazy"
+        decoding="async"
+        width="200"
+        height="200"
+        onerror="this.style.display='none'"
+      />
+    )}
+  </div>
+  <h3 class="pz-docente__nombre">{docente.nombre}</h3>
+  <span class="pz-docente__rol">{docente.rol}</span>
+  {nivelClass && <span class:list={['pz-docente__nivel', nivelClass]}>{docente.nivel}</span>}
+</article>
+
+<style>
+  .pz-docente {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--pz-space-2xs);
+  }
+
+  .pz-docente__avatar {
+    position: relative;
+    width: clamp(80px, 20vw, 128px);
+    aspect-ratio: 1;
+    margin-bottom: var(--pz-space-xs);
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-surface);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+
+  .pz-docente__initial {
+    font-family: var(--pz-font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--pz-muted);
+  }
+
+  .pz-docente__avatar img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%);
+    transition: filter var(--pz-transition);
+  }
+  .pz-docente:hover .pz-docente__avatar img { filter: grayscale(0%); }
+
+  .pz-docente__nombre { font-size: 0.95rem; }
+  .pz-docente__rol {
+    font-family: var(--pz-font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pz-muted);
+  }
+  .pz-docente__nivel {
+    font-family: var(--pz-font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .pz-docente__nivel.n1 { color: var(--pz-n1); }
+  .pz-docente__nivel.n2 { color: var(--pz-n2); }
+</style>

@@ -1,0 +1,183 @@
+---
+import PropuestaLayout from '../../layouts/PropuestaLayout.astro';
+import Section from '../../components/propuesta/Section.astro';
+import Grid from '../../components/propuesta/Grid.astro';
+import Button from '../../components/propuesta/Button.astro';
+import NivelCard from '../../components/propuesta/NivelCard.astro';
+import HalftoneLab from '../../components/propuesta/HalftoneLab.astro';
+
+const explorar = [
+  { href: '/propuesta/equipo', tag: 'Plantel', title: 'Plantel docente', desc: 'Adjuntos, JTP, docentes y ayudantes de la cátedra.' },
+  { href: '/propuesta/galeria', tag: 'Multimedia', title: 'Galería', desc: 'Fotos y videos de clases, talleres y jornadas.' },
+];
+---
+
+<PropuestaLayout>
+  <!-- Hero: fondo halftone (K en claro / RGB en oscuro), tenue, a pantalla completa -->
+  <section class="hero" data-hero-halftone>
+    <canvas class="hero__bg" aria-hidden="true"></canvas>
+    <div class="hero__content pz-container" data-reveal-group>
+      <span class="pz-eyebrow" data-reveal>Diseño gráfico | FADU · UBA</span>
+      <h1 class="hero__title" data-reveal>Cátedra<br />Zachin</h1>
+      <p class="hero__subtitle" data-reveal>Tecnología | Nivel 1 &amp; 2</p>
+      <div class="hero__actions" data-reveal>
+        <Button href="https://instagram.com/catedrazachin" variant="secondary" target="_blank" rel="noopener noreferrer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+          </svg>
+          @catedrazachin
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Niveles -->
+  <Section reveal eyebrow="Programa" title="Dos niveles, un sistema" lead="De la reproducción del diseño (digital y web) a la replicación del diseño material (industria gráfica e impresión).">
+    <Grid cols={2} colsMd={1} data-reveal-group>
+      <NivelCard data-reveal nivel={1} title="Tecnología 1" href="/propuesta/nivel-1" desc="Color, imagen digital, soportes, generación de originales, web e introducción a la industria gráfica." />
+      <NivelCard data-reveal nivel={2} title="Tecnología 2" href="/propuesta/nivel-2" desc="Industria gráfica, soportes e insumos, pre-impresión, impresión y postimpresión." />
+    </Grid>
+  </Section>
+
+  <!-- Halftone Lab: la sección ES el juego interactivo, sin texto -->
+  <Section>
+    <HalftoneLab brush="both" />
+  </Section>
+
+  <!-- Explorar (cards sin imagen, con trama de puntos) -->
+  <Section reveal eyebrow="Explorar" title="Adentro de la cátedra">
+    <Grid cols={2} colsMd={1} data-reveal-group>
+      {explorar.map((c) => (
+        <a class="explore-card" data-reveal href={c.href}>
+          <div class="explore-card__head">
+            <span class="pz-tag">{c.tag}</span>
+            <span class="explore-card__arrow" aria-hidden="true">↗</span>
+          </div>
+          <div class="explore-card__body">
+            <h3 class="explore-card__title">{c.title}</h3>
+            <p class="explore-card__desc">{c.desc}</p>
+          </div>
+        </a>
+      ))}
+    </Grid>
+  </Section>
+</PropuestaLayout>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: calc(100dvh - var(--pz-header-height));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.12;
+    z-index: 0;
+  }
+  :global([data-theme='dark']) .hero__bg { opacity: 0.24; }
+
+  .hero__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding-block: var(--pz-space-2xl);
+  }
+  .hero__title {
+    font-size: clamp(3.5rem, 15vw, 10rem);
+    line-height: 0.9;
+    margin-top: var(--pz-space-md);
+  }
+  .hero__subtitle {
+    font-size: clamp(1.1rem, 3vw, 1.75rem);
+    color: var(--pz-muted);
+    margin-top: var(--pz-space-md);
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pz-space-sm);
+    margin-top: var(--pz-space-xl);
+  }
+
+  /* Explore card: sin imagen, con trama de puntos (halftone) */
+  .explore-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--pz-space-xl);
+    min-height: 240px;
+    padding: var(--pz-space-lg);
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-bg);
+    color: var(--pz-fg);
+    overflow: hidden;
+    transition: transform var(--pz-transition), box-shadow var(--pz-transition);
+  }
+  .explore-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(var(--pz-fg) 1.4px, transparent 1.5px);
+    background-size: 13px 13px;
+    opacity: 0.05;
+    transition: opacity var(--pz-transition);
+    pointer-events: none;
+  }
+  .explore-card:hover {
+    transform: translate(var(--pz-lift), var(--pz-lift));
+    box-shadow: var(--pz-shadow-hover);
+  }
+  .explore-card:hover::before { opacity: 0.12; }
+
+  .explore-card__head {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .explore-card__arrow {
+    font-size: 1.9rem;
+    line-height: 1;
+    transition: transform var(--pz-transition);
+  }
+  .explore-card:hover .explore-card__arrow { transform: translate(5px, -5px); }
+
+  .explore-card__body { position: relative; }
+  .explore-card__title { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+  .explore-card__desc {
+    color: var(--pz-muted);
+    font-size: 0.95rem;
+    margin-top: var(--pz-space-xs);
+    max-width: 34ch;
+  }
+</style>
+
+<script>
+  import { initHalftoneLab } from '../../scripts/halftone-lab.js';
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('[data-hero-halftone]').forEach((el) => {
+      const lab = initHalftoneLab(el, { background: true });
+      if (!lab) return;
+      const io = new IntersectionObserver(
+        (es) => es.forEach((e) => (e.isIntersecting ? lab.start() : lab.stop())),
+        { threshold: 0 }
+      );
+      io.observe(el);
+      document.addEventListener('astro:before-swap', () => { io.disconnect(); lab.destroy(); }, { once: true });
+    });
+  });
+</script>

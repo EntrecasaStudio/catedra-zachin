@@ -1,0 +1,85 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import PropuestaHeader from '../components/propuesta/PropuestaHeader.astro';
+import PropuestaFooter from '../components/propuesta/PropuestaFooter.astro';
+import '../styles/propuesta.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Propuesta brutalista | Cátedra Zachin',
+  description = 'Rediseño brutalista de la Cátedra Zachin — tres intensidades conmutables (refined / raw / neo).',
+} = Astro.props;
+---
+
+<html lang="es" data-theme="light" data-brutalism="neo">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Tema: aplicar antes del paint para evitar flash -->
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme') || 'light';
+          document.documentElement.setAttribute('data-theme', t);
+          // Reveal en cascada: marcar listo antes del paint (salvo reduced-motion).
+          if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.classList.add('pz-reveal-ready');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <!-- Fuentes: DIN (Typekit) + Inter + Space Mono (skin raw) -->
+    <link rel="stylesheet" href="https://use.typekit.net/owv7rck.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <ClientRouter />
+    <title>{title}</title>
+  </head>
+  <body>
+    <PropuestaHeader />
+    <main id="contenido" class="pz-main">
+      <slot />
+    </main>
+    <PropuestaFooter />
+
+    <script>
+      import { initReveal } from '../scripts/reveal.js';
+
+      // Persistir tema + estado de reveal a través de las View Transitions
+      document.addEventListener('astro:before-swap', (ev) => {
+        const root = document.documentElement;
+        ev.newDocument.documentElement.setAttribute('data-theme', root.getAttribute('data-theme') || 'light');
+        if (root.classList.contains('pz-reveal-ready')) {
+          ev.newDocument.documentElement.classList.add('pz-reveal-ready');
+        }
+      });
+
+      document.addEventListener('astro:page-load', initReveal);
+    </script>
+  </body>
+</html>
+
+<style>
+  .pz-main {
+    padding-top: var(--pz-header-height);
+    min-height: 60vh;
+  }
+</style>

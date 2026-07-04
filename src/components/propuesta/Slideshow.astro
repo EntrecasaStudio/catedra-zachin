@@ -1,0 +1,118 @@
+---
+/**
+ * Slideshow — crossfade automático de imágenes. Con <2 imágenes degrada a
+ * imagen estática (sin dots ni timer). Respeta prefers-reduced-motion (no cicla).
+ *
+ * @prop {{src:string, alt:string}[]} images
+ * @prop {number} [interval] - ms entre transiciones. Default 3000.
+ * @prop {number} [offset] - retardo inicial en ms (para desfasar varios). Default 0.
+ * @prop {string} [ratio] - aspect-ratio CSS. Default '4 / 3'.
+ */
+interface Props {
+  images: { src: string; alt: string }[];
+  interval?: number;
+  offset?: number;
+  ratio?: string;
+  class?: string;
+}
+const { images, interval = 3000, offset = 0, ratio = '4 / 3', class: className } = Astro.props;
+const isStatic = images.length < 2;
+---
+
+{images.length === 0 ? (
+  <div class:list={['pz-slideshow pz-slideshow--empty', className]} style={`aspect-ratio:${ratio}`}>
+    <span>Sin imágenes</span>
+  </div>
+) : (
+  <div
+    class:list={['pz-slideshow', className]}
+    style={`aspect-ratio:${ratio}`}
+    data-slideshow={isStatic ? undefined : ''}
+    data-interval={interval}
+    data-offset={offset}
+  >
+    {images.map((img, i) => (
+      <img src={img.src} alt={img.alt} loading="lazy" decoding="async" data-active={i === 0 ? '' : undefined} />
+    ))}
+    {!isStatic && (
+      <div class="pz-slideshow__dots" aria-hidden="true">
+        {images.map((_, i) => <span data-active={i === 0 ? '' : undefined}></span>)}
+      </div>
+    )}
+  </div>
+)}
+
+<style>
+  .pz-slideshow {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--pz-surface);
+  }
+  .pz-slideshow img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    filter: grayscale(100%);
+    transition: opacity var(--pz-transition-slow), filter var(--pz-transition);
+  }
+  .pz-slideshow img[data-active] { opacity: 1; }
+  :global(.pz-card--interactive:hover) .pz-slideshow img,
+  .pz-slideshow:hover img { filter: grayscale(0%); }
+
+  .pz-slideshow--empty {
+    display: grid;
+    place-items: center;
+    color: var(--pz-muted);
+    font-family: var(--pz-font-mono);
+    font-size: 0.8rem;
+  }
+
+  .pz-slideshow__dots {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 2;
+  }
+  .pz-slideshow__dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.45);
+    transition: background var(--pz-transition), transform var(--pz-transition);
+  }
+  .pz-slideshow__dots span[data-active] { background: #fff; transform: scale(1.3); }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    document.querySelectorAll('[data-slideshow]').forEach((box) => {
+      const imgs = box.querySelectorAll('img');
+      const dots = box.querySelectorAll('.pz-slideshow__dots span');
+      if (imgs.length < 2) return;
+
+      let current = 0;
+      const interval = parseInt(box.getAttribute('data-interval') || '3000', 10);
+      const offset = parseInt(box.getAttribute('data-offset') || '0', 10);
+
+      const cycle = () => {
+        imgs[current].removeAttribute('data-active');
+        dots[current]?.removeAttribute('data-active');
+        current = (current + 1) % imgs.length;
+        imgs[current].setAttribute('data-active', '');
+        dots[current]?.setAttribute('data-active', '');
+      };
+
+      setTimeout(() => setInterval(cycle, interval), offset);
+    });
+  });
+</script>

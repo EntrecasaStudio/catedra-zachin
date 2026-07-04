@@ -1,0 +1,370 @@
+---
+/**
+ * PropuestaHeader — barra de navegación brutalista de la propuesta.
+ * Nav sin Trabajos ni Inscripciones (coherente con la limpieza del sitio).
+ * En mobile: menú fullscreen slide-in con entrada escalonada y toggle de tema adentro.
+ */
+const nav = [
+  { href: '/propuesta/nivel-1', label: 'N1', tone: 'n1' },
+  { href: '/propuesta/nivel-2', label: 'N2', tone: 'n2' },
+  { href: '/propuesta/equipo', label: 'Plantel', tone: 'duo' },
+  { href: '/propuesta/galeria', label: 'Galería', tone: 'duo' },
+  { href: '/propuesta/contacto', label: 'Contacto', tone: 'duo' },
+];
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
+---
+
+<header class="pz-header">
+  <div class="pz-header__inner pz-container">
+    <a href="/propuesta" class="pz-header__brand" aria-label="Cátedra Zachin — Inicio">
+      <img src="/images/logo-iso-white-bold.svg" alt="Cátedra Zachin" class="pz-header__logo pz-header__logo--dark" width="40" height="40" />
+      <img src="/images/logo-iso-black-bold.svg" alt="Cátedra Zachin" class="pz-header__logo pz-header__logo--light" width="40" height="40" />
+    </a>
+
+    <nav class="pz-header__nav" id="pz-nav" aria-label="Navegación de la propuesta">
+      <ul class="pz-header__list">
+        {nav.map((l, i) => (
+          <li class="pz-header__item" style={`--i: ${i}`}>
+            <a
+              href={l.href}
+              class:list={['pz-header__link', { 'is-active': path === l.href, [`is-active--${l.tone}`]: path === l.href }]}
+              aria-current={path === l.href ? 'page' : undefined}
+            >
+              <svg class="pz-header__arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+              <span class="pz-header__label">{l.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="pz-header__menu-footer">
+        <button class="pz-header__theme pz-header__theme--mobile" type="button" aria-label="Cambiar tema claro/oscuro">
+          <svg class="pz-theme-svg" viewBox="0 0 32 32" fill="currentColor" stroke-linecap="round" aria-hidden="true">
+            <clipPath id="pz-theme-clip-m">
+              <path class="toggle__clip-path" d="M0-5h30a1 1 0 0 0 9 13v24H0Z" />
+            </clipPath>
+            <g clip-path="url(#pz-theme-clip-m)">
+              <circle class="toggle__circle" cx="16" cy="16" r="8" />
+              <g class="toggle__rays" stroke="currentColor" stroke-width="1.5">
+                <path d="M16 5.5v-4" /><path d="M16 30.5v-4" />
+                <path d="M1.5 16h4" /><path d="M26.5 16h4" />
+                <path d="m23.4 8.6 2.8-2.8" /><path d="m5.7 26.3 2.9-2.9" />
+                <path d="m5.8 5.8 2.8 2.8" /><path d="m23.4 23.4 2.9 2.9" />
+              </g>
+            </g>
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <div class="pz-header__actions">
+      <button class="pz-header__theme pz-header__theme--desktop" type="button" aria-label="Cambiar tema claro/oscuro">
+        <svg class="pz-theme-svg" viewBox="0 0 32 32" fill="currentColor" stroke-linecap="round" aria-hidden="true">
+          <clipPath id="pz-theme-clip-d">
+            <path class="toggle__clip-path" d="M0-5h30a1 1 0 0 0 9 13v24H0Z" />
+          </clipPath>
+          <g clip-path="url(#pz-theme-clip-d)">
+            <circle class="toggle__circle" cx="16" cy="16" r="8" />
+            <g class="toggle__rays" stroke="currentColor" stroke-width="1.5">
+              <path d="M16 5.5v-4" /><path d="M16 30.5v-4" />
+              <path d="M1.5 16h4" /><path d="M26.5 16h4" />
+              <path d="m23.4 8.6 2.8-2.8" /><path d="m5.7 26.3 2.9-2.9" />
+              <path d="m5.8 5.8 2.8 2.8" /><path d="m23.4 23.4 2.9 2.9" />
+            </g>
+          </g>
+        </svg>
+      </button>
+      <button class="pz-header__burger" id="pz-burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="pz-nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .pz-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 100;
+    height: var(--pz-header-height);
+    background: var(--pz-bg);
+  }
+  /* Divisor inferior al ancho del contenido (no full-bleed) */
+  .pz-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(min(100%, var(--pz-max-width)) - 2 * var(--pz-container-pad));
+    height: var(--pz-border-width);
+    background: var(--pz-fg);
+  }
+
+  .pz-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    gap: var(--pz-space-lg);
+  }
+
+  .pz-header__brand {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .pz-header__logo {
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: contain;
+    transition: transform var(--pz-transition-slow);
+  }
+  .pz-header__brand:hover .pz-header__logo { transform: rotate(-12deg) scale(1.08); }
+  :global([data-theme='dark']) .pz-header__logo--dark { display: block; }
+  :global([data-theme='dark']) .pz-header__logo--light { display: none; }
+  :global([data-theme='light']) .pz-header__logo--dark { display: none; }
+  :global([data-theme='light']) .pz-header__logo--light { display: block; }
+
+  /* Nav: chips con fill en el active (como los tags de galería) */
+  .pz-header__nav { align-self: center; }
+  .pz-header__list { display: flex; gap: var(--pz-space-sm); align-items: center; }
+  .pz-header__item { display: flex; }
+
+  .pz-header__link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0.32rem var(--pz-space-sm);
+    border: var(--pz-border-width) solid transparent;
+    border-radius: var(--pz-radius);
+    font-family: var(--pz-font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pz-muted);
+    transition: background var(--pz-transition), color var(--pz-transition);
+  }
+
+  /* Hover neutro (calmo) — el fill de color queda reservado al active */
+  .pz-header__link:hover { background: var(--pz-surface); color: var(--pz-fg); }
+
+  /* Active: fill tipo tag según el nivel; texto blanco por defecto */
+  .pz-header__link.is-active { color: #fff; }
+  .pz-header__link.is-active--n1 { background: var(--pz-n1); }
+  .pz-header__link.is-active--n2 { background: var(--pz-n2); }
+  .pz-header__link.is-active--duo { background: var(--pz-duo); }
+
+  /* Contraste AA: donde el blanco no llega, texto oscuro.
+     Claro: cyan (n2) es claro → texto negro. Oscuro: --pz-fg es blanco,
+     así que los fills saturados llevan negro explícito. */
+  :global([data-theme='light']) .pz-header__link.is-active--n2 { color: #000; }
+  :global([data-theme='dark']) .pz-header__link.is-active--n1,
+  :global([data-theme='dark']) .pz-header__link.is-active--n2,
+  :global([data-theme='dark']) .pz-header__link.is-active--duo { color: #000; }
+
+  /* Flecha (sólo mobile) */
+  .pz-header__arrow { display: none; }
+  .pz-header__menu-footer { display: none; }
+  .pz-header__theme--mobile { display: none; }
+
+  .pz-header__actions { display: flex; align-items: center; gap: var(--pz-space-xs); }
+
+  .pz-header__theme {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    transition: background var(--pz-transition);
+    flex-shrink: 0;
+  }
+  .pz-header__theme:hover { background: var(--pz-surface); }
+
+  /* Toggle sol/luna (clipPath animado, del sitio original) */
+  .pz-theme-svg { width: 1.3rem; height: 1.3rem; color: var(--pz-fg); }
+  .toggle__clip-path { transition: transform 0.35s ease-in-out; }
+  :global([data-theme='dark']) .toggle__clip-path { transform: translate(-12px, 10px); }
+  .toggle__circle { transition: transform 0.35s ease-in-out; transform-origin: 16px 16px; }
+  :global([data-theme='dark']) .toggle__circle { transform: scale(1.25); }
+  .toggle__rays {
+    transition: transform 0.35s ease-in-out, opacity 0.35s ease-in-out;
+    transform-origin: 16px 16px;
+  }
+  :global([data-theme='dark']) .toggle__rays { transform: rotate(-100deg) scale(0.5); opacity: 0; }
+
+  .pz-header__burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+  /* Líneas anchas y centradas; display:block para que Safari las dibuje */
+  .pz-header__burger span {
+    display: block;
+    width: 1.6rem;
+    height: var(--pz-border-width);
+    background: var(--pz-fg);
+    border-radius: 2px;
+    transition: transform var(--pz-transition), opacity var(--pz-transition);
+  }
+  /* X centrada: distancia centro a centro = grosor de línea + gap (6px) */
+  .pz-header__burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(calc(var(--pz-border-width) + 6px)) rotate(45deg); }
+  .pz-header__burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+  .pz-header__burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(calc(-1 * (var(--pz-border-width) + 6px))) rotate(-45deg); }
+
+  /* ===========================
+     Mobile: menú fullscreen slide-in (estilo del sitio original)
+     =========================== */
+  @media (max-width: 860px) {
+    .pz-header__burger { display: flex; }
+    .pz-header__theme--desktop { display: none; }
+    .pz-header__theme--mobile { display: grid; }
+
+    .pz-header__nav {
+      position: fixed;
+      top: var(--pz-header-height);
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 99;
+      background: var(--pz-bg);
+      display: flex;
+      flex-direction: column;
+      padding: var(--pz-space-xl) var(--pz-space-lg) var(--pz-space-lg);
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform var(--pz-transition-slow), visibility var(--pz-transition-slow);
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .pz-header__nav.is-open {
+      transform: translateX(0);
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .pz-header__list {
+      flex-direction: column;
+      gap: 0.4rem;
+      height: auto;
+      align-items: stretch;
+      flex: 1;
+    }
+
+    /* Entrada escalonada de cada item */
+    .pz-header__item {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    .pz-header__nav.is-open .pz-header__item {
+      animation: pzMenuIn 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: calc(0.06s + var(--i) * 0.05s);
+    }
+    @keyframes pzMenuIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .pz-header__link {
+      height: auto;
+      gap: var(--pz-space-sm);
+      font-size: clamp(1.6rem, 7vw, 2.4rem);
+      color: var(--pz-fg);
+      padding: var(--pz-space-2xs) 0;
+      border: none;
+      overflow: hidden;
+    }
+    /* En mobile el active se comunica con la flecha, no con el fill */
+    .pz-header__link:hover,
+    .pz-header__link.is-active--n1,
+    .pz-header__link.is-active--n2,
+    .pz-header__link.is-active--duo { background: transparent; color: var(--pz-fg); }
+
+    .pz-header__arrow {
+      display: block;
+      width: 1.6rem;
+      height: 1.6rem;
+      flex-shrink: 0;
+      color: var(--pz-muted);
+      opacity: 0;
+      transform: translateX(-120%);
+      transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    }
+    .pz-header__label {
+      display: block;
+      transform: translateX(-2.1rem);
+      transition: transform 0.3s ease-out;
+    }
+    .pz-header__link:hover .pz-header__arrow,
+    .pz-header__link.is-active .pz-header__arrow { opacity: 1; transform: translateX(0); }
+    .pz-header__link:hover .pz-header__label,
+    .pz-header__link.is-active .pz-header__label { transform: translateX(0); }
+    .pz-header__link.is-active { color: var(--pz-fg); }
+    .pz-header__link.is-active .pz-header__arrow { color: var(--pz-fg); }
+
+    .pz-header__menu-footer {
+      display: flex;
+      align-items: center;
+      margin-top: auto;
+      padding-top: var(--pz-space-lg);
+      border-top: var(--pz-border-width) solid var(--pz-fg);
+    }
+    .pz-header__theme--mobile { width: 2.75rem; height: 2.75rem; }
+    .pz-header__theme--mobile .pz-theme-svg { width: 1.6rem; height: 1.6rem; }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const burger = document.getElementById('pz-burger');
+    const nav = document.getElementById('pz-nav');
+
+    if (burger && nav) {
+      const close = () => {
+        nav.classList.remove('is-open');
+        burger.setAttribute('aria-expanded', 'false');
+      };
+      burger.addEventListener('click', () => {
+        const open = nav.classList.toggle('is-open');
+        burger.setAttribute('aria-expanded', String(open));
+      });
+      nav.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+      // Al pasar a desktop, cerrar el menú para que no quede abierto tras un resize
+      window.matchMedia('(min-width: 861px)').addEventListener('change', (e) => {
+        if (e.matches) close();
+      });
+      // Cerrar con Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && nav.classList.contains('is-open')) close();
+      });
+    }
+
+    // Toggle de tema (desktop + mobile comparten la clase)
+    document.querySelectorAll('.pz-header__theme').forEach((toggle) =>
+      toggle.addEventListener('click', () => {
+        const cur = document.documentElement.getAttribute('data-theme') || 'light';
+        const next = cur === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch {}
+      })
+    );
+  });
+</script>

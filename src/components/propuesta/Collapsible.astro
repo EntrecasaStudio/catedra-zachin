@@ -1,0 +1,113 @@
+---
+/**
+ * Collapsible — disclosure accesible basado en <details>/<summary>.
+ * Funciona sin JS y es navegable por teclado (Enter/Espacio). Emite el
+ * evento nativo `toggle`, del que se puede colgar lógica (ver HalftoneLab).
+ *
+ * @prop {string} summary - Texto del disparador.
+ * @prop {string} [eyebrow] - Label tipo "system" sobre el summary.
+ * @prop {boolean} open - Estado inicial abierto. Default false.
+ * @prop {string} [id] - id del <details> (útil para hookear scripts).
+ *
+ * @slot default - Contenido colapsable.
+ * @slot summary - Reemplaza el contenido del summary (opcional).
+ */
+interface Props {
+  summary: string;
+  eyebrow?: string;
+  open?: boolean;
+  id?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { summary, eyebrow, open = false, id, class: className, ...rest } = Astro.props;
+---
+
+<details class:list={['pz-collapsible', className]} id={id} open={open} {...rest}>
+  <summary class="pz-collapsible__summary">
+    <span class="pz-collapsible__label">
+      {eyebrow && <span class="pz-eyebrow">{eyebrow}</span>}
+      <span class="pz-collapsible__title">
+        <slot name="summary">{summary}</slot>
+      </span>
+    </span>
+    <span class="pz-collapsible__icon" aria-hidden="true">
+      <span></span><span></span>
+    </span>
+  </summary>
+  <div class="pz-collapsible__panel">
+    <slot />
+  </div>
+</details>
+
+<style>
+  .pz-collapsible {
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-bg);
+    overflow: hidden;
+  }
+
+  .pz-collapsible__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--pz-space-md);
+    padding: var(--pz-space-lg);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .pz-collapsible__summary::-webkit-details-marker { display: none; }
+
+  .pz-collapsible__label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pz-space-2xs);
+  }
+
+  .pz-collapsible__title {
+    font-family: var(--pz-font-display);
+    font-weight: var(--pz-display-weight);
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    letter-spacing: var(--pz-display-tracking);
+    text-transform: var(--pz-display-transform);
+  }
+
+  /* Icono +/− */
+  .pz-collapsible__icon {
+    position: relative;
+    width: 1.4rem;
+    height: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .pz-collapsible__icon span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1.4rem;
+    height: var(--pz-border-width);
+    background: var(--pz-duo);
+    transform: translate(-50%, -50%);
+    transition: transform var(--pz-transition), opacity var(--pz-transition);
+  }
+
+  .pz-collapsible__icon span:last-child { transform: translate(-50%, -50%) rotate(90deg); }
+
+  .pz-collapsible[open] .pz-collapsible__icon span:last-child {
+    transform: translate(-50%, -50%) rotate(0deg);
+    opacity: 0;
+  }
+
+  .pz-collapsible__summary:hover .pz-collapsible__title { color: var(--pz-accent); }
+
+  .pz-collapsible__panel {
+    padding: 0 var(--pz-space-lg) var(--pz-space-lg);
+    border-top: var(--pz-border-width) solid var(--pz-fg);
+    padding-top: var(--pz-space-lg);
+  }
+</style>

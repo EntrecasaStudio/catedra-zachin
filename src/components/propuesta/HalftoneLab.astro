@@ -1,0 +1,249 @@
+---
+/**
+ * HalftoneLab — el juego de semitono CMYK, directo y sin texto.
+ * Es la pieza interactiva en sí: canvas + controles de canal, nada más.
+ * Sólo anima mientras está visible en pantalla (IntersectionObserver) y
+ * respeta prefers-reduced-motion.
+ *
+ * @prop {string} [id] - id base del bloque. Default 'halftone-lab'.
+ */
+interface Props {
+  id?: string;
+  /** Brush al mantener presionado: 'area' (crece radio) o 'both' (radio + intensidad). */
+  brush?: 'area' | 'both';
+}
+const { id = 'halftone-lab', brush } = Astro.props;
+
+const channels = [
+  { id: 'k', label: 'K', rgb: 'W', title: 'Negro (K) / Blanco (W)' },
+  { id: 'c', label: 'C', rgb: 'B', title: 'Cyan (C) / Azul (B)' },
+  { id: 'm', label: 'M', rgb: 'R', title: 'Magenta (M) / Rojo (R)' },
+  { id: 'y', label: 'Y', rgb: 'G', title: 'Amarillo (Y) / Verde (G)' },
+];
+---
+
+<div class="pz-halftone" id={id} data-halftone-lab data-brush={brush}>
+  <div class="pz-halftone__stage" data-stage>
+    <canvas class="pz-halftone__canvas" id={`${id}-canvas`} aria-hidden="true"></canvas>
+    <button type="button" class="pz-halftone__expand" data-expand title="Pantalla completa" aria-label="Pantalla completa">
+      <svg class="icon-expand" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 3 21 3 21 9" /><polyline points="9 21 3 21 3 15" />
+        <line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" />
+      </svg>
+      <svg class="icon-compress" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="4 14 10 14 10 20" /><polyline points="20 10 14 10 14 4" />
+        <line x1="14" y1="10" x2="21" y2="3" /><line x1="3" y1="21" x2="10" y2="14" />
+      </svg>
+    </button>
+    <div class="pz-halftone__controls" role="group" aria-label="Canales CMYK">
+      {channels.map((ch) => (
+        <button
+          type="button"
+          class:list={['pz-channel-btn', `pz-channel-btn--${ch.id}`, { active: ch.id === 'k', selected: ch.id === 'k' }]}
+          data-channel={ch.id}
+          title={ch.title}
+          aria-label={`Canal ${ch.title}`}
+          aria-pressed={ch.id === 'k' ? 'true' : 'false'}
+        ><span class="lbl lbl--cmyk">{ch.label}</span><span class="lbl lbl--rgb">{ch.rgb}</span></button>
+      ))}
+      <button
+        type="button"
+        class="pz-channel-btn pz-channel-btn--reset"
+        data-reset
+        title="Resetear el canal seleccionado"
+        aria-label="Resetear el canal seleccionado"
+      >↺</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .pz-halftone__stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    min-height: 320px;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-surface);
+    overflow: hidden;
+  }
+
+  .pz-halftone__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+  }
+
+  .pz-halftone__controls {
+    position: absolute;
+    left: var(--pz-space-md);
+    bottom: var(--pz-space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--pz-space-xs);
+    z-index: 1;
+  }
+
+  .pz-channel-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pz-font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    background: var(--pz-bg);
+    color: var(--pz-muted);
+    box-shadow: var(--pz-shadow);
+    transition: all var(--pz-transition);
+  }
+
+  .pz-channel-btn:hover { color: var(--pz-fg); transform: translate(var(--pz-lift), var(--pz-lift)); }
+
+  /* Claro = CMYK */
+  .pz-channel-btn--k.active { background: var(--pz-fg); color: var(--pz-bg); border-color: var(--pz-fg); }
+  .pz-channel-btn--c.active { background: #00aeef; color: #fff; border-color: #00aeef; }
+  .pz-channel-btn--m.active { background: #ec008c; color: #fff; border-color: #ec008c; }
+  .pz-channel-btn--y.active { background: #fff200; color: #000; border-color: #fff200; }
+  /* Oscuro = RGB aditivo: C→azul, M→rojo, Y→verde (K→blanco vía --pz-fg) */
+  :global([data-theme='dark']) .pz-channel-btn--c.active { background: #2b7fff; color: #fff; border-color: #2b7fff; }
+  :global([data-theme='dark']) .pz-channel-btn--m.active { background: #ff3b3b; color: #fff; border-color: #ff3b3b; }
+  :global([data-theme='dark']) .pz-channel-btn--y.active { background: #22c55e; color: #fff; border-color: #22c55e; }
+
+  /* Selección: anillo interior (no choca con la sombra offset del brutalismo).
+     currentColor = color de texto del botón activo → siempre contrasta con su fondo. */
+  .pz-channel-btn.selected { box-shadow: var(--pz-shadow), inset 0 0 0 var(--pz-border-width) currentColor; }
+
+  /* Botón reset: circular y más chico que los toggles de canal */
+  .pz-channel-btn--reset {
+    margin-left: var(--pz-space-2xs);
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    font-size: 1.05rem;
+    line-height: 1;
+    padding-bottom: 0.1em; /* ajuste óptico del glifo ↺ */
+  }
+
+  /* Botón expand → pantalla completa (arriba a la derecha) */
+  .pz-halftone__expand {
+    position: absolute;
+    top: var(--pz-space-md);
+    right: var(--pz-space-md);
+    z-index: 1;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: grid;
+    place-items: center;
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    background: var(--pz-bg);
+    color: var(--pz-fg);
+    box-shadow: var(--pz-shadow);
+    transition: transform var(--pz-transition), box-shadow var(--pz-transition), color var(--pz-transition);
+  }
+  .pz-halftone__expand:hover {
+    transform: translate(var(--pz-lift), var(--pz-lift));
+    box-shadow: var(--pz-shadow-hover);
+  }
+  .pz-halftone__expand svg { width: 1.15rem; height: 1.15rem; }
+  .pz-halftone__expand .icon-compress { display: none; }
+  .pz-halftone__expand.is-fullscreen .icon-expand { display: none; }
+  .pz-halftone__expand.is-fullscreen .icon-compress { display: block; }
+
+  /* Expandido: el stage llena la ventana del browser (overlay), sin borde ni ratio */
+  .pz-halftone__stage.is-expanded {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    height: auto;
+    z-index: 1000;
+    aspect-ratio: auto;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--pz-surface);
+  }
+  :global([data-theme='dark']) .pz-halftone__stage.is-expanded { background: #000; }
+
+  /* Mobile (mismo umbral que el nav): proporción portrait (más alto que ancho) */
+  @media (max-width: 860px) {
+    .pz-halftone__stage:not(.is-expanded) {
+      aspect-ratio: 4 / 5;
+      min-height: 0;
+    }
+  }
+  @media (max-width: 560px) {
+    .pz-halftone__stage:not(.is-expanded) { aspect-ratio: 3 / 4; }
+  }
+
+  /* Etiquetas: CMYK en claro, RGB en oscuro */
+  .lbl--rgb { display: none; }
+  :global([data-theme='dark']) .lbl--cmyk { display: none; }
+  :global([data-theme='dark']) .lbl--rgb { display: inline; }
+
+  /* RGB (oscuro) no tiene canal blanco: se oculta el botón K/W */
+  :global([data-theme='dark']) .pz-channel-btn--k { display: none; }
+</style>
+
+<script>
+  import { initHalftoneLab } from '../../scripts/halftone-lab.js';
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('[data-halftone-lab]').forEach((el) => {
+      const brush = el.dataset.brush === 'area' || el.dataset.brush === 'both' ? el.dataset.brush : undefined;
+      const lab = initHalftoneLab(el, { brush });
+      if (!lab) return;
+
+      // Corre sólo cuando la sección está en pantalla (ahorra CPU)
+      const io = new IntersectionObserver(
+        (entries) => entries.forEach((e) => (e.isIntersecting ? lab.start() : lab.stop())),
+        { threshold: 0.1 }
+      );
+      io.observe(el);
+
+      // Expandir dentro de la ventana del browser (overlay, no fullscreen del SO)
+      const stage = el.querySelector('[data-stage]');
+      const expandBtn = el.querySelector('[data-expand]');
+      const setExpanded = (active) => {
+        stage.classList.toggle('is-expanded', active);
+        document.body.style.overflow = active ? 'hidden' : '';
+        if (expandBtn) {
+          expandBtn.classList.toggle('is-fullscreen', active);
+          const label = active ? 'Contraer' : 'Expandir';
+          expandBtn.setAttribute('aria-label', label);
+          expandBtn.setAttribute('title', label);
+        }
+        lab.start();
+        window.dispatchEvent(new Event('resize')); // reajusta el canvas al nuevo tamaño
+      };
+      const onExpand = () => setExpanded(!stage.classList.contains('is-expanded'));
+      const onKey = (e) => {
+        if (e.key === 'Escape' && stage.classList.contains('is-expanded')) setExpanded(false);
+      };
+      if (expandBtn && stage) {
+        expandBtn.addEventListener('click', onExpand);
+        document.addEventListener('keydown', onKey);
+      }
+
+      document.addEventListener(
+        'astro:before-swap',
+        () => {
+          io.disconnect();
+          lab.destroy();
+          document.removeEventListener('keydown', onKey);
+          document.body.style.overflow = '';
+        },
+        { once: true }
+      );
+    });
+  });
+</script>

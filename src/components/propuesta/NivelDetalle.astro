@@ -1,0 +1,139 @@
+---
+import Section from './Section.astro';
+import Button from './Button.astro';
+
+/**
+ * NivelDetalle — plantilla de página de nivel (hero + cursada + programa apilado).
+ * DRY: nivel-1 y nivel-2 sólo pasan datos.
+ *
+ * @prop {1|2} nivel
+ * @prop {string} desc
+ * @prop {string} mail
+ * @prop {{num:string, titulo:string, desc:string}[]} programa
+ * @prop {{turno:string, detalle:string}[]} [cursada]
+ */
+interface Props {
+  nivel: 1 | 2;
+  desc: string;
+  mail: string;
+  programa: { num: string; titulo: string; desc: string }[];
+  cursada?: { turno: string; detalle: string }[];
+}
+const { nivel, desc, mail, programa, cursada = [] } = Astro.props;
+const accent = nivel === 1 ? 'n1' : 'n2';
+---
+
+<section class:list={['niveldet-hero', 'pz-container']} data-reveal-group>
+  <span class="pz-eyebrow" data-reveal>Tecnología | DG | FADU | UBA</span>
+  <h1 class:list={['niveldet-hero__title', nivel === 1 ? 'text-n1' : 'text-n2']} data-reveal>
+    Nivel {nivel}
+  </h1>
+  <p class="niveldet-hero__desc" data-reveal>{desc}</p>
+  <Button href={`mailto:${mail}`} variant="secondary" size="sm" data-reveal>{mail}</Button>
+
+  {cursada.length > 0 && (
+    <div class="niveldet-cursada" data-reveal>
+      <span class="pz-eyebrow">Cursada</span>
+      <ul class="niveldet-cursada__list">
+        {cursada.map((c) => (
+          <li><strong>Turno {c.turno}</strong> — {c.detalle}</li>
+        ))}
+      </ul>
+    </div>
+  )}
+</section>
+
+<Section reveal eyebrow="Contenidos" title="Programa">
+  <ol class:list={['niveldet-programa', `niveldet-programa--${accent}`]} data-reveal-group>
+    {programa.map((item) => (
+      <li class="niveldet-prog" data-reveal>
+        <div class="niveldet-prog__index" aria-hidden="true">
+          <span class="niveldet-prog__label">Unidad</span>
+          <span class="niveldet-prog__num">{item.num}</span>
+        </div>
+        <div class="niveldet-prog__body">
+          <h3 class="niveldet-prog__title">{item.titulo}</h3>
+          <p class="niveldet-prog__desc">{item.desc}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
+</Section>
+
+<style>
+  .niveldet-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
+  .niveldet-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
+  .niveldet-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin: var(--pz-space-md) 0 var(--pz-space-lg); max-width: 60ch; }
+
+  .niveldet-cursada { margin-top: var(--pz-space-lg); }
+  .niveldet-cursada__list {
+    margin-top: var(--pz-space-xs);
+    display: flex;
+    flex-direction: column;
+    gap: var(--pz-space-2xs);
+    font-family: var(--pz-font-mono);
+    font-size: 0.9rem;
+    color: var(--pz-muted);
+  }
+  .niveldet-cursada__list strong { color: var(--pz-fg); }
+
+  /* Programa: filas full-width tipo índice editorial (índice | título | descripción) */
+  .niveldet-programa {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pz-space-md);
+  }
+  .niveldet-prog {
+    display: grid;
+    grid-template-columns: clamp(4.5rem, 7vw, 6rem) minmax(8rem, 15rem) minmax(0, 1fr);
+    column-gap: var(--pz-space-xl);
+    align-items: baseline;
+    padding: var(--pz-space-lg) var(--pz-space-xl);
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-bg);
+  }
+  /* title + desc pasan a ser celdas directas de la grilla en desktop */
+  .niveldet-prog__body { display: contents; }
+
+  .niveldet-prog__index { display: flex; flex-direction: column; gap: 0.15rem; }
+  .niveldet-prog__label {
+    font-family: var(--pz-font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--pz-muted);
+  }
+  .niveldet-prog__num {
+    font-family: var(--pz-font-display);
+    font-weight: 800;
+    font-size: clamp(1.9rem, 3.6vw, 2.6rem);
+    line-height: 1;
+  }
+  .niveldet-programa--n1 .niveldet-prog__num { color: var(--pz-n1); }
+  .niveldet-programa--n2 .niveldet-prog__num { color: var(--pz-n2); }
+  .niveldet-prog__title { font-size: 1.4rem; font-weight: 700; line-height: 1.15; }
+  .niveldet-prog__desc {
+    color: var(--pz-muted);
+    font-size: 0.95rem;
+    line-height: 1.45;
+    max-width: 62ch;
+  }
+
+  /* Tablet: vuelve a 2 zonas (índice | cuerpo apilado) */
+  @media (max-width: 880px) {
+    .niveldet-prog {
+      grid-template-columns: clamp(4rem, 12vw, 5.5rem) 1fr;
+      column-gap: var(--pz-space-lg);
+      align-items: start;
+    }
+    .niveldet-prog__body { display: block; }
+    .niveldet-prog__title { margin-bottom: var(--pz-space-2xs); }
+  }
+  /* Mobile: una columna */
+  @media (max-width: 560px) {
+    .niveldet-prog { grid-template-columns: 1fr; gap: var(--pz-space-xs); }
+  }
+</style>
