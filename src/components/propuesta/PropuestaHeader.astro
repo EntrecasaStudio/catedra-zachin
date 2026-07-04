@@ -5,11 +5,11 @@
  * En mobile: menú fullscreen slide-in con entrada escalonada y toggle de tema adentro.
  */
 const nav = [
-  { href: '/nivel-1', label: 'N1', tone: 'n1' },
-  { href: '/nivel-2', label: 'N2', tone: 'n2' },
-  { href: '/equipo', label: 'Plantel', tone: 'duo' },
-  { href: '/galeria', label: 'Galería', tone: 'duo' },
-  { href: '/contacto', label: 'Contacto', tone: 'duo' },
+  { href: '/nivel-1', label: 'N1', full: 'Nivel 1', tone: 'n1' },
+  { href: '/nivel-2', label: 'N2', full: 'Nivel 2', tone: 'n2' },
+  { href: '/equipo', label: 'Plantel', full: 'Plantel', tone: 'duo' },
+  { href: '/galeria', label: 'Galería', full: 'Galería', tone: 'duo' },
+  { href: '/contacto', label: 'Contacto', full: 'Contacto', tone: 'duo' },
 ];
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -23,12 +23,13 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     </a>
 
     <nav class="pz-header__nav" id="pz-nav" aria-label="Navegación de la propuesta">
+      <span class="pz-header__menu-eyebrow" aria-hidden="true">Navegación</span>
       <ul class="pz-header__list">
         {nav.map((l, i) => (
           <li class="pz-header__item" style={`--i: ${i}`}>
             <a
               href={l.href}
-              class:list={['pz-header__link', { 'is-active': path === l.href, [`is-active--${l.tone}`]: path === l.href }]}
+              class:list={['pz-header__link', `pz-header__link--${l.tone}`, { 'is-active': path === l.href, [`is-active--${l.tone}`]: path === l.href }]}
               aria-current={path === l.href ? 'page' : undefined}
             >
               <svg class="pz-header__arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -36,6 +37,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
                 <polyline points="12 5 19 12 12 19" />
               </svg>
               <span class="pz-header__label">{l.label}</span>
+              <span class="pz-header__label-full">{l.full}</span>
             </a>
           </li>
         ))}
@@ -173,8 +175,10 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   :global([data-theme='dark']) .pz-header__link.is-active--n2,
   :global([data-theme='dark']) .pz-header__link.is-active--duo { color: #000; }
 
-  /* Flecha (sólo mobile) */
+  /* Flecha, label completo y eyebrow: sólo mobile */
   .pz-header__arrow { display: none; }
+  .pz-header__label-full { display: none; }
+  .pz-header__menu-eyebrow { display: none; }
   .pz-header__menu-footer { display: none; }
   .pz-header__theme--mobile { display: none; }
 
@@ -241,35 +245,64 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     .pz-header__theme--desktop { display: none; }
     .pz-header__theme--mobile { display: grid; }
 
+    /* El overlay cubre top:0; el logo y el burger/X deben quedar por encima
+       (dentro del stacking context del header, el nav z:99 los taparía). */
+    .pz-header__brand,
+    .pz-header__actions { position: relative; z-index: 100; }
+
+    /* Overlay a viewport completo. Sin transform en la capa fixed (un fixed con
+       transform propio scrollea con la página en iOS/WebKit → el menú se corría
+       ~scrollY y la página se colaba). Se revela con opacity+visibility; el
+       movimiento lo dan los items (pzMenuIn). Scroll del body bloqueado por JS. */
     .pz-header__nav {
       position: fixed;
-      top: var(--pz-header-height);
+      top: 0;
       right: 0;
       bottom: 0;
       left: 0;
+      align-self: stretch; /* anula el align-self:center del header (evita centrado vertical) */
+      margin: 0;
       z-index: 99;
       background: var(--pz-bg);
       display: flex;
       flex-direction: column;
-      padding: var(--pz-space-xl) var(--pz-space-lg) var(--pz-space-lg);
+      padding:
+        calc(var(--pz-header-height) + env(safe-area-inset-top) + var(--pz-space-lg))
+        calc(var(--pz-space-lg) + env(safe-area-inset-right))
+        calc(var(--pz-space-lg) + env(safe-area-inset-bottom))
+        calc(var(--pz-space-lg) + env(safe-area-inset-left));
       overflow-y: auto;
-      transform: translateX(100%);
-      transition: transform var(--pz-transition-slow), visibility var(--pz-transition-slow);
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      opacity: 0;
       visibility: hidden;
       pointer-events: none;
+      transition: opacity var(--pz-transition-slow), visibility var(--pz-transition-slow);
     }
     .pz-header__nav.is-open {
-      transform: translateX(0);
+      opacity: 1;
       visibility: visible;
       pointer-events: auto;
     }
 
+    /* Eyebrow del menú */
+    .pz-header__menu-eyebrow {
+      display: block;
+      margin-bottom: var(--pz-space-lg);
+      font-family: var(--pz-font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--pz-muted);
+    }
+
     .pz-header__list {
       flex-direction: column;
-      gap: 0.4rem;
+      gap: var(--pz-space-xs);
       height: auto;
       align-items: stretch;
-      flex: 1;
+      /* sin flex:1 → la lista se ancla arriba, no flota centrada */
     }
 
     /* Entrada escalonada de cada item */
@@ -287,41 +320,45 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     }
 
     .pz-header__link {
-      height: auto;
       gap: var(--pz-space-sm);
-      font-size: clamp(1.6rem, 7vw, 2.4rem);
+      align-items: center;
+      min-height: 56px; /* target táctil cómodo */
+      font-size: clamp(1.5rem, 7vw, 2.3rem);
+      letter-spacing: 0.01em; /* mono grande: tracking ajustado */
       color: var(--pz-fg);
-      padding: var(--pz-space-2xs) 0;
+      padding: var(--pz-space-xs) 0 var(--pz-space-xs) var(--pz-space-md);
       border: none;
-      overflow: hidden;
+      border-left: 3px solid var(--_tone, var(--pz-fg)); /* acento por nivel */
+      border-radius: 0;
     }
-    /* En mobile el active se comunica con la flecha, no con el fill */
-    .pz-header__link:hover,
+    /* Color de acento por item (permanente, no sólo en el activo) */
+    .pz-header__link--n1 { --_tone: var(--pz-n1); }
+    .pz-header__link--n2 { --_tone: var(--pz-n2); }
+    .pz-header__link--duo { --_tone: var(--pz-duo); }
+
+    /* Etiqueta: en mobile el nombre completo */
+    .pz-header__label { display: none; }
+    .pz-header__label-full { display: block; }
+
+    /* Anula el fill de chip del desktop en mobile (sin fill → texto en --pz-fg,
+       no el #000 que usa el chip lleno; si no, el activo queda negro sobre negro). */
     .pz-header__link.is-active--n1,
     .pz-header__link.is-active--n2,
     .pz-header__link.is-active--duo { background: transparent; color: var(--pz-fg); }
+    :global([data-theme='dark']) .pz-header__link.is-active--n1,
+    :global([data-theme='dark']) .pz-header__link.is-active--n2,
+    :global([data-theme='dark']) .pz-header__link.is-active--duo { color: var(--pz-fg); }
 
+    /* Activo: regla izquierda más gruesa + flecha teñida del color del nivel */
+    .pz-header__link.is-active { border-left-width: 6px; }
     .pz-header__arrow {
-      display: block;
-      width: 1.6rem;
-      height: 1.6rem;
+      display: none;
+      width: 1.3rem;
+      height: 1.3rem;
       flex-shrink: 0;
-      color: var(--pz-muted);
-      opacity: 0;
-      transform: translateX(-120%);
-      transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+      color: var(--_tone, var(--pz-fg));
     }
-    .pz-header__label {
-      display: block;
-      transform: translateX(-2.1rem);
-      transition: transform 0.3s ease-out;
-    }
-    .pz-header__link:hover .pz-header__arrow,
-    .pz-header__link.is-active .pz-header__arrow { opacity: 1; transform: translateX(0); }
-    .pz-header__link:hover .pz-header__label,
-    .pz-header__link.is-active .pz-header__label { transform: translateX(0); }
-    .pz-header__link.is-active { color: var(--pz-fg); }
-    .pz-header__link.is-active .pz-header__arrow { color: var(--pz-fg); }
+    .pz-header__link.is-active .pz-header__arrow { display: block; }
 
     .pz-header__menu-footer {
       display: flex;
@@ -337,17 +374,52 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 <script>
   document.addEventListener('astro:page-load', () => {
+    // Defensa: si un swap ocurrió con el body bloqueado, restaurarlo.
+    if (document.body.style.position === 'fixed') {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+    }
     const burger = document.getElementById('pz-burger');
     const nav = document.getElementById('pz-nav');
 
     if (burger && nav) {
+      let scrollY = 0;
+      // Bloqueo de scroll del body (técnica iOS: position:fixed + restaurar).
+      // Mantiene scrollY=0 mientras el menú está abierto y evita el rubber-band.
+      const lock = () => {
+        scrollY = window.scrollY;
+        const b = document.body.style;
+        b.position = 'fixed';
+        b.top = `-${scrollY}px`;
+        b.left = '0';
+        b.right = '0';
+        b.width = '100%';
+      };
+      const unlock = () => {
+        const b = document.body.style;
+        b.position = '';
+        b.top = '';
+        b.left = '';
+        b.right = '';
+        b.width = '';
+        window.scrollTo(0, scrollY);
+      };
+      const open = () => {
+        nav.classList.add('is-open');
+        burger.setAttribute('aria-expanded', 'true');
+        lock();
+      };
       const close = () => {
+        if (!nav.classList.contains('is-open')) return;
         nav.classList.remove('is-open');
         burger.setAttribute('aria-expanded', 'false');
+        unlock();
       };
       burger.addEventListener('click', () => {
-        const open = nav.classList.toggle('is-open');
-        burger.setAttribute('aria-expanded', String(open));
+        nav.classList.contains('is-open') ? close() : open();
       });
       nav.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
       // Al pasar a desktop, cerrar el menú para que no quede abierto tras un resize
@@ -356,7 +428,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       });
       // Cerrar con Escape
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && nav.classList.contains('is-open')) close();
+        if (e.key === 'Escape') close();
       });
     }
 

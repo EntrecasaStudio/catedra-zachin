@@ -95,7 +95,7 @@ const accent = nivel === 1 ? 'n1' : 'n2';
   .niveldet-prog__num {
     font-family: var(--pz-font-mono);
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: clamp(1.35rem, 3vw, 1.75rem); /* mismo tamaño que el título */
     line-height: 1;
   }
   .niveldet-programa--n1 .niveldet-prog__num { color: var(--pz-n1); }
