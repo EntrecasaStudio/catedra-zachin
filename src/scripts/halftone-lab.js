@@ -81,6 +81,7 @@ export function initHalftoneLab(root, opts = {}) {
   let lastFrameTime = performance.now();
   let rafId = null;
   let running = false;
+  let startRetries = 0; // iOS Safari: el layout (100dvh) puede no estar listo al primer start()
   let lastIsDark = null; // detecta cambio de tema para regenerar la geometría
 
   function generateDotsForChannel(ch) {
@@ -325,11 +326,10 @@ export function initHalftoneLab(root, opts = {}) {
   function onLeave() {
     autoMode = !reducedMotion;
   }
-  function onClick(e) {
-    if (reducedMotion || background) return; // el fondo del hero no congela
-    const rect = canvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
+  // Depósito inmediato bajo el cursor (click/tap): fija los dots cercanos al valor
+  // de hover al instante. Es lo que hace que un TAP en mobile pinte sin necesidad de
+  // mantener presionado (el brush recién crece con el tiempo).
+  function stampAt(mx, my) {
     // Claro: fija el canal seleccionado. Oscuro (aditivo): fija todos los activos → mancha de luz.
     const targets = isDarkNow()
       ? channels.filter((c) => c.active)
@@ -344,10 +344,17 @@ export function initHalftoneLab(root, opts = {}) {
           const t = 1 - dist / INFLUENCE;
           const grown = dot.baseR + (dot.maxR - dot.baseR) * t;
           dot.frozen = true;
-          dot.fixedR = Math.max(dot.current, grown);
+          dot.fixedR = Math.max(dot.fixedR, dot.current, grown);
+          dot.current = dot.fixedR; // aparece al instante (no espera el LERP)
         }
       }
     }
+  }
+  function onClick(e) {
+    if (background) return; // el fondo del hero no congela
+    const rect = canvas.getBoundingClientRect();
+    stampAt(e.clientX - rect.left, e.clientY - rect.top);
+    if (reducedMotion) drawStaticFrame();
   }
 
   // Brush: mientras se mantiene presionado, el radio crece con el tiempo; los puntos
@@ -378,11 +385,13 @@ export function initHalftoneLab(root, opts = {}) {
     }
   }
   function onDown(e) {
-    if (reducedMotion || background) return;
+    if (background) return;
     autoMode = false;
     const rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
     mouseY = e.clientY - rect.top;
+    stampAt(mouseX, mouseY); // dab inmediato: el click/tap responde al instante
+    if (reducedMotion) { drawStaticFrame(); return; }
     pressing = true;
     pressStart = performance.now();
   }
@@ -398,17 +407,19 @@ export function initHalftoneLab(root, opts = {}) {
     return { x: t.clientX - rect.left, y: t.clientY - rect.top };
   }
   function onTouchStart(e) {
-    if (reducedMotion || background) return;
+    if (background) return;
     autoMode = false;
     const p = touchXY(e);
     if (p) { mouseX = p.x; mouseY = p.y; }
+    stampAt(mouseX, mouseY); // tap = pinta al instante (mobile no mantiene presionado)
+    if (reducedMotion) { drawStaticFrame(); return; }
     if (brushMode) { pressing = true; pressStart = performance.now(); }
   }
   function onTouchMove(e) {
     if (reducedMotion || background) return;
     const p = touchXY(e);
     if (p) { mouseX = p.x; mouseY = p.y; }
-    if (pressing) e.preventDefault(); // pinta en vez de scrollear mientras se mantiene
+    if (pressing) { stampAt(mouseX, mouseY); e.preventDefault(); } // arrastre = pincelada continua
   }
   function onTouchEnd() {
     pressing = false;
@@ -496,7 +507,13 @@ export function initHalftoneLab(root, opts = {}) {
     start() {
       if (running) return;
       resize();
-      if (displayW === 0) return; // aún oculto; se reintenta al próximo start
+      if (displayW === 0) {
+        // Layout aún sin medir (típico en iOS Safari al cargar): reintentar en el
+        // próximo frame en vez de abandonar para siempre.
+        if (startRetries++ < 90) requestAnimationFrame(() => { if (!running) this.start(); });
+        return;
+      }
+      startRetries = 0;
       running = true;
       updateButtonStates();
       if (reducedMotion) {
