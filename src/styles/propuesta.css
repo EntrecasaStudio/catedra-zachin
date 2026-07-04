@@ -51,6 +51,9 @@
   /* Color por nivel — claro/CMYK: N1 magenta · N2 cyan */
   --pz-n1: var(--pz-magenta);
   --pz-n2: var(--pz-cyan);
+  /* duo: gradiente magenta→cyan con stops vívidos (evita el violeta oscuro del
+     medio en sRGB). Funciona en todos los browsers. */
+  --pz-duo: linear-gradient(120deg, var(--pz-n1) 0%, #c81c9e 30%, #5b6fd6 70%, var(--pz-n2) 100%);
 }
 
 [data-theme='dark'] {
@@ -63,23 +66,15 @@
   /* Color por nivel — oscuro/RGB: N1 rojo · N2 azul */
   --pz-n1: var(--pz-red);
   --pz-n2: var(--pz-blue);
+  /* duo: gradiente rojo→azul con stops vívidos (mismo criterio que en claro). */
+  --pz-duo: linear-gradient(120deg, var(--pz-n1) 0%, #ff4a9e 30%, #6d78ff 70%, var(--pz-n2) 100%);
 }
 
 /* Tokens comunes (referencian n1/n2/fg → se adaptan solos al tema).
    Lo común a ambos niveles usa el gradiente (nunca un solo color de nivel);
    los acentos neutros usan el color de texto. */
 :root {
-  /* Fallback sRGB (interpola por un violeta apagado en el medio). */
-  --pz-duo: linear-gradient(120deg, var(--pz-n1), var(--pz-n2));
   --pz-accent: var(--pz-fg);
-}
-/* En navegadores modernos, interpolar en OKLAB: blend suave magenta↔cyan, sin el
-   violeta oscuro del sRGB (que se leía como sombra) ni el violeta fuerte del OKLCH
-   (que metía un tercer color marcado). Queda consistente con los pills sólidos. */
-@supports (background: linear-gradient(in oklab, red, blue)) {
-  :root {
-    --pz-duo: linear-gradient(120deg in oklab, var(--pz-n1), var(--pz-n2));
-  }
 }
 
 /* ------------------------------------------------------------------ *
