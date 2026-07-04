@@ -107,6 +107,11 @@ const grupos = groupDocentes(docentes);
 
     filtros.querySelectorAll('.equipo-filtro').forEach((btn) => {
       btn.addEventListener('click', () => {
+        // Mínimo un nivel encendido: no permitir apagar el último activo.
+        if (btn.classList.contains('is-on') &&
+            filtros.querySelectorAll('.equipo-filtro.is-on').length <= 1) {
+          return;
+        }
         const on = btn.classList.toggle('is-on');
         btn.setAttribute('aria-pressed', String(on));
         apply();

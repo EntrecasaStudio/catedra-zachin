@@ -37,9 +37,15 @@ const label = (c) => (c === 'tps' ? 'TPs' : c.charAt(0).toUpperCase() + c.slice(
 
   <!-- Lightbox -->
   <div class="gal-lightbox" id="gal-lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Vista ampliada">
-    <button class="gal-lightbox__btn gal-lightbox__close" id="gal-close" aria-label="Cerrar">✕</button>
-    <button class="gal-lightbox__btn gal-lightbox__nav gal-lightbox__prev" id="gal-prev" aria-label="Anterior">‹</button>
-    <button class="gal-lightbox__btn gal-lightbox__nav gal-lightbox__next" id="gal-next" aria-label="Siguiente">›</button>
+    <button class="gal-lightbox__btn gal-lightbox__close" id="gal-close" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" /></svg>
+    </button>
+    <button class="gal-lightbox__btn gal-lightbox__nav gal-lightbox__prev" id="gal-prev" aria-label="Anterior">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 5 8 12 15 19" /></svg>
+    </button>
+    <button class="gal-lightbox__btn gal-lightbox__nav gal-lightbox__next" id="gal-next" aria-label="Siguiente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 5 16 12 9 19" /></svg>
+    </button>
     <div class="gal-lightbox__content" id="gal-content"></div>
     <div class="gal-lightbox__info"><span id="gal-counter"></span> · <span id="gal-alt"></span></div>
   </div>
@@ -70,15 +76,20 @@ const label = (c) => (c === 'tps' ? 'TPs' : c.charAt(0).toUpperCase() + c.slice(
     border: var(--pz-border-width) solid #fff;
   }
   /* Botones brutalistas: caja blanca sólida, glifo negro; hover → gradiente */
+  /* Botones en sistema: caja sólida, borde --pz-border-width, radio --pz-radius,
+     ícono SVG centrado (mismo peso de línea que el resto). Sobre el overlay negro
+     el borde va en blanco para leerse. */
   .gal-lightbox__btn {
     position: absolute; z-index: 2;
     width: 3rem; height: 3rem; display: grid; place-items: center;
-    font-size: 1.4rem; line-height: 1;
     color: #000; background: #fff;
     border: var(--pz-border-width) solid #fff;
+    border-radius: var(--pz-radius);
     transition: background var(--pz-transition), color var(--pz-transition);
   }
-  .gal-lightbox__btn:hover { background: var(--pz-duo); color: #fff; border-color: transparent; }
+  .gal-lightbox__btn svg { display: block; width: 1.35rem; height: 1.35rem; }
+  /* Hover: se invierte a caja calada (glifo blanco, marco blanco) */
+  .gal-lightbox__btn:hover { background: transparent; color: #fff; }
   .gal-lightbox__close { top: 1rem; right: 1rem; }
   .gal-lightbox__nav { top: 50%; transform: translateY(-50%); }
   .gal-lightbox__prev { left: 1rem; }
