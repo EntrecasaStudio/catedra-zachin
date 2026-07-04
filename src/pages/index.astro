@@ -1,818 +1,183 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import PropuestaLayout from '../layouts/PropuestaLayout.astro';
+import Section from '../components/propuesta/Section.astro';
+import Grid from '../components/propuesta/Grid.astro';
+import Button from '../components/propuesta/Button.astro';
+import NivelCard from '../components/propuesta/NivelCard.astro';
+import HalftoneLab from '../components/propuesta/HalftoneLab.astro';
+
+const explorar = [
+  { href: '/equipo', tag: 'Plantel', title: 'Plantel docente', desc: 'Adjuntos, JTP, docentes y ayudantes de la cátedra.' },
+  { href: '/galeria', tag: 'Multimedia', title: 'Galería', desc: 'Fotos y videos de clases, talleres y jornadas.' },
+];
 ---
 
-<BaseLayout>
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero__inner container">
-      <canvas class="hero__halftone" id="halftone-canvas" aria-hidden="true"></canvas>
-      <div class="hero__content">
-        <span class="hero__label">FADU - UBA / Diseño Gráfico</span>
-        <h1 class="hero__title">
-          Cátedra<br/>
-          Zachin
-        </h1>
-        <p class="hero__subtitle">Tecnología / Niveles 1 & 2</p>
-        <div class="hero__actions">
-          <a href="https://instagram.com/catedrazachin" target="_blank" rel="noopener noreferrer" class="btn btn-hero-secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-            </svg>
-            @catedrazachin
-          </a>
-          <div class="halftone-channels">
-            <button class="channel-btn channel-btn--k active selected" data-channel="k" type="button" title="Black 45°" aria-label="Canal negro (K) a 45 grados">K</button>
-            <button class="channel-btn channel-btn--c" data-channel="c" type="button" title="Cyan 15°" aria-label="Canal cyan (C) a 15 grados">C</button>
-            <button class="channel-btn channel-btn--m" data-channel="m" type="button" title="Magenta 75°" aria-label="Canal magenta (M) a 75 grados">M</button>
-            <button class="channel-btn channel-btn--y" data-channel="y" type="button" title="Yellow 0°" aria-label="Canal amarillo (Y) a 0 grados">Y</button>
-          </div>
-        </div>
+<PropuestaLayout>
+  <!-- Hero: fondo halftone (K en claro / RGB en oscuro), tenue, a pantalla completa -->
+  <section class="hero" data-hero-halftone>
+    <canvas class="hero__bg" aria-hidden="true"></canvas>
+    <div class="hero__content pz-container" data-reveal-group>
+      <span class="pz-eyebrow" data-reveal>Diseño gráfico | FADU · UBA</span>
+      <h1 class="hero__title" data-reveal>Cátedra<br />Zachin</h1>
+      <p class="hero__subtitle" data-reveal>Tecnología | Nivel 1 &amp; 2</p>
+      <div class="hero__actions" data-reveal>
+        <Button href="https://instagram.com/catedrazachin" variant="secondary" target="_blank" rel="noopener noreferrer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+          </svg>
+          @catedrazachin
+        </Button>
       </div>
     </div>
   </section>
 
-  <!-- Niveles Preview -->
-  <section class="niveles section">
-    <div class="container">
-      <h2 class="section-title" data-animate>Niveles</h2>
-      <div class="niveles__grid" data-animate-stagger>
-        <a href="/nivel-1" class="nivel-card nivel-card--n1">
-          <span class="nivel-card__number">01</span>
-          <h3>Nivel 1</h3>
-          <p>Introducción a las tecnologías de producción gráfica. Procesos analógicos y digitales.</p>
-          <span class="nivel-card__link">Ver programa &rarr;</span>
-        </a>
-        <a href="/nivel-2" class="nivel-card nivel-card--n2">
-          <span class="nivel-card__number">02</span>
-          <h3>Nivel 2</h3>
-          <p>Profundización en tecnologías avanzadas de producción y gestión de proyectos gráficos.</p>
-          <span class="nivel-card__link">Ver programa &rarr;</span>
-        </a>
-      </div>
-    </div>
-  </section>
+  <!-- Niveles -->
+  <Section reveal eyebrow="Programa" title="Dos niveles, un sistema" lead="De la reproducción del diseño (digital y web) a la replicación del diseño material (industria gráfica e impresión).">
+    <Grid cols={2} colsMd={1} data-reveal-group>
+      <NivelCard data-reveal nivel={1} title="Tecnología 1" href="/nivel-1" desc="Color, imagen digital, soportes, generación de originales, web e introducción a la industria gráfica." />
+      <NivelCard data-reveal nivel={2} title="Tecnología 2" href="/nivel-2" desc="Industria gráfica, soportes e insumos, pre-impresión, impresión y postimpresión." />
+    </Grid>
+  </Section>
 
-  <!-- Secciones Preview -->
-  <section class="previews section">
-    <div class="container">
-      <div class="previews__grid" data-animate-stagger>
-        <a href="/equipo" class="preview-card">
-          <div class="preview-card__mosaic">
-            <img src="/images/docentes/Adjunta-Daniela-Vulcano.png" alt="" loading="lazy" />
-            <img src="/images/docentes/Adjunto-Leandro-Barales.png" alt="" loading="lazy" />
-            <img src="/images/docentes/JTP-Julieta-Casela.png" alt="" loading="lazy" />
-            <img src="/images/docentes/JTP-Karina-Kusner.png" alt="" loading="lazy" />
-            <img src="/images/docentes/JTP-Paula-Rincon.png" alt="" loading="lazy" />
-            <img src="/images/docentes/JTP-Gabriel-Gutierrez.jpg" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Antonella-Scardino.png" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Juan-Hileger.png" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Catalina-Somoza.png" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Lucas-Belfiore.png" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Azul-Moreno.png" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Camila-Vidal-Cabrera.png" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Fiorella-Nucara.png" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Josefina-Calvo.png" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Laura-Romano.png" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Greta-Marazzi.png" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Noelia-Fortunato.png" alt="" loading="lazy" />
-            <img src="/images/docentes/DOCENTE-Valentina-Scarfo.png" alt="" loading="lazy" />
-            <img src="/images/docentes/AYUDANTE-Francisco-Bontempi.png" alt="" loading="lazy" />
-            <img src="/images/docentes/AYUDANTE-Charo-Hardouin.png" alt="" loading="lazy" />
-            <img src="/images/docentes/AYUDANTE-Celeste-Diaz.png" alt="" loading="lazy" />
-            <img src="/images/docentes/AYUDANTE-Luis-Sanchez.png" alt="" loading="lazy" />
-            <img src="/images/docentes/AYUDANTE-Ana-Alvarez.png" alt="" loading="lazy" />
-            <img src="/images/docentes/AYUDANTE-Iara-Pizarro.png" alt="" loading="lazy" />
+  <!-- Halftone Lab: la sección ES el juego interactivo, sin texto -->
+  <Section>
+    <HalftoneLab brush="both" />
+  </Section>
+
+  <!-- Explorar (cards sin imagen, con trama de puntos) -->
+  <Section reveal eyebrow="Explorar" title="Adentro de la cátedra">
+    <Grid cols={2} colsMd={1} data-reveal-group>
+      {explorar.map((c) => (
+        <a class="explore-card" data-reveal href={c.href}>
+          <div class="explore-card__head">
+            <span class="pz-tag">{c.tag}</span>
+            <span class="explore-card__arrow" aria-hidden="true">↗</span>
           </div>
-          <div class="preview-card__text">
-            <h3>Plantel Docente</h3>
-            <p>Conocé a los docentes y ayudantes de la cátedra.</p>
+          <div class="explore-card__body">
+            <h3 class="explore-card__title">{c.title}</h3>
+            <p class="explore-card__desc">{c.desc}</p>
           </div>
         </a>
-        <a href="/galeria" class="preview-card">
-          <div class="preview-card__slideshow" data-slideshow data-offset="0">
-            <img src="/images/galeria/jornada/IMG_1481.jpg" alt="Jornada Zachin Live" loading="lazy" data-active />
-            <img src="/images/galeria/clase/IMG_4048.jpg" alt="Clase de tecnología" loading="lazy" />
-            <img src="/images/galeria/taller/IMG_2825.jpg" alt="Taller de producción" loading="lazy" />
-            <img src="/images/galeria/jornada/IMG_3863.jpg" alt="Jornada Zachin Live" loading="lazy" />
-            <div class="slideshow-dots">
-              <span class="slideshow-dot" data-active></span>
-              <span class="slideshow-dot"></span>
-              <span class="slideshow-dot"></span>
-              <span class="slideshow-dot"></span>
-            </div>
-          </div>
-          <div class="preview-card__text">
-            <h3>Galería</h3>
-            <p>Fotos y videos de las clases, eventos y talleres.</p>
-          </div>
-        </a>
-      </div>
-    </div>
-  </section>
-</BaseLayout>
+      ))}
+    </Grid>
+  </Section>
+</PropuestaLayout>
 
 <style>
-  /* Hero */
   .hero {
-    min-height: 80dvh;
-    display: flex;
-    align-items: center;
-    padding-top: var(--header-height);
     position: relative;
-  }
-
-  .hero__halftone {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    user-select: none;
-    pointer-events: none;
-  }
-
-  .halftone-channels {
+    min-height: calc(100dvh - var(--pz-header-height));
     display: flex;
-    gap: 4px;
-    align-items: center;
-  }
-
-  .channel-btn {
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    font-size: 0.6rem;
-    font-weight: 700;
-    border: 1px solid var(--color-border);
-    border-radius: 2px;
-    cursor: pointer;
-    background: transparent;
-    color: var(--color-text-muted);
-    transition: all 0.2s ease;
-    padding: 0;
-    line-height: 1;
-  }
-
-  .channel-btn:hover {
-    border-color: var(--color-text-secondary);
-  }
-
-  .channel-btn--k.active {
-    background: var(--color-text);
-    color: var(--color-bg);
-    border-color: var(--color-text);
-  }
-
-  .channel-btn--c.active {
-    background: #00AEEF;
-    color: #fff;
-    border-color: #00AEEF;
-  }
-
-  .channel-btn--m.active {
-    background: #EC008C;
-    color: #fff;
-    border-color: #EC008C;
-  }
-
-  .channel-btn--y.active {
-    background: #FFF200;
-    color: #000;
-    border-color: #FFF200;
-  }
-
-  .channel-btn.selected {
-    outline: 1.5px solid var(--color-text);
-    outline-offset: 2px;
-  }
-
-  .channel-btn--k.active.selected { outline-color: var(--color-text); }
-  .channel-btn--c.active.selected { outline-color: #00AEEF; }
-  .channel-btn--m.active.selected { outline-color: #EC008C; }
-  .channel-btn--y.active.selected { outline-color: #FFF200; }
-
-  .hero__inner {
-    padding-block: var(--space-2xl);
-  }
-
-  .hero__content {
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero__label,
-  .hero__title,
-  .hero__subtitle,
-  .hero__actions {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  .hero__title {
-    transform: translateY(40px);
-  }
-
-  .hero--animated .hero__label {
-    animation: heroFadeIn 0.6s ease-out 0.15s forwards;
-  }
-
-  .hero--animated .hero__title {
-    animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-  }
-
-  .hero--animated .hero__subtitle {
-    animation: heroFadeIn 0.6s ease-out 0.55s forwards;
-  }
-
-  .hero--animated .hero__actions {
-    animation: heroFadeIn 0.6s ease-out 0.75s forwards;
-  }
-
-  @keyframes heroFadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes heroFadeInUp {
-    from { opacity: 0; transform: translateY(40px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .hero__label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--color-text-secondary);
-    font-weight: 600;
-  }
-
-  .hero__title {
-    font-size: clamp(3rem, 10vw, 7rem);
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    margin-top: var(--space-md);
-  }
-
-  .hero__subtitle {
-    font-size: clamp(1rem, 2.5vw, 1.5rem);
-    color: var(--color-text-secondary);
-    margin-top: var(--space-md);
-    font-weight: 500;
-  }
-
-  .hero__actions {
-    display: flex;
-    gap: var(--space-md);
-    margin-top: var(--space-xl);
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .btn-hero-primary {
-    background-color: var(--color-magenta);
-    color: var(--color-white);
-  }
-
-  .btn-hero-primary:hover {
-    background-color: #c4006a;
-    color: var(--color-white);
-  }
-
-  .btn-hero-secondary {
-    border: 1.5px solid var(--color-border);
-    color: var(--color-text-secondary);
-    font-size: 0.8125rem;
-    padding: var(--space-xs) var(--space-md);
-  }
-
-  .btn-hero-secondary:hover {
-    border-color: var(--color-text);
-    color: var(--color-text);
-  }
-
-  /* Section Title */
-  .section-title {
-    margin-bottom: var(--space-xl);
-  }
-
-  /* Niveles */
-  .niveles__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-lg);
-  }
-
-  .nivel-card {
-    display: block;
-    padding: var(--space-xl);
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    text-decoration: none;
-    color: var(--color-text);
-    transition: all var(--transition-base);
-    position: relative;
     overflow: hidden;
   }
-
-  .nivel-card:hover {
-    color: var(--color-text);
-  }
-
-  .nivel-card--n1:hover { border-color: var(--color-magenta); }
-  .nivel-card--n2:hover { border-color: var(--color-cyan); }
-
-  .nivel-card__number {
-    font-size: 4rem;
-    font-weight: 700;
-    opacity: 0.2;
-    position: absolute;
-    top: var(--space-md);
-    right: var(--space-lg);
-    line-height: 1;
-  }
-
-  .nivel-card--n1 .nivel-card__number { color: var(--color-magenta); }
-  .nivel-card--n2 .nivel-card__number { color: var(--color-cyan); }
-
-  .nivel-card h3 {
-    font-size: 1.5rem;
-    margin-bottom: var(--space-sm);
-  }
-
-  .nivel-card p {
-    color: var(--color-text-secondary);
-    font-size: 0.9375rem;
-  }
-
-  .nivel-card__link {
-    display: inline-block;
-    margin-top: var(--space-md);
-    font-weight: 600;
-    font-size: 0.875rem;
-  }
-
-  .nivel-card--n1 .nivel-card__link { color: var(--color-magenta); }
-  .nivel-card--n2 .nivel-card__link { color: var(--color-cyan); }
-
-  /* Previews Grid */
-  .previews__grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-md);
-  }
-
-  .preview-card {
-    display: block;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    text-decoration: none;
-    color: var(--color-text);
-    transition: all var(--transition-base);
-    overflow: hidden;
-  }
-
-  .preview-card:hover {
-    border-color: var(--color-text-secondary);
-    color: var(--color-text);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  }
-
-  /* Uniform text area across all cards */
-  .preview-card__text {
-    padding: var(--space-md);
-  }
-
-  .preview-card__text h3 {
-    font-size: 1rem;
-    margin-bottom: var(--space-xs);
-  }
-
-  .preview-card__text p {
-    font-size: 0.8125rem;
-    color: var(--color-text-muted);
-    line-height: 1.5;
-  }
-
-  /* Docente mosaic: 6×4 grid of square avatars, no gaps */
-  .preview-card__mosaic {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 0;
-  }
-
-  .preview-card__mosaic img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    display: block;
-    filter: grayscale(100%);
-    transition: filter 0.3s ease;
-  }
-
-  .preview-card:hover .preview-card__mosaic img {
-    filter: grayscale(0%);
-  }
-
-  /* Slideshow: single photo crossfading via JS */
-  .preview-card__slideshow {
-    position: relative;
-    aspect-ratio: 4/3;
-    overflow: hidden;
-  }
-
-  .preview-card__slideshow img {
+  .hero__bg {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    display: block;
-    opacity: 0;
-    filter: grayscale(100%);
-    transition: opacity 0.8s ease, filter 0.3s ease;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.12;
+    z-index: 0;
   }
+  :global([data-theme='dark']) .hero__bg { opacity: 0.24; }
 
-  .preview-card__slideshow img[data-active] {
-    opacity: 1;
+  .hero__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding-block: var(--pz-space-2xl);
   }
-
-  .preview-card:hover .preview-card__slideshow img {
-    filter: grayscale(0%);
+  .hero__title {
+    font-size: clamp(3.5rem, 15vw, 10rem);
+    line-height: 0.9;
+    margin-top: var(--pz-space-md);
   }
-
-  /* Slideshow dots */
-  .slideshow-dots {
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    transform: translateX(-50%);
+  .hero__subtitle {
+    font-size: clamp(1.1rem, 3vw, 1.75rem);
+    color: var(--pz-muted);
+    margin-top: var(--pz-space-md);
+  }
+  .hero__actions {
     display: flex;
-    gap: 6px;
-    z-index: 2;
+    flex-wrap: wrap;
+    gap: var(--pz-space-sm);
+    margin-top: var(--pz-space-xl);
   }
 
-  .slideshow-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.4);
-    transition: background 0.3s ease, transform 0.3s ease;
+  /* Explore card: sin imagen, con trama de puntos (halftone) */
+  .explore-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--pz-space-xl);
+    min-height: 240px;
+    padding: var(--pz-space-lg);
+    border: var(--pz-border-width) solid var(--pz-fg);
+    border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-bg);
+    color: var(--pz-fg);
+    overflow: hidden;
+    transition: transform var(--pz-transition), box-shadow var(--pz-transition);
   }
-
-  .slideshow-dot[data-active] {
-    background: rgba(255, 255, 255, 0.9);
-    transform: scale(1.3);
+  .explore-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(var(--pz-fg) 1.4px, transparent 1.5px);
+    background-size: 13px 13px;
+    opacity: 0.05;
+    transition: opacity var(--pz-transition);
+    pointer-events: none;
   }
+  .explore-card:hover {
+    transform: translate(var(--pz-lift), var(--pz-lift));
+    box-shadow: var(--pz-shadow-hover);
+  }
+  .explore-card:hover::before { opacity: 0.12; }
 
-  /* Responsive */
-  @media (max-width: 768px) {
-    .niveles__grid,
-    .previews__grid {
-      grid-template-columns: 1fr;
-    }
+  .explore-card__head {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .explore-card__arrow {
+    font-size: 1.9rem;
+    line-height: 1;
+    transition: transform var(--pz-transition);
+  }
+  .explore-card:hover .explore-card__arrow { transform: translate(5px, -5px); }
+
+  .explore-card__body { position: relative; }
+  .explore-card__title { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+  .explore-card__desc {
+    color: var(--pz-muted);
+    font-size: 0.95rem;
+    margin-top: var(--pz-space-xs);
+    max-width: 34ch;
   }
 </style>
 
 <script>
+  import { initHalftoneLab } from '../scripts/halftone-lab.js';
+
   document.addEventListener('astro:page-load', () => {
-    const canvas = document.getElementById('halftone-canvas') as HTMLCanvasElement;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const hero = canvas.closest('.hero') as HTMLElement;
-    if (!hero) return;
-
-    const offscreen = document.createElement('canvas');
-    const offCtx = offscreen.getContext('2d')!;
-
-    // AM Halftone parameters
-    const SPACING = 10;
-    const BASE_RADIUS = Math.sqrt(0.05 * SPACING * SPACING / Math.PI);
-    const MAX_RADIUS = SPACING * 0.6;
-    const INFLUENCE = 160;
-    const LERP = 0.12;
-    const CHANNEL_ALPHA = 0.10;
-    const SWEEP_DURATION = 800; // ms for full sweep
-    const SWEEP_SOFT = 100;    // px edge softness
-
-    interface Dot {
-      x: number;
-      y: number;
-      current: number;
-      target: number;
-      frozen: boolean;
-      maxR: number;
-      baseR: number;
-    }
-
-    interface Channel {
-      id: string;
-      angle: number;
-      color: string;
-      dots: Dot[];
-      active: boolean;
-      sweep: number;       // 0 = hidden, 1 = fully visible
-      sweepTarget: number; // where sweep is going
-    }
-
-    const channels: Channel[] = [
-      { id: 'k', angle: Math.PI / 4,        color: '#000000', dots: [], active: true,  sweep: 0, sweepTarget: 1 },
-      { id: 'c', angle: Math.PI * 15 / 180, color: '#00AEEF', dots: [], active: false, sweep: 0, sweepTarget: 0 },
-      { id: 'm', angle: Math.PI * 75 / 180, color: '#EC008C', dots: [], active: false, sweep: 0, sweepTarget: 0 },
-      { id: 'y', angle: 0,                  color: '#FFF200', dots: [], active: false, sweep: 0, sweepTarget: 0 },
-    ];
-
-    let mouseX = -9999;
-    let mouseY = -9999;
-    let displayW = 0;
-    let displayH = 0;
-    let autoMode = true;
-    let autoTime = Math.random() * 100;
-    let selectedChannel = 'k';
-    let lastFrameTime = performance.now();
-
-    function generateDotsForChannel(ch: Channel) {
-      ch.dots = [];
-      const w = displayW, h = displayH;
-      const cosA = Math.cos(ch.angle);
-      const sinA = Math.sin(ch.angle);
-      const diag = Math.sqrt(w * w + h * h);
-      const steps = Math.ceil(diag / SPACING) + 2;
-
-      for (let i = -steps; i <= steps; i++) {
-        for (let j = -steps; j <= steps; j++) {
-          const rx = i * SPACING;
-          const ry = j * SPACING;
-          const x = rx * cosA - ry * sinA + w / 2;
-          const y = rx * sinA + ry * cosA + h / 2;
-
-          if (x >= -MAX_RADIUS && x <= w + MAX_RADIUS &&
-              y >= -MAX_RADIUS && y <= h + MAX_RADIUS) {
-            const fadeStart = h * 0.8;
-            let dotMaxR = MAX_RADIUS;
-            let dotBaseR = BASE_RADIUS;
-            if (y > fadeStart) {
-              const fade = 1 - (y - fadeStart) / (h * 0.2);
-              dotMaxR *= Math.max(fade, 0);
-              dotBaseR *= Math.max(fade, 0);
-            }
-            ch.dots.push({
-              x, y,
-              current: dotBaseR,
-              target: dotBaseR,
-              frozen: false,
-              maxR: dotMaxR,
-              baseR: dotBaseR
-            });
-          }
-        }
-      }
-    }
-
-    function resize() {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = hero.getBoundingClientRect();
-      displayW = rect.width;
-      displayH = rect.height;
-      canvas.width = displayW * dpr;
-      canvas.height = displayH * dpr;
-      offscreen.width = canvas.width;
-      offscreen.height = canvas.height;
-      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-      offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      for (const ch of channels) {
-        if (ch.active || ch.dots.length > 0) generateDotsForChannel(ch);
-      }
-    }
-
-    function updateAutoCursor() {
-      if (!autoMode) return;
-      autoTime += 0.006;
-      mouseX = displayW * 0.5 + displayW * 0.3 * Math.sin(autoTime * 1.3);
-      mouseY = displayH * 0.4 + displayH * 0.25 * Math.sin(autoTime * 0.9 + 1.5);
-    }
-
-    function draw() {
-      const now = performance.now();
-      const dt = now - lastFrameTime;
-      lastFrameTime = now;
-
-      updateAutoCursor();
-
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const dpr = window.devicePixelRatio || 1;
-
-      // Update sweep progress for each channel
-      for (const ch of channels) {
-        if (ch.sweep !== ch.sweepTarget) {
-          const speed = dt / SWEEP_DURATION;
-          if (ch.sweepTarget > ch.sweep) {
-            ch.sweep = Math.min(ch.sweep + speed, ch.sweepTarget);
-          } else {
-            ch.sweep = Math.max(ch.sweep - speed, ch.sweepTarget);
-          }
-          // Deactivate when fully swept out
-          if (ch.sweep <= 0 && ch.sweepTarget <= 0) {
-            ch.active = false;
-            ch.dots = [];
-          }
-        }
-      }
-
-      // Clear main canvas
-      ctx!.setTransform(1, 0, 0, 1, 0, 0);
-      ctx!.clearRect(0, 0, canvas.width, canvas.height);
-      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      // Draw each active channel
-      for (const ch of channels) {
-        if (!ch.active || ch.sweep <= 0) continue;
-
-        const isSelected = ch.id === selectedChannel;
-        const totalSweepW = displayW + SWEEP_SOFT * 2;
-        const sweepEdge = ch.sweep * totalSweepW - SWEEP_SOFT;
-
-        offCtx.globalCompositeOperation = 'source-over';
-        offCtx.globalAlpha = 1;
-        offCtx.clearRect(0, 0, displayW, displayH);
-        offCtx.fillStyle = ch.id === 'k'
-          ? (isDark ? '#FFFFFF' : '#000000')
-          : ch.color;
-
-        for (const dot of ch.dots) {
-          if (dot.maxR <= 0.1) continue;
-
-          // Sweep scale: dots to the left of sweep edge are visible
-          const distFromEdge = sweepEdge - dot.x;
-          const sweepScale = Math.max(0, Math.min(1, distFromEdge / SWEEP_SOFT));
-          if (sweepScale <= 0.01) continue;
-
-          // Mouse interaction: only for selected channel
-          if (isSelected) {
-            const dx = mouseX - dot.x;
-            const dy = mouseY - dot.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dot.frozen) {
-              if (dist < INFLUENCE) {
-                const t = 1 - dist / INFLUENCE;
-                const newTarget = dot.baseR + (dot.maxR - dot.baseR) * t;
-                if (newTarget > dot.target) dot.target = newTarget;
-              }
-            } else {
-              if (dist < INFLUENCE) {
-                const t = 1 - dist / INFLUENCE;
-                dot.target = dot.baseR + (dot.maxR - dot.baseR) * t;
-              } else {
-                dot.target = dot.baseR;
-              }
-            }
-          } else {
-            // Non-selected: non-frozen dots return to base
-            if (!dot.frozen) {
-              dot.target = dot.baseR;
-            }
-          }
-
-          // Lerp
-          const diff = dot.target - dot.current;
-          if (Math.abs(diff) > 0.05) {
-            dot.current += diff * LERP;
-          } else {
-            dot.current = dot.target;
-          }
-
-          // Draw with sweep scale applied
-          const r = Math.max(dot.current * sweepScale, 0.3);
-          offCtx.beginPath();
-          offCtx.arc(dot.x, dot.y, r, 0, Math.PI * 2);
-          offCtx.fill();
-        }
-
-        // Composite to main at controlled intensity
-        ctx!.globalAlpha = CHANNEL_ALPHA;
-        ctx!.globalCompositeOperation = 'source-over';
-        ctx!.setTransform(1, 0, 0, 1, 0, 0);
-        ctx!.drawImage(offscreen, 0, 0);
-        ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-
-      ctx!.globalAlpha = 1;
-      requestAnimationFrame(draw);
-    }
-
-    // Update button visual states
-    function updateButtonStates() {
-      document.querySelectorAll('.channel-btn').forEach(btn => {
-        const chId = (btn as HTMLElement).dataset.channel!;
-        const ch = channels.find(c => c.id === chId)!;
-        const isActive = ch.active && ch.sweepTarget > 0;
-        const isSelected = chId === selectedChannel;
-        btn.classList.toggle('active', isActive);
-        btn.classList.toggle('selected', isSelected);
-      });
-    }
-
-    // Mouse tracking
-    hero.addEventListener('mousemove', (e: MouseEvent) => {
-      autoMode = false;
-      const rect = canvas.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
-    });
-
-    hero.addEventListener('mouseleave', () => {
-      autoMode = true;
-    });
-
-    // Click to freeze dots (only selected channel)
-    hero.addEventListener('click', (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest('a, button')) return;
-
-      const rect = canvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-
-      const ch = channels.find(c => c.id === selectedChannel);
-      if (!ch || !ch.active) return;
-
-      for (const dot of ch.dots) {
-        if (dot.frozen) continue;
-        const dx = mx - dot.x;
-        const dy = my - dot.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < INFLUENCE) dot.frozen = true;
-      }
-    });
-
-    // Channel buttons: click to add/select/remove
-    document.querySelectorAll('.channel-btn').forEach(btn => {
-      btn.addEventListener('click', (e: Event) => {
-        e.stopPropagation();
-        const chId = (btn as HTMLElement).dataset.channel!;
-        const ch = channels.find(c => c.id === chId)!;
-
-        if (!ch.active || ch.sweepTarget <= 0) {
-          // Inactive → activate + select (sweep in)
-          ch.active = true;
-          ch.sweepTarget = 1;
-          if (ch.dots.length === 0) generateDotsForChannel(ch);
-          selectedChannel = chId;
-        } else if (chId !== selectedChannel) {
-          // Active but not selected → just select it
-          selectedChannel = chId;
-        } else {
-          // Already selected → remove (sweep out)
-          ch.sweepTarget = 0;
-          // Select next available active channel
-          const next = channels.find(c => c.active && c.id !== chId && c.sweepTarget > 0);
-          selectedChannel = next ? next.id : '';
-        }
-
-        updateButtonStates();
-      });
-    });
-
-    // Theme change observer
-    const observer = new MutationObserver(() => {});
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-
-    // Initialize — K sweeps in from left on page load
-    resize();
-    window.addEventListener('resize', resize);
-    requestAnimationFrame(draw);
-
-    // Slideshow: cycle images with staggered timing per card
-    document.querySelectorAll('[data-slideshow]').forEach(container => {
-      const imgs = container.querySelectorAll('img');
-      const dots = container.querySelectorAll('.slideshow-dot');
-      if (imgs.length < 2) return;
-
-      let current = 0;
-      const offset = parseInt((container as HTMLElement).dataset.offset || '0');
-
-      const cycle = () => {
-        imgs[current].removeAttribute('data-active');
-        if (dots[current]) dots[current].removeAttribute('data-active');
-        current = (current + 1) % imgs.length;
-        imgs[current].setAttribute('data-active', '');
-        if (dots[current]) dots[current].setAttribute('data-active', '');
-      };
-
-      // Start each slideshow with its own offset
-      setTimeout(() => {
-        setInterval(cycle, 3000);
-      }, offset);
+    document.querySelectorAll('[data-hero-halftone]').forEach((el) => {
+      const lab = initHalftoneLab(el, { background: true });
+      if (!lab) return;
+      const io = new IntersectionObserver(
+        (es) => es.forEach((e) => (e.isIntersecting ? lab.start() : lab.stop())),
+        { threshold: 0 }
+      );
+      io.observe(el);
+      document.addEventListener('astro:before-swap', () => { io.disconnect(); lab.destroy(); }, { once: true });
     });
   });
 </script>
