@@ -144,6 +144,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/propuesta';
     padding: 0.32rem var(--pz-space-sm);
     border: var(--pz-border-width) solid transparent;
     border-radius: var(--pz-radius);
+    /* padding-box: el fill activo no se pinta bajo el borde transparente →
+       sin fringe oscuro en las esquinas. */
+    background-clip: padding-box;
     font-family: var(--pz-font-mono);
     font-size: 0.8rem;
     font-weight: 700;
