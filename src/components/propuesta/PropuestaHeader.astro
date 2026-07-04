@@ -23,7 +23,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     </a>
 
     <nav class="pz-header__nav" id="pz-nav" aria-label="Navegación de la propuesta">
-      <span class="pz-header__menu-eyebrow" aria-hidden="true">Navegación</span>
+      <span class="pz-header__sweep" aria-hidden="true"></span>
       <ul class="pz-header__list">
         {nav.map((l, i) => (
           <li class="pz-header__item" style={`--i: ${i}`}>
@@ -175,10 +175,10 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   :global([data-theme='dark']) .pz-header__link.is-active--n2,
   :global([data-theme='dark']) .pz-header__link.is-active--duo { color: #000; }
 
-  /* Flecha, label completo y eyebrow: sólo mobile */
+  /* Flecha, label completo, sweep y footer del menú: sólo mobile */
   .pz-header__arrow { display: none; }
   .pz-header__label-full { display: none; }
-  .pz-header__menu-eyebrow { display: none; }
+  .pz-header__sweep { display: none; }
   .pz-header__menu-footer { display: none; }
   .pz-header__theme--mobile { display: none; }
 
@@ -285,16 +285,22 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       pointer-events: auto;
     }
 
-    /* Eyebrow del menú */
-    .pz-header__menu-eyebrow {
+    /* Línea que "baja": el divider del tope de la nav se desplaza hasta el footer
+       al abrir el menú (transform animado; el recorrido exacto lo mide el JS). */
+    .pz-header__sweep {
       display: block;
-      margin-bottom: var(--pz-space-lg);
-      font-family: var(--pz-font-mono);
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--pz-muted);
+      position: absolute;
+      top: calc(var(--pz-header-height) + env(safe-area-inset-top));
+      left: calc(var(--pz-space-lg) + env(safe-area-inset-left));
+      right: calc(var(--pz-space-lg) + env(safe-area-inset-right));
+      height: var(--pz-border-width);
+      background: var(--pz-fg);
+      z-index: 3;
+      transform: translateY(0);
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .pz-header__nav.is-open .pz-header__sweep {
+      transform: translateY(var(--pz-sweep-travel, calc(100dvh - var(--pz-header-height) - 6rem)));
     }
 
     .pz-header__list {
@@ -326,12 +332,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       font-size: clamp(1.5rem, 7vw, 2.3rem);
       letter-spacing: 0.01em; /* mono grande: tracking ajustado */
       color: var(--pz-fg);
-      padding: var(--pz-space-xs) 0 var(--pz-space-xs) var(--pz-space-md);
+      padding: var(--pz-space-xs) 0;
       border: none;
-      border-left: 3px solid var(--_tone, var(--pz-fg)); /* acento por nivel */
       border-radius: 0;
     }
-    /* Color de acento por item (permanente, no sólo en el activo) */
+    /* Color de acento por item (feed de la flecha del activo) */
     .pz-header__link--n1 { --_tone: var(--pz-n1); }
     .pz-header__link--n2 { --_tone: var(--pz-n2); }
     .pz-header__link--duo { --_tone: var(--pz-duo); }
@@ -349,8 +354,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     :global([data-theme='dark']) .pz-header__link.is-active--n2,
     :global([data-theme='dark']) .pz-header__link.is-active--duo { color: var(--pz-fg); }
 
-    /* Activo: regla izquierda más gruesa + flecha teñida del color del nivel */
-    .pz-header__link.is-active { border-left-width: 6px; }
+    /* Activo: flecha teñida del color del nivel (sin barras verticales) */
     .pz-header__arrow {
       display: none;
       width: 1.3rem;
@@ -365,7 +369,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       align-items: center;
       margin-top: auto;
       padding-top: var(--pz-space-lg);
-      border-top: var(--pz-border-width) solid var(--pz-fg);
+      /* El divider lo dibuja la línea que baja (.pz-header__sweep) al aterrizar acá. */
     }
     .pz-header__theme--mobile { width: 2.75rem; height: 2.75rem; }
     .pz-header__theme--mobile .pz-theme-svg { width: 1.6rem; height: 1.6rem; }
@@ -407,7 +411,16 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
         b.width = '';
         window.scrollTo(0, scrollY);
       };
+      const sweep = nav.querySelector('.pz-header__sweep');
+      const footer = nav.querySelector('.pz-header__menu-footer');
+      // Mide cuánto tiene que bajar la línea para aterrizar en el footer.
+      const setSweepTravel = () => {
+        if (!sweep || !footer) return;
+        const travel = footer.getBoundingClientRect().top - sweep.getBoundingClientRect().top;
+        if (travel > 0) nav.style.setProperty('--pz-sweep-travel', `${travel}px`);
+      };
       const open = () => {
+        setSweepTravel(); // medir antes de animar (recorrido exacto)
         nav.classList.add('is-open');
         burger.setAttribute('aria-expanded', 'true');
         lock();
