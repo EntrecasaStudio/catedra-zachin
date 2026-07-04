@@ -345,6 +345,9 @@ button {
   border: var(--pz-border-width) solid var(--pz-fg);
   border-radius: var(--pz-radius);
   background: var(--_bg);
+  /* padding-box: el fill no se pinta bajo el borde → evita el fringe oscuro en
+     las esquinas cuando el borde es transparente (fondos con gradiente). */
+  background-clip: padding-box;
   color: var(--_fg);
   box-shadow: var(--pz-shadow);
   transition: transform var(--pz-transition), box-shadow var(--pz-transition),
@@ -427,6 +430,7 @@ button {
   letter-spacing: 0.08em;
   border: var(--pz-border-width) solid var(--pz-fg);
   border-radius: var(--pz-radius);
+  background-clip: padding-box; /* evita fringe oscuro en esquinas con fill gradiente */
   line-height: 1.3;
 }
 
