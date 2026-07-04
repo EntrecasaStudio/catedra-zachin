@@ -73,11 +73,12 @@
   --pz-duo: linear-gradient(120deg, var(--pz-n1), var(--pz-n2));
   --pz-accent: var(--pz-fg);
 }
-/* En navegadores modernos, interpolar en OKLCH: el medio queda vívido (violeta
-   brillante) en vez de un violeta oscuro/apagado que se leía como sombra/borde. */
-@supports (background: linear-gradient(in oklch, red, blue)) {
+/* En navegadores modernos, interpolar en OKLAB: blend suave magenta↔cyan, sin el
+   violeta oscuro del sRGB (que se leía como sombra) ni el violeta fuerte del OKLCH
+   (que metía un tercer color marcado). Queda consistente con los pills sólidos. */
+@supports (background: linear-gradient(in oklab, red, blue)) {
   :root {
-    --pz-duo: linear-gradient(120deg in oklch, var(--pz-n1), var(--pz-n2));
+    --pz-duo: linear-gradient(120deg in oklab, var(--pz-n1), var(--pz-n2));
   }
 }
 
