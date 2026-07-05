@@ -46,13 +46,14 @@ export function initHalftoneLab(root, opts = {}) {
   const SWEEP_SOFT = 100;
 
   // Brush: crecimiento del radio con el tiempo de presión (px/ms) y tope.
-  const BRUSH_GROW = 0.09;
+  // Más lento al mantener (pedido): el radio se agranda más despacio.
+  const BRUSH_GROW = 0.05;
   const BRUSH_MAX = 520;
   // 'both': ganancia extra sobre el tamaño máximo del punto (satura donde se mantiene).
   const BRUSH_BOOST_RATE = 1 / 4500; // alcanza el tope a ~2.7s
   const BRUSH_BOOST_MAX = 0.6;
-  // Suba gradual del tono pintado: el punto no salta al máximo, sube de a poco.
-  const PAINT_LERP = 0.06;
+  // Suba gradual del tono pintado: el punto no salta al máximo, sube de a poco (lento).
+  const PAINT_LERP = 0.035;
 
   // Subpíxeles RGB (modo oscuro / aditivo): cada celda = rayas R|G|B sobre negro.
   const CELL = 21;            // divisible por 3 → rayas de 7px
@@ -61,10 +62,6 @@ export function initHalftoneLab(root, opts = {}) {
   const MAX_BRIGHT = 1;       // emisión bajo el cursor
   const RGB_EMIT = { m: '#ff1a1a', y: '#22ff22', c: '#1a6bff' }; // rojo / verde / azul puros
   const RGB_SLOT = { m: 0, y: 1, c: 2 }; // posición de la raya dentro de la celda
-
-  // Moiré (sólo light): colapso animado de los ángulos de trama para exhibir la
-  // interferencia. C y M se acercan; K y Y quedan como pantallas de referencia.
-  const MSPACING = 12; // celda del campo de moiré (más grande = patrón más visible)
 
   const isDarkNow = () => document.documentElement.getAttribute('data-theme') === 'dark';
 
@@ -91,7 +88,6 @@ export function initHalftoneLab(root, opts = {}) {
   let running = false;
   let lastIsDark = null; // detecta cambio de tema para regenerar la geometría
   let moireT = 0; // 0 = halftone normal; >0 = moiré (colapso de ángulos). Sólo light.
-  let moireTile = null, moireTileCtx = null, moireTileSize = 0, moireTileKey = '';
 
   function generateDotsForChannel(ch) {
     ch.dots = [];
@@ -160,45 +156,20 @@ export function initHalftoneLab(root, opts = {}) {
   const deg = (d) => (d * Math.PI) / 180;
   const mix = (a, b, t) => a + (b - a) * t;
 
-  // Ángulo efectivo por canal según el colapso t (0→1). C y M se acercan; K y Y
-  // quedan fijos como pantallas de referencia. wob = respiración temporal (rad).
+  // Ángulo efectivo por canal según el colapso t (0→1). Colapso simétrico y
+  // acotado (rotaciones ≤20°) para no dejar huecos al rotar la trama existente.
+  // K queda fijo (referencia); C, M, Y se acercan → aparece el moiré.
   function moireAngle(id, t, wob) {
-    if (id === 'c') return deg(mix(15, 19, t));
-    if (id === 'm') return deg(mix(75, 23, t)) + wob;
-    if (id === 'k') return deg(45);
-    return 0; // y
+    if (id === 'c') return deg(mix(15, 35, t));
+    if (id === 'm') return deg(mix(75, 55, t)) + wob;
+    if (id === 'y') return deg(mix(0, 20, t));
+    return deg(45); // k fijo
   }
 
-  // Tile de trama blanca (una sola vez por tamaño): se dibuja rotado y teñido por
-  // canal → el moiré es la interferencia real entre las grillas superpuestas.
-  function buildMoireTile(dpr) {
-    const diag = Math.sqrt(displayW * displayW + displayH * displayH);
-    const size = Math.ceil(diag + MSPACING * 4);
-    if (!moireTile) {
-      moireTile = document.createElement('canvas');
-      moireTileCtx = moireTile.getContext('2d');
-    }
-    moireTile.width = size * dpr;
-    moireTile.height = size * dpr;
-    const c = moireTileCtx;
-    c.setTransform(dpr, 0, 0, dpr, 0, 0);
-    c.clearRect(0, 0, size, size);
-    c.fillStyle = '#fff';
-    const r = MSPACING * 0.36;
-    c.beginPath();
-    for (let x = 0; x <= size; x += MSPACING) {
-      for (let y = 0; y <= size; y += MSPACING) {
-        c.moveTo(x + r, y);
-        c.arc(x, y, r, 0, Math.PI * 2);
-      }
-    }
-    c.fill();
-    moireTileSize = size;
-    moireTileKey = `${displayW}x${displayH}x${dpr}`;
-  }
-
+  // Render del moiré: rota la trama REAL de cada canal (con el tamaño actual de
+  // cada punto, incluido lo pintado por el usuario) desde su ángulo horneado
+  // hasta el colapsado. No agranda nada: sólo cambia el ángulo → interferencia real.
   function drawMoireFrame(now, dpr) {
-    if (moireTileKey !== `${displayW}x${displayH}x${dpr}`) buildMoireTile(dpr);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -206,25 +177,25 @@ export function initHalftoneLab(root, opts = {}) {
     const cy = displayH / 2;
     const t = moireT * moireT; // ease-in: el caos vive en el tramo alto del slider
     const wob = deg(2) * moireT * Math.sin(now / 2600); // respiración temporal
-    const half = moireTileSize / 2;
     for (const ch of channels) {
       if (!ch.active) continue;
-      const ang = moireAngle(ch.id, t, wob);
+      const delta = moireAngle(ch.id, t, wob) - ch.angle;
       offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       offCtx.globalCompositeOperation = 'source-over';
       offCtx.globalAlpha = 1;
       offCtx.clearRect(0, 0, displayW, displayH);
+      offCtx.fillStyle = ch.color;
       offCtx.save();
       offCtx.translate(cx, cy);
-      offCtx.rotate(ang);
-      offCtx.drawImage(moireTile, -half, -half, moireTileSize, moireTileSize);
+      offCtx.rotate(delta);
+      offCtx.translate(-cx, -cy);
+      for (const dot of ch.dots) {
+        const r = Math.max(dot.current, 0.3); // tamaño real actual (incluye lo pintado)
+        offCtx.beginPath();
+        offCtx.arc(dot.x, dot.y, r, 0, Math.PI * 2);
+        offCtx.fill();
+      }
       offCtx.restore();
-      // Teñir la trama blanca con el color del canal
-      offCtx.globalCompositeOperation = 'source-in';
-      offCtx.fillStyle = ch.color;
-      offCtx.fillRect(0, 0, displayW, displayH);
-      offCtx.globalCompositeOperation = 'source-over';
-      // Componer con multiply (tinta sustractiva)
       ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = 'multiply';
       ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -454,8 +425,9 @@ export function initHalftoneLab(root, opts = {}) {
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < INFLUENCE) {
           // Fija el valor actual (incluye lo que creció por el hover); un nuevo click re-fija más alto.
+          // Radio inicial del dab 25% más chico (pedido): factor 0.75 sobre el crecimiento.
           const t = 1 - dist / INFLUENCE;
-          const grown = dot.baseR + (dot.maxR - dot.baseR) * t;
+          const grown = dot.baseR + (dot.maxR - dot.baseR) * t * 0.75;
           dot.frozen = true;
           dot.fixedR = Math.max(dot.fixedR, dot.current, grown);
           dot.current = dot.fixedR; // aparece al instante (no espera el LERP)
@@ -465,6 +437,7 @@ export function initHalftoneLab(root, opts = {}) {
   }
   function onClick(e) {
     if (background) return; // el fondo del hero no congela
+    if (overControls(e.clientX, e.clientY)) return; // no pintar sobre los selectores
     const rect = canvas.getBoundingClientRect();
     stampAt(e.clientX - rect.left, e.clientY - rect.top);
     if (reducedMotion) drawStaticFrame();
@@ -497,8 +470,20 @@ export function initHalftoneLab(root, opts = {}) {
       }
     }
   }
+  // ¿El punto (viewport) cae sobre el área de los controles? Con un margen extra
+  // para que tocar/errarle a los selectores NO accione la trama.
+  function overControls(clientX, clientY) {
+    const zones = root.querySelectorAll('.pz-halftone__controls, .pz-halftone__moire, [data-expand]');
+    const M = 18;
+    for (const z of zones) {
+      const r = z.getBoundingClientRect();
+      if (clientX >= r.left - M && clientX <= r.right + M && clientY >= r.top - M && clientY <= r.bottom + M) return true;
+    }
+    return false;
+  }
   function onDown(e) {
     if (background) return;
+    if (overControls(e.clientX, e.clientY)) return; // no pintar sobre los selectores
     autoMode = false;
     const rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
@@ -521,6 +506,8 @@ export function initHalftoneLab(root, opts = {}) {
   }
   function onTouchStart(e) {
     if (background) return;
+    const raw = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+    if (raw && overControls(raw.clientX, raw.clientY)) return; // no pintar sobre los selectores
     autoMode = false;
     const p = touchXY(e);
     if (p) { mouseX = p.x; mouseY = p.y; }
