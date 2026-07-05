@@ -18,15 +18,15 @@ const explorar = [
     <div class="hero__content pz-container" data-reveal-group>
       <span class="pz-eyebrow" data-reveal>Diseño gráfico | FADU · UBA</span>
       <h1 class="hero__title" data-reveal>Cátedra<br />Zachin</h1>
-      <p class="hero__subtitle" data-reveal>Tecnología | Nivel 1 &amp; 2</p>
+      <p class="hero__subtitle" data-reveal>Tecnología | Nivel <span class="text-n1">1</span> &amp; <span class="text-n2">2</span></p>
     </div>
   </section>
 
   <!-- Niveles -->
   <Section>
     <Grid cols={2} colsMd={1} data-reveal-group>
-      <NivelCard data-reveal nivel={1} title="Tecnología 1" href="/nivel-1" desc="Color, imagen digital, soportes, generación de originales, web e introducción a la industria gráfica." />
-      <NivelCard data-reveal nivel={2} title="Tecnología 2" href="/nivel-2" desc="Industria gráfica, soportes e insumos, pre-impresión, impresión, postimpresión y productos digitales." />
+      <NivelCard data-reveal titleHidden nivel={1} title="Tecnología 1" href="/nivel-1" desc="Color, imagen digital, soportes, generación de originales, web e introducción a la industria gráfica." />
+      <NivelCard data-reveal titleHidden nivel={2} title="Tecnología 2" href="/nivel-2" desc="Industria gráfica, soportes e insumos, pre-impresión, impresión, postimpresión y productos digitales." />
     </Grid>
   </Section>
 
@@ -92,11 +92,16 @@ const explorar = [
     line-height: 0.9;
     margin-top: var(--pz-space-md);
   }
+  /* Segunda jerarquía reforzada: mono (como la volanta) pero mucho más presente
+     —tamaño de subhead, bold, color pleno— con los números en color de nivel.
+     Deja de leerse como caption. */
   .hero__subtitle {
-    font-family: var(--pz-font-mono); /* misma que la volanta (Space Mono) */
-    font-size: clamp(1rem, 2.6vw, 1.5rem);
-    letter-spacing: 0.02em;
-    color: var(--pz-muted);
+    font-family: var(--pz-font-mono);
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.15;
+    color: var(--pz-fg);
     margin-top: auto; /* se ancla al fondo del hero */
   }
   .hero__actions {
@@ -157,7 +162,7 @@ const explorar = [
   .explore-card__desc {
     color: var(--pz-muted);
     font-size: 0.95rem;
-    margin-top: var(--pz-space-xs);
+    margin-top: var(--pz-space-md);
     max-width: 34ch;
   }
 </style>
