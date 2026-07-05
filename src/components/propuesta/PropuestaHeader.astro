@@ -516,11 +516,13 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
         if (!nav.classList.contains('is-open')) return;
         nav.classList.remove('is-open');
         nav.classList.add('is-closing'); // dispara la salida (cascada inversa + retracción)
+        // La línea (divider) retrae JUNTO con el plano: al soltar is-menu-open cae
+        // a la transición base del ::after (delay 0.4s), sincronizada con el plano.
+        if (header) header.classList.remove('is-menu-open');
         burger.setAttribute('aria-expanded', 'false');
         clearTimeout(closeTimer);
         closeTimer = setTimeout(() => {
           nav.classList.remove('is-closing');
-          if (header) header.classList.remove('is-menu-open'); // reaparece cuando la línea volvió
           unlock(); // diferido: el scroll se restaura recién cuando el panel ya se fue
         }, CLOSE_MS);
       };
