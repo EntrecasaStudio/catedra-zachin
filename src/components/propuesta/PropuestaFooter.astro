@@ -132,5 +132,9 @@ const year = 2026; // fijo: Date no disponible en algunos entornos de build
   }
   @media (max-width: 480px) {
     .pz-footer__grid { grid-template-columns: 1fr; }
+    /* En una sola columna, alinear los links (y sus headings) contra el texto
+       "Cátedra Zachin" —no contra el logo—, igual que la volanta Tecnología/FADU.
+       El corrimiento = ancho del logo + gap del mark. */
+    .pz-footer__col { padding-left: calc(1.75rem + var(--pz-space-xs)); }
   }
 </style>
