@@ -83,7 +83,7 @@ export function initHalftoneLab(root, opts = {}) {
   let pressStart = 0;
   let displayW = 0;
   let displayH = 0;
-  let autoMode = !reducedMotion;
+  let autoMode = background; // sólo el hero deriva solo; el experimento anima con el input
   let autoTime = 0.42; // determinista (sin Math.random)
   let selectedChannel = 'k';
   let lastFrameTime = performance.now();
@@ -437,7 +437,7 @@ export function initHalftoneLab(root, opts = {}) {
     mouseY = e.clientY - rect.top;
   }
   function onLeave() {
-    autoMode = !reducedMotion;
+    autoMode = background;
   }
   // Depósito inmediato bajo el cursor (click/tap): fija los dots cercanos al valor
   // de hover al instante. Es lo que hace que un TAP en mobile pinte sin necesidad de
@@ -536,7 +536,7 @@ export function initHalftoneLab(root, opts = {}) {
   }
   function onTouchEnd() {
     pressing = false;
-    autoMode = !reducedMotion; // sin cursor persistente en mobile → vuelve el auto
+    autoMode = background; // el experimento no deriva solo; el hero sí
   }
 
   stage.addEventListener('mousemove', onMove);
