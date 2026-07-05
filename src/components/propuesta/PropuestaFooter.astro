@@ -90,7 +90,13 @@ const year = 2026; // fijo: Date no disponible en algunos entornos de build
   :global([data-theme='dark']) .pz-footer__logo--light { display: none; }
   :global([data-theme='light']) .pz-footer__logo--dark { display: none; }
   :global([data-theme='light']) .pz-footer__logo--light { display: block; }
-  .pz-footer__tag { color: var(--pz-muted); font-size: 0.85rem; margin-top: var(--pz-space-xs); }
+  /* Alineado bajo "Cátedra Zachin" (no bajo el logo): se corre el ancho del logo + gap */
+  .pz-footer__tag {
+    color: var(--pz-muted);
+    font-size: 0.85rem;
+    margin-top: var(--pz-space-xs);
+    padding-left: calc(1.75rem + var(--pz-space-xs));
+  }
 
   .pz-footer__heading {
     font-family: var(--pz-font-mono);

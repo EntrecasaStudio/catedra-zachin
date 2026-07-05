@@ -123,14 +123,16 @@
   --pz-font-mono: 'Space Mono', ui-monospace, monospace;
   --pz-border-width: 3px;
   --pz-radius: 8px;
-  --pz-shadow: 5px 5px 0 var(--pz-shadow-color);
-  --pz-shadow-hover: 8px 8px 0 var(--pz-shadow-color);
+  --pz-shadow: 4px 4px 0 var(--pz-shadow-color);
+  --pz-shadow-hover: 10px 10px 0 var(--pz-shadow-color);
   --pz-display-transform: none;
   --pz-display-weight: 800;
   --pz-display-tracking: -0.02em;
   --pz-display-leading: 0.94;
   --pz-eyebrow-family: var(--pz-font-mono);
-  --pz-lift: 0px;
+  /* Lift real en hover: la card se despega (motion inequívoco) mientras la sombra
+     crece. Antes 0px → el hover no se percibía. */
+  --pz-lift: -4px;
 }
 
 /* ------------------------------------------------------------------ *

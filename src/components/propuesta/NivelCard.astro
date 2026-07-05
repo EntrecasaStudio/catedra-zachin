@@ -9,6 +9,8 @@ import Tag from './Tag.astro';
  * @prop {string} desc - Descripción breve.
  * @prop {string} href - Destino.
  * @prop {string} [cta] - Texto del enlace. Default 'Ver programa'.
+ * @prop {boolean} [titleHidden] - Oculta visualmente el título (opacity 0) sin
+ *   alterar el layout de la tarjeta. Se mantiene como heading para lectores.
  */
 interface Props {
   nivel: 1 | 2;
@@ -16,16 +18,17 @@ interface Props {
   desc: string;
   href: string;
   cta?: string;
+  titleHidden?: boolean;
   [key: string]: unknown;
 }
-const { nivel, title, desc, href, cta = 'Ver programa', ...rest } = Astro.props;
+const { nivel, title, desc, href, cta = 'Ver programa', titleHidden = false, ...rest } = Astro.props;
 const num = nivel === 1 ? 'N1' : 'N2';
 ---
 
 <a href={href} class:list={['pz-nivel', `pz-nivel--n${nivel}`]} {...rest}>
   <span class="pz-nivel__num" aria-hidden="true">{num}</span>
   <Tag tone={nivel === 1 ? 'n1' : 'n2'}>Nivel {nivel}</Tag>
-  <h3 class="pz-nivel__title">{title}</h3>
+  <h3 class:list={['pz-nivel__title', { 'pz-nivel__title--hidden': titleHidden }]}>{title}</h3>
   <p class="pz-nivel__desc">{desc}</p>
   <span class="pz-nivel__cta">{cta} <span aria-hidden="true">→</span></span>
 </a>
@@ -43,11 +46,18 @@ const num = nivel === 1 ? 'N1' : 'N2';
     border-radius: var(--pz-radius);
     box-shadow: var(--pz-shadow);
     overflow: hidden;
-    transition: transform var(--pz-transition), box-shadow var(--pz-transition), border-color var(--pz-transition);
+  }
+  /* Doble clase → gana a la regla de reveal (transform 280ms + stagger) para que
+     el hover use el timing corto y no quede flotante/laggy. */
+  .pz-nivel.pz-nivel {
+    transition: transform var(--pz-transition), box-shadow var(--pz-transition),
+      border-color var(--pz-transition);
   }
   .pz-nivel:hover {
     transform: translate(var(--pz-lift), var(--pz-lift));
     box-shadow: var(--pz-shadow-hover);
+    transition: transform var(--pz-transition), box-shadow var(--pz-transition),
+      border-color var(--pz-transition);
   }
   .pz-nivel--n1:hover { border-color: var(--pz-n1); }
   .pz-nivel--n2:hover { border-color: var(--pz-n2); }
@@ -69,7 +79,12 @@ const num = nivel === 1 ? 'N1' : 'N2';
   .pz-nivel--n2 .pz-nivel__num { color: var(--pz-n2); }
 
   .pz-nivel__title { font-size: clamp(1.5rem, 4vw, 2.25rem); }
-  .pz-nivel__desc { color: var(--pz-muted); font-size: 0.95rem; }
+  /* Oculto visual sin reflow: mantiene su caja (y por tanto la posición del resto),
+     como bajar la opacidad a 0. */
+  .pz-nivel__title--hidden { opacity: 0; }
+  /* Separar la bajada del título: el gap general (sm) queda ≈ interlínea, así que
+     se refuerza el salto de jerarquía con un margen propio. */
+  .pz-nivel__desc { color: var(--pz-muted); font-size: 0.95rem; margin-top: var(--pz-space-md); }
   .pz-nivel__cta {
     margin-top: var(--pz-space-xs);
     font-family: var(--pz-font-mono);
