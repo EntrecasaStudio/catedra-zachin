@@ -109,6 +109,8 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     height: var(--pz-border-width);
     background: var(--pz-fg);
   }
+  /* Con el menú abierto se oculta: la línea que baja (sweep) ES este divider. */
+  .pz-header.is-menu-open::after { opacity: 0; }
 
   .pz-header__inner {
     display: flex;
@@ -387,21 +389,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       from { opacity: 1; transform: translateX(0); }
       to { opacity: 0; transform: translateX(24px); }
     }
-    @media (prefers-reduced-motion: reduce) {
-      .pz-header__nav.is-open .pz-header__panel,
-      .pz-header__nav.is-closing .pz-header__panel,
-      .pz-header__nav.is-open .pz-header__sweep,
-      .pz-header__nav.is-closing .pz-header__sweep,
-      .pz-header__nav.is-open::before,
-      .pz-header__nav.is-closing::before,
-      .pz-header__nav.is-open .pz-header__item,
-      .pz-header__nav.is-closing .pz-header__item {
-        transition-duration: 0.001s !important;
-        transition-delay: 0s !important;
-        animation-duration: 0.001s !important;
-        animation-delay: 0s !important;
-      }
-    }
+    /* Sin fondo en hover dentro del menú mobile (el "plano" de hover molesta y
+       se queda pegado en touch). */
+    .pz-header__link:hover { background: transparent; }
 
     .pz-header__link {
       gap: var(--pz-space-sm);
@@ -461,6 +451,19 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       margin-top: auto;
       padding-top: var(--pz-space-lg);
       padding-bottom: var(--pz-space-lg); /* separa el toggle de la línea que aterriza debajo */
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    /* El toggle entra DESPUÉS de los links (índice 5) y al cerrar sale PRIMERO. */
+    .pz-header__nav.is-open .pz-header__menu-footer {
+      animation: pzMenuIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: calc(0.42s + 5 * 0.04s);
+    }
+    .pz-header__nav.is-closing .pz-header__menu-footer {
+      opacity: 1;
+      transform: translateX(0);
+      animation: pzMenuOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+      animation-delay: 0s;
     }
     .pz-header__theme--mobile { width: 2.75rem; height: 2.75rem; }
     .pz-header__theme--mobile .pz-theme-svg { width: 1.6rem; height: 1.6rem; }
@@ -513,11 +516,15 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       };
       let closeTimer;
       const CLOSE_MS = 730; // ventana del cierre (cascada→fill-out→retract): unlock al final
+      const header = nav.closest('.pz-header');
       const open = () => {
         clearTimeout(closeTimer);
         nav.classList.remove('is-closing');
         setSweepTravel(); // medir antes de animar (recorrido exacto)
         nav.classList.add('is-open');
+        // El divider del header se oculta: la MISMA línea (sweep) baja desde su
+        // posición y vuelve. Así no quedan dos líneas.
+        if (header) header.classList.add('is-menu-open');
         burger.setAttribute('aria-expanded', 'true');
         lock();
       };
@@ -529,6 +536,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
         clearTimeout(closeTimer);
         closeTimer = setTimeout(() => {
           nav.classList.remove('is-closing');
+          if (header) header.classList.remove('is-menu-open'); // reaparece cuando la línea volvió
           unlock(); // diferido: el scroll se restaura recién cuando el panel ya se fue
         }, CLOSE_MS);
       };
