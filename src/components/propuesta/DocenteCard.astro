@@ -11,6 +11,7 @@ interface Props {
 const { docente } = Astro.props;
 const inicial = docente.nombre.charAt(0).toUpperCase();
 const nivelClass = docente.nivel === 'Nivel 1' ? 'n1' : docente.nivel === 'Nivel 2' ? 'n2' : '';
+const nivelAbbr = docente.nivel === 'Nivel 1' ? 'N1' : docente.nivel === 'Nivel 2' ? 'N2' : docente.nivel;
 ---
 
 <article class="pz-docente" data-nivel={docente.nivel}>
@@ -30,7 +31,7 @@ const nivelClass = docente.nivel === 'Nivel 1' ? 'n1' : docente.nivel === 'Nivel
   </div>
   <h3 class="pz-docente__nombre">{docente.nombre}</h3>
   <span class="pz-docente__rol">{docente.rol}</span>
-  {nivelClass && <span class:list={['pz-docente__nivel', nivelClass]}>{docente.nivel}</span>}
+  {nivelClass && <span class:list={['pz-docente__nivel', nivelClass]}>{nivelAbbr}</span>}
 </article>
 
 <style>
@@ -44,7 +45,7 @@ const nivelClass = docente.nivel === 'Nivel 1' ? 'n1' : docente.nivel === 'Nivel
 
   .pz-docente__avatar {
     position: relative;
-    width: clamp(80px, 20vw, 128px);
+    width: 100%; /* ocupa toda la columna (misma cantidad por fila, imágenes más grandes) */
     aspect-ratio: 1;
     margin-bottom: var(--pz-space-xs);
     border: var(--pz-border-width) solid var(--pz-fg);
@@ -84,10 +85,10 @@ const nivelClass = docente.nivel === 'Nivel 1' ? 'n1' : docente.nivel === 'Nivel
   }
   .pz-docente__nivel {
     font-family: var(--pz-font-mono);
-    font-size: 0.68rem;
+    font-size: 0.58rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
   }
   .pz-docente__nivel.n1 { color: var(--pz-n1); }
   .pz-docente__nivel.n2 { color: var(--pz-n2); }
