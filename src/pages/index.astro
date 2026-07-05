@@ -30,11 +30,6 @@ const explorar = [
     </Grid>
   </Section>
 
-  <!-- Halftone Lab: la sección ES el juego interactivo, sin texto -->
-  <Section>
-    <HalftoneLab brush="both" />
-  </Section>
-
   <!-- Explorar (cards sin imagen, con trama de puntos) -->
   <Section>
     <Grid cols={2} colsMd={1} data-reveal-group>
@@ -51,6 +46,11 @@ const explorar = [
         </a>
       ))}
     </Grid>
+  </Section>
+
+  <!-- Halftone Lab: la sección ES el juego interactivo, sin texto. Cierra el home. -->
+  <Section>
+    <HalftoneLab brush="both" />
   </Section>
 </PropuestaLayout>
 
