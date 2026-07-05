@@ -30,8 +30,10 @@ export function initHalftoneLab(root, opts = {}) {
   const offscreen = document.createElement('canvas');
   const offCtx = offscreen.getContext('2d');
 
-  const reducedMotion =
-    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // El halftone es una pieza de marca/interacción: anima siempre (decisión del
+  // cliente), incluso con "Reducir movimiento" activo — común en iPhone, donde
+  // si no el hero quedaba estático y el experimento no respondía.
+  const reducedMotion = false;
 
   // Parámetros AM halftone
   const SPACING = 10;
@@ -75,6 +77,8 @@ export function initHalftoneLab(root, opts = {}) {
 
   let mouseX = -9999;
   let mouseY = -9999;
+  let tiltX = 0; // inclinación del dispositivo (-1..1), sólo hero
+  let tiltY = 0;
   let pressing = false;
   let pressStart = 0;
   let displayW = 0;
@@ -147,8 +151,9 @@ export function initHalftoneLab(root, opts = {}) {
   function updateAutoCursor() {
     if (!autoMode) return;
     autoTime += 0.006;
-    mouseX = displayW * 0.5 + displayW * 0.3 * Math.sin(autoTime * 1.3);
-    mouseY = displayH * 0.4 + displayH * 0.25 * Math.sin(autoTime * 0.9 + 1.5);
+    // "La bola que pasa": deriva suave + sesgo por inclinación del teléfono (hero).
+    mouseX = displayW * 0.5 + displayW * 0.28 * Math.sin(autoTime * 1.3) + tiltX * displayW * 0.32;
+    mouseY = displayH * 0.4 + displayH * 0.24 * Math.sin(autoTime * 0.9 + 1.5) + tiltY * displayH * 0.28;
   }
 
   // --- Moiré (sólo light) ------------------------------------------------------
@@ -632,6 +637,32 @@ export function initHalftoneLab(root, opts = {}) {
   }
   window.addEventListener('resize', onResize);
 
+  // Inclinación del teléfono → sesga la "bola" del hero (sólo modo fondo).
+  // iOS 13+ exige permiso desde un gesto del usuario (primer tap).
+  function onOrient(e) {
+    const g = Math.max(-40, Math.min(40, e.gamma || 0)); // izq/der
+    const b = Math.max(-40, Math.min(40, (e.beta || 0) - 40)); // adelante/atrás (~40° = en la mano)
+    tiltX = g / 40;
+    tiltY = b / 40;
+  }
+  let orientReq = null;
+  if (background && typeof window.DeviceOrientationEvent !== 'undefined') {
+    const DOE = window.DeviceOrientationEvent;
+    if (typeof DOE.requestPermission === 'function') {
+      orientReq = () => {
+        DOE.requestPermission()
+          .then((s) => { if (s === 'granted') window.addEventListener('deviceorientation', onOrient); })
+          .catch(() => {});
+        window.removeEventListener('touchend', orientReq);
+        window.removeEventListener('click', orientReq);
+      };
+      window.addEventListener('touchend', orientReq, { once: true });
+      window.addEventListener('click', orientReq, { once: true });
+    } else {
+      window.addEventListener('deviceorientation', onOrient);
+    }
+  }
+
   let wantRun = false;
   let ro = null;
 
@@ -664,6 +695,11 @@ export function initHalftoneLab(root, opts = {}) {
       this.stop();
       if (ro) ro.disconnect();
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('deviceorientation', onOrient);
+      if (orientReq) {
+        window.removeEventListener('touchend', orientReq);
+        window.removeEventListener('click', orientReq);
+      }
       stage.removeEventListener('mousemove', onMove);
       stage.removeEventListener('mouseleave', onLeave);
       if (brushMode && !background) {
