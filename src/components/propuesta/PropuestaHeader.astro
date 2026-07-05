@@ -279,11 +279,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     .pz-header__brand,
     .pz-header__actions { position: relative; z-index: 100; }
 
-    /* Cortina invertida: el nav es un STAGE transparente. La revelación la hace
-       un plano color --pz-fg que baja (su borde inferior = la línea), y un
-       relleno full-bleed (::before) que recién aparece al final para cubrir los
-       márgenes laterales. Sin crossfade: sólo se togglea visibility al instante.
-       El texto/íconos del menú se invierten a --pz-bg. */
+    /* Cortina: el nav es un STAGE transparente. La revelación la hace un plano
+       full-bleed que baja (su borde inferior = la línea) cubriendo TODO el ancho
+       —incluidos los márgenes laterales— a medida que desciende. Un ::before full-
+       bleed remata sólo la franja bajo la línea al aterrizar. Sin crossfade: sólo
+       se togglea visibility al instante. */
     .pz-header__nav {
       position: fixed;
       top: 0;
@@ -311,8 +311,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     .pz-header__nav.is-closing { visibility: visible; }
     .pz-header__nav.is-open { pointer-events: auto; }
 
-    /* Relleno de márgenes laterales (full-bleed): transparente durante la bajada,
-       aparece rápido cuando la línea aterriza; en el cierre se va antes del retract. */
+    /* Backdrop remanente (full-bleed): ahora el plano ya cubre los laterales a
+       medida que baja, así que esto sólo remata la franja BAJO la línea (zona del
+       footer). Aparece al aterrizar y se va antes del retract en el cierre. */
     .pz-header__nav::before {
       content: '';
       position: absolute;
@@ -334,14 +335,16 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0.3s;
     }
 
-    /* Plano content-width que baja (borde inferior = la línea). scaleY desde arriba;
-       su alto = el recorrido medido, así el borde inferior y la línea van juntos. */
+    /* Plano FULL-BLEED que baja (borde inferior = la línea). scaleY desde arriba;
+       su alto = el recorrido medido, así el borde inferior y la línea van juntos.
+       Al ir de margen a margen, cubre los laterales A MEDIDA que baja (no después):
+       en cada instante el ancho cubierto es completo, hasta la línea. */
     .pz-header__panel {
       display: block;
       position: absolute;
       top: calc(var(--pz-header-height) + env(safe-area-inset-top));
-      left: calc(var(--pz-space-lg) + env(safe-area-inset-left));
-      right: calc(var(--pz-space-lg) + env(safe-area-inset-right));
+      left: 0;
+      right: 0;
       height: var(--pz-sweep-travel, calc(100dvh - var(--pz-header-height) - 6rem));
       background: var(--pz-bg);
       transform-origin: top center;
