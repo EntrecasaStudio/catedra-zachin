@@ -79,8 +79,14 @@ const explorar = [
     position: relative;
     z-index: 1;
     width: 100%;
-    padding-block: var(--pz-space-2xl);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-block: var(--pz-space-xl);
   }
+  /* Eyebrow + título quedan centrados; la bajada se ancla al fondo del hero
+     (arriba del divider) vía márgenes automáticos que reparten el espacio. */
+  .hero__content > .pz-eyebrow { margin-top: auto; }
   .hero__title {
     font-size: clamp(3.5rem, 15vw, 10rem);
     line-height: 0.9;
@@ -89,7 +95,7 @@ const explorar = [
   .hero__subtitle {
     font-size: clamp(1.1rem, 3vw, 1.75rem);
     color: var(--pz-muted);
-    margin-top: var(--pz-space-md);
+    margin-top: auto; /* se ancla al fondo del hero */
   }
   .hero__actions {
     display: flex;
