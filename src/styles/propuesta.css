@@ -495,14 +495,7 @@ button {
  * 12. Movimiento reducido                                             *
  * ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-  /* Degradar el reveal a "simplemente visible" */
-  .pz-reveal-ready [data-reveal] { opacity: 1 !important; transform: none !important; }
+  /* Sólo se calma el scroll suave; las animaciones de marca (reveal, hover,
+     experimento, menú) corren igual por decisión del cliente. */
+  * { scroll-behavior: auto !important; }
 }

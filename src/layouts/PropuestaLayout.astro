@@ -27,10 +27,10 @@ const {
         try {
           var t = localStorage.getItem('theme') || 'light';
           document.documentElement.setAttribute('data-theme', t);
-          // Reveal en cascada: marcar listo antes del paint (salvo reduced-motion).
-          if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            document.documentElement.classList.add('pz-reveal-ready');
-          }
+          // Reveal en cascada: marcar listo antes del paint. Se corre siempre
+          // (decisión del cliente: las animaciones de marca van aunque el sistema
+          // tenga "Reducir movimiento" activo — común en iPhone).
+          document.documentElement.classList.add('pz-reveal-ready');
         } catch (e) {}
       })();
     </script>

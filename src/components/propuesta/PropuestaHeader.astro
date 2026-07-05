@@ -295,7 +295,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       bottom: 0;
       left: 0;
       z-index: 1;
-      background: var(--pz-fg);
+      background: var(--pz-bg);
       opacity: 0;
       pointer-events: none;
     }
@@ -317,7 +317,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       left: calc(var(--pz-space-lg) + env(safe-area-inset-left));
       right: calc(var(--pz-space-lg) + env(safe-area-inset-right));
       height: var(--pz-sweep-travel, calc(100dvh - var(--pz-header-height) - 6rem));
-      background: var(--pz-fg);
+      background: var(--pz-bg);
       transform-origin: top center;
       transform: scaleY(0);
       z-index: 2;
@@ -409,7 +409,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       min-height: 56px; /* target táctil cómodo */
       font-size: clamp(1.5rem, 7vw, 2.3rem);
       letter-spacing: 0.01em; /* mono grande: tracking ajustado */
-      color: var(--pz-bg); /* invertido: texto sobre el plano --pz-fg */
+      color: var(--pz-fg); /* texto sobre el plano --pz-bg */
       padding: var(--pz-space-xs) 0;
       border: none;
       border-radius: 0;
@@ -431,10 +431,10 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
        no el #000 que usa el chip lleno; si no, el activo queda negro sobre negro). */
     .pz-header__link.is-active--n1,
     .pz-header__link.is-active--n2,
-    .pz-header__link.is-active--duo { background: transparent; color: var(--pz-bg); }
+    .pz-header__link.is-active--duo { background: transparent; color: var(--pz-fg); }
     :global([data-theme='dark']) .pz-header__link.is-active--n1,
     :global([data-theme='dark']) .pz-header__link.is-active--n2,
-    :global([data-theme='dark']) .pz-header__link.is-active--duo { color: var(--pz-bg); }
+    :global([data-theme='dark']) .pz-header__link.is-active--duo { color: var(--pz-fg); }
 
     /* Flecha con reveal en hover/activo (como estaba): entra desde la izquierda. */
     .pz-header__arrow {
@@ -442,7 +442,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       width: 1.3rem;
       height: 1.3rem;
       flex-shrink: 0;
-      color: var(--pz-bg); /* invertido */
+      color: var(--pz-muted);
       opacity: 0;
       transform: translateX(-120%);
       transition: opacity 0.3s ease-out, transform 0.3s ease-out;
@@ -451,7 +451,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     .pz-header__link.is-active .pz-header__arrow { opacity: 1; transform: translateX(0); }
     .pz-header__link:hover .pz-header__label-full,
     .pz-header__link.is-active .pz-header__label-full { transform: translateX(0); }
-    .pz-header__link.is-active .pz-header__arrow { color: var(--pz-bg); }
+    .pz-header__link.is-active .pz-header__arrow { color: var(--pz-fg); }
 
     .pz-header__menu-footer {
       position: relative;
@@ -460,16 +460,10 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       align-items: center;
       margin-top: auto;
       padding-top: var(--pz-space-lg);
-      /* El divider lo dibuja la línea que baja (.pz-header__sweep) al aterrizar acá. */
+      padding-bottom: var(--pz-space-lg); /* separa el toggle de la línea que aterriza debajo */
     }
-    /* Toggle invertido sobre el plano --pz-fg */
-    .pz-header__theme--mobile {
-      width: 2.75rem;
-      height: 2.75rem;
-      border-color: var(--pz-bg);
-    }
-    .pz-header__theme--mobile .pz-theme-svg { width: 1.6rem; height: 1.6rem; color: var(--pz-bg); }
-    .pz-header__theme--mobile:hover { background: transparent; }
+    .pz-header__theme--mobile { width: 2.75rem; height: 2.75rem; }
+    .pz-header__theme--mobile .pz-theme-svg { width: 1.6rem; height: 1.6rem; }
   }
 </style>
 
@@ -510,10 +504,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       };
       const sweep = nav.querySelector('.pz-header__sweep');
       const footer = nav.querySelector('.pz-header__menu-footer');
-      // Mide cuánto tiene que bajar la línea para aterrizar en el footer.
+      // Mide cuánto baja la línea para aterrizar DEBAJO del toggle (el toggle
+      // queda por encima del divider).
       const setSweepTravel = () => {
         if (!sweep || !footer) return;
-        const travel = footer.getBoundingClientRect().top - sweep.getBoundingClientRect().top;
+        const travel = footer.getBoundingClientRect().bottom - sweep.getBoundingClientRect().top;
         if (travel > 0) nav.style.setProperty('--pz-sweep-travel', `${travel}px`);
       };
       let closeTimer;
