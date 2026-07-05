@@ -23,6 +23,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     </a>
 
     <nav class="pz-header__nav" id="pz-nav" aria-label="Navegación de la propuesta">
+      <span class="pz-header__panel" aria-hidden="true"></span>
       <span class="pz-header__sweep" aria-hidden="true"></span>
       <ul class="pz-header__list">
         {nav.map((l, i) => (
@@ -175,10 +176,12 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   :global([data-theme='dark']) .pz-header__link.is-active--n2,
   :global([data-theme='dark']) .pz-header__link.is-active--duo { color: #000; }
 
-  /* Flecha, label completo, sweep y footer del menú: sólo mobile */
+  /* Flecha, label completo, sweep, plano y footer del menú: sólo mobile */
   .pz-header__arrow { display: none; }
   .pz-header__label-full { display: none; }
   .pz-header__sweep { display: none; }
+  .pz-header__panel { display: none; }
+  .pz-header__menu-eyebrow { display: none; }
   .pz-header__menu-footer { display: none; }
   .pz-header__theme--mobile { display: none; }
 
@@ -250,20 +253,21 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     .pz-header__brand,
     .pz-header__actions { position: relative; z-index: 100; }
 
-    /* Overlay a viewport completo. Sin transform en la capa fixed (un fixed con
-       transform propio scrollea con la página en iOS/WebKit → el menú se corría
-       ~scrollY y la página se colaba). Se revela con opacity+visibility; el
-       movimiento lo dan los items (pzMenuIn). Scroll del body bloqueado por JS. */
+    /* Cortina invertida: el nav es un STAGE transparente. La revelación la hace
+       un plano color --pz-fg que baja (su borde inferior = la línea), y un
+       relleno full-bleed (::before) que recién aparece al final para cubrir los
+       márgenes laterales. Sin crossfade: sólo se togglea visibility al instante.
+       El texto/íconos del menú se invierten a --pz-bg. */
     .pz-header__nav {
       position: fixed;
       top: 0;
       right: 0;
       bottom: 0;
       left: 0;
-      align-self: stretch; /* anula el align-self:center del header (evita centrado vertical) */
+      align-self: stretch;
       margin: 0;
       z-index: 99;
-      background: var(--pz-bg);
+      background: transparent;
       display: flex;
       flex-direction: column;
       padding:
@@ -274,30 +278,61 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       overflow-y: auto;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
-      opacity: 0;
       visibility: hidden;
       pointer-events: none;
-      /* Cierre (estado base): un toque más lento que la apertura. */
-      transition: opacity 0.6s ease, visibility 0.6s ease;
     }
-    .pz-header__nav.is-open {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      /* Apertura: más ágil. */
-      transition: opacity var(--pz-transition-slow), visibility var(--pz-transition-slow);
-    }
-    /* Cierre coreografiado: el overlay acelera hacia afuera (ease-in) y queda
-       visible hasta el final para no cortar la salida de los items. */
-    .pz-header__nav.is-closing {
+    .pz-header__nav.is-open,
+    .pz-header__nav.is-closing { visibility: visible; }
+    .pz-header__nav.is-open { pointer-events: auto; }
+
+    /* Relleno de márgenes laterales (full-bleed): transparente durante la bajada,
+       aparece rápido cuando la línea aterriza; en el cierre se va antes del retract. */
+    .pz-header__nav::before {
+      content: '';
+      position: absolute;
+      top: calc(var(--pz-header-height) + env(safe-area-inset-top)); /* deja la barra del header intacta arriba */
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      background: var(--pz-fg);
       opacity: 0;
-      visibility: visible;
       pointer-events: none;
-      transition: opacity 0.46s cubic-bezier(0.4, 0, 1, 1), visibility 0s linear 0.46s;
+    }
+    .pz-header__nav.is-open::before {
+      opacity: 1;
+      transition: opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1) 0.36s;
+    }
+    .pz-header__nav.is-closing::before {
+      opacity: 0;
+      transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0.3s;
     }
 
-    /* Línea que "baja": el divider del tope de la nav se desplaza hasta el footer
-       al abrir el menú (transform animado; el recorrido exacto lo mide el JS). */
+    /* Plano content-width que baja (borde inferior = la línea). scaleY desde arriba;
+       su alto = el recorrido medido, así el borde inferior y la línea van juntos. */
+    .pz-header__panel {
+      display: block;
+      position: absolute;
+      top: calc(var(--pz-header-height) + env(safe-area-inset-top));
+      left: calc(var(--pz-space-lg) + env(safe-area-inset-left));
+      right: calc(var(--pz-space-lg) + env(safe-area-inset-right));
+      height: var(--pz-sweep-travel, calc(100dvh - var(--pz-header-height) - 6rem));
+      background: var(--pz-fg);
+      transform-origin: top center;
+      transform: scaleY(0);
+      z-index: 2;
+      pointer-events: none;
+    }
+    .pz-header__nav.is-open .pz-header__panel {
+      transform: scaleY(1);
+      transition: transform 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .pz-header__nav.is-closing .pz-header__panel {
+      transform: scaleY(0);
+      transition: transform 0.32s cubic-bezier(0.5, 0, 0.75, 0) 0.4s;
+    }
+
+    /* La MISMA línea: baja hasta el footer y sube al cerrar (nunca se fadea). */
     .pz-header__sweep {
       display: block;
       position: absolute;
@@ -308,21 +343,19 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       background: var(--pz-fg);
       z-index: 3;
       transform: translateY(0);
-      /* Reversión (cierre): más lenta. */
-      transition: transform 0.72s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .pz-header__nav.is-open .pz-header__sweep {
       transform: translateY(var(--pz-sweep-travel, calc(100dvh - var(--pz-header-height) - 6rem)));
-      /* Bajada (apertura). */
-      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.36s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    /* Retracción (cierre): la línea sube acelerando, sin rebote. */
     .pz-header__nav.is-closing .pz-header__sweep {
       transform: translateY(0);
-      transition: transform 0.42s cubic-bezier(0.5, 0, 0.75, 0);
+      transition: transform 0.32s cubic-bezier(0.5, 0, 0.75, 0) 0.4s;
     }
 
     .pz-header__list {
+      position: relative;
+      z-index: 4; /* por encima del plano (2) y la línea (3) */
       flex-direction: column;
       gap: var(--pz-space-xs);
       height: auto;
@@ -330,14 +363,14 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       /* sin flex:1 → la lista se ancla arriba, no flota centrada */
     }
 
-    /* Entrada escalonada de cada item */
+    /* Entrada escalonada: arranca cuando el plano ya bajó y los márgenes se llenaron */
     .pz-header__item {
       opacity: 0;
       transform: translateX(30px);
     }
     .pz-header__nav.is-open .pz-header__item {
-      animation: pzMenuIn 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      animation-delay: calc(0.06s + var(--i) * 0.05s);
+      animation: pzMenuIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: calc(0.42s + var(--i) * 0.04s);
     }
     @keyframes pzMenuIn {
       from { opacity: 0; transform: translateX(30px); }
@@ -347,7 +380,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     .pz-header__nav.is-closing .pz-header__item {
       opacity: 1;
       transform: translateX(0);
-      animation: pzMenuOut 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+      animation: pzMenuOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
       animation-delay: calc((4 - var(--i)) * 0.035s);
     }
     @keyframes pzMenuOut {
@@ -355,9 +388,19 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       to { opacity: 0; transform: translateX(24px); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .pz-header__nav.is-closing { transition-duration: 0.001s, 0s; }
-      .pz-header__nav.is-closing .pz-header__item,
-      .pz-header__nav.is-closing .pz-header__sweep { animation: none; transition: none; }
+      .pz-header__nav.is-open .pz-header__panel,
+      .pz-header__nav.is-closing .pz-header__panel,
+      .pz-header__nav.is-open .pz-header__sweep,
+      .pz-header__nav.is-closing .pz-header__sweep,
+      .pz-header__nav.is-open::before,
+      .pz-header__nav.is-closing::before,
+      .pz-header__nav.is-open .pz-header__item,
+      .pz-header__nav.is-closing .pz-header__item {
+        transition-duration: 0.001s !important;
+        transition-delay: 0s !important;
+        animation-duration: 0.001s !important;
+        animation-delay: 0s !important;
+      }
     }
 
     .pz-header__link {
@@ -366,7 +409,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       min-height: 56px; /* target táctil cómodo */
       font-size: clamp(1.5rem, 7vw, 2.3rem);
       letter-spacing: 0.01em; /* mono grande: tracking ajustado */
-      color: var(--pz-fg);
+      color: var(--pz-bg); /* invertido: texto sobre el plano --pz-fg */
       padding: var(--pz-space-xs) 0;
       border: none;
       border-radius: 0;
@@ -388,10 +431,10 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
        no el #000 que usa el chip lleno; si no, el activo queda negro sobre negro). */
     .pz-header__link.is-active--n1,
     .pz-header__link.is-active--n2,
-    .pz-header__link.is-active--duo { background: transparent; color: var(--pz-fg); }
+    .pz-header__link.is-active--duo { background: transparent; color: var(--pz-bg); }
     :global([data-theme='dark']) .pz-header__link.is-active--n1,
     :global([data-theme='dark']) .pz-header__link.is-active--n2,
-    :global([data-theme='dark']) .pz-header__link.is-active--duo { color: var(--pz-fg); }
+    :global([data-theme='dark']) .pz-header__link.is-active--duo { color: var(--pz-bg); }
 
     /* Flecha con reveal en hover/activo (como estaba): entra desde la izquierda. */
     .pz-header__arrow {
@@ -399,7 +442,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       width: 1.3rem;
       height: 1.3rem;
       flex-shrink: 0;
-      color: var(--pz-muted);
+      color: var(--pz-bg); /* invertido */
       opacity: 0;
       transform: translateX(-120%);
       transition: opacity 0.3s ease-out, transform 0.3s ease-out;
@@ -408,17 +451,25 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     .pz-header__link.is-active .pz-header__arrow { opacity: 1; transform: translateX(0); }
     .pz-header__link:hover .pz-header__label-full,
     .pz-header__link.is-active .pz-header__label-full { transform: translateX(0); }
-    .pz-header__link.is-active .pz-header__arrow { color: var(--pz-fg); }
+    .pz-header__link.is-active .pz-header__arrow { color: var(--pz-bg); }
 
     .pz-header__menu-footer {
+      position: relative;
+      z-index: 5; /* el toggle queda por encima del divider (línea) */
       display: flex;
       align-items: center;
       margin-top: auto;
       padding-top: var(--pz-space-lg);
       /* El divider lo dibuja la línea que baja (.pz-header__sweep) al aterrizar acá. */
     }
-    .pz-header__theme--mobile { width: 2.75rem; height: 2.75rem; }
-    .pz-header__theme--mobile .pz-theme-svg { width: 1.6rem; height: 1.6rem; }
+    /* Toggle invertido sobre el plano --pz-fg */
+    .pz-header__theme--mobile {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-color: var(--pz-bg);
+    }
+    .pz-header__theme--mobile .pz-theme-svg { width: 1.6rem; height: 1.6rem; color: var(--pz-bg); }
+    .pz-header__theme--mobile:hover { background: transparent; }
   }
 </style>
 
@@ -466,7 +517,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
         if (travel > 0) nav.style.setProperty('--pz-sweep-travel', `${travel}px`);
       };
       let closeTimer;
-      const CLOSE_MS = 480; // ventana del cierre coreografiado (>= 0.46s del overlay)
+      const CLOSE_MS = 730; // ventana del cierre (cascada→fill-out→retract): unlock al final
       const open = () => {
         clearTimeout(closeTimer);
         nav.classList.remove('is-closing');
