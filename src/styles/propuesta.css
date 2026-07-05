@@ -235,7 +235,7 @@ button {
   left: 50%;
   transform: translateX(-50%);
   width: calc(min(100%, var(--pz-max-width)) - 2 * var(--pz-container-pad));
-  height: var(--pz-border-width);
+  height: 1px; /* divisores internos finos (nav y footer conservan su grosor) */
   background: var(--pz-fg);
 }
 

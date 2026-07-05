@@ -18,8 +18,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 <header class="pz-header">
   <div class="pz-header__inner pz-container">
     <a href="/" class="pz-header__brand" aria-label="Cátedra Zachin — Inicio">
-      <img src="/images/logo-iso-white-bold.svg" alt="Cátedra Zachin" class="pz-header__logo pz-header__logo--dark" width="40" height="40" />
-      <img src="/images/logo-iso-black-bold.svg" alt="Cátedra Zachin" class="pz-header__logo pz-header__logo--light" width="40" height="40" />
+      <span class="pz-header__logo" aria-hidden="true"></span>
     </a>
 
     <nav class="pz-header__nav" id="pz-nav" aria-label="Navegación de la propuesta">
@@ -131,17 +130,37 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     align-items: center;
     flex-shrink: 0;
   }
+  /* Logo como máscara → el color lo pone el background (theme por defecto, y en
+     hover un ciclo por el espectro CMYK / RGB según el theme). */
   .pz-header__logo {
+    display: block;
     width: 2.5rem;
     height: 2.5rem;
-    object-fit: contain;
+    background: var(--pz-fg);
+    -webkit-mask: url('/images/logo-iso-black-bold.svg') center / contain no-repeat;
+    mask: url('/images/logo-iso-black-bold.svg') center / contain no-repeat;
     transition: transform var(--pz-transition-slow);
   }
-  .pz-header__brand:hover .pz-header__logo { transform: rotate(-12deg) scale(1.08); }
-  :global([data-theme='dark']) .pz-header__logo--dark { display: block; }
-  :global([data-theme='dark']) .pz-header__logo--light { display: none; }
-  :global([data-theme='light']) .pz-header__logo--dark { display: none; }
-  :global([data-theme='light']) .pz-header__logo--light { display: block; }
+  .pz-header__brand:hover .pz-header__logo {
+    transform: rotate(-12deg) scale(1.08);
+    animation: pz-logo-cmyk 2.4s linear infinite;
+  }
+  :global([data-theme='dark']) .pz-header__brand:hover .pz-header__logo {
+    animation-name: pz-logo-rgb;
+  }
+  /* Transiciones suaves de color (interpola entre stops, no cuadro a cuadro) */
+  @keyframes pz-logo-cmyk {
+    0%   { background: #00aeef; }
+    33%  { background: #ec008c; }
+    66%  { background: #fff200; }
+    100% { background: #00aeef; }
+  }
+  @keyframes pz-logo-rgb {
+    0%   { background: #ff1a1a; }
+    33%  { background: #22ff22; }
+    66%  { background: #1a6bff; }
+    100% { background: #ff1a1a; }
+  }
 
   /* Nav: chips con fill en el active (como los tags de galería) */
   .pz-header__nav { align-self: center; }
