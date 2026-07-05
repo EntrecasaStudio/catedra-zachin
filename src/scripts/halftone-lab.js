@@ -425,9 +425,9 @@ export function initHalftoneLab(root, opts = {}) {
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < INFLUENCE) {
           // Fija el valor actual (incluye lo que creció por el hover); un nuevo click re-fija más alto.
-          // Radio inicial del dab 25% más chico (pedido): factor 0.75 sobre el crecimiento.
+          // Radio inicial del dab más chico (dos pedidos de -25%): factor 0.5625.
           const t = 1 - dist / INFLUENCE;
-          const grown = dot.baseR + (dot.maxR - dot.baseR) * t * 0.75;
+          const grown = dot.baseR + (dot.maxR - dot.baseR) * t * 0.5625;
           dot.frozen = true;
           dot.fixedR = Math.max(dot.fixedR, dot.current, grown);
           dot.current = dot.fixedR; // aparece al instante (no espera el LERP)
