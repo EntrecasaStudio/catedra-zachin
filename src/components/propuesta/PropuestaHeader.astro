@@ -24,7 +24,6 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
     <nav class="pz-header__nav" id="pz-nav" aria-label="Navegación de la propuesta">
       <span class="pz-header__panel" aria-hidden="true"></span>
-      <span class="pz-header__sweep" aria-hidden="true"></span>
       <ul class="pz-header__list">
         {nav.map((l, i) => (
           <li class="pz-header__item" style={`--i: ${i}`}>
@@ -98,19 +97,26 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     height: var(--pz-header-height);
     background: var(--pz-bg);
   }
-  /* Divisor inferior al ancho del contenido (no full-bleed) */
+  /* Divisor inferior al ancho del contenido (no full-bleed). Es LA línea que baja
+     al abrir el menú (no se duplica): se anima su propio transform. */
   .pz-header::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 50%;
-    transform: translateX(-50%);
     width: calc(min(100%, var(--pz-max-width)) - 2 * var(--pz-container-pad));
     height: var(--pz-border-width);
     background: var(--pz-fg);
+    z-index: 100; /* por encima del overlay del menú (nav z:99) mientras baja */
+    transform: translate(-50%, 0);
+    /* Reversión (cierre): sube acelerando, después de la salida de los items. */
+    transition: transform 0.32s cubic-bezier(0.5, 0, 0.75, 0) 0.4s;
   }
-  /* Con el menú abierto se oculta: la línea que baja (sweep) ES este divider. */
-  .pz-header.is-menu-open::after { opacity: 0; }
+  /* Menú abierto: ESTA misma línea baja hasta el footer (debajo del toggle). */
+  .pz-header.is-menu-open::after {
+    transform: translate(-50%, var(--pz-sweep-travel, 0px));
+    transition: transform 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 
   .pz-header__inner {
     display: flex;
@@ -181,7 +187,6 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   /* Flecha, label completo, sweep, plano y footer del menú: sólo mobile */
   .pz-header__arrow { display: none; }
   .pz-header__label-full { display: none; }
-  .pz-header__sweep { display: none; }
   .pz-header__panel { display: none; }
   .pz-header__menu-eyebrow { display: none; }
   .pz-header__menu-footer { display: none; }
@@ -331,27 +336,6 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     }
     .pz-header__nav.is-closing .pz-header__panel {
       transform: scaleY(0);
-      transition: transform 0.32s cubic-bezier(0.5, 0, 0.75, 0) 0.4s;
-    }
-
-    /* La MISMA línea: baja hasta el footer y sube al cerrar (nunca se fadea). */
-    .pz-header__sweep {
-      display: block;
-      position: absolute;
-      top: calc(var(--pz-header-height) + env(safe-area-inset-top));
-      left: calc(var(--pz-space-lg) + env(safe-area-inset-left));
-      right: calc(var(--pz-space-lg) + env(safe-area-inset-right));
-      height: var(--pz-border-width);
-      background: var(--pz-fg);
-      z-index: 3;
-      transform: translateY(0);
-    }
-    .pz-header__nav.is-open .pz-header__sweep {
-      transform: translateY(var(--pz-sweep-travel, calc(100dvh - var(--pz-header-height) - 6rem)));
-      transition: transform 0.36s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .pz-header__nav.is-closing .pz-header__sweep {
-      transform: translateY(0);
       transition: transform 0.32s cubic-bezier(0.5, 0, 0.75, 0) 0.4s;
     }
 
@@ -505,18 +489,18 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
         b.width = '';
         window.scrollTo(0, scrollY);
       };
-      const sweep = nav.querySelector('.pz-header__sweep');
       const footer = nav.querySelector('.pz-header__menu-footer');
-      // Mide cuánto baja la línea para aterrizar DEBAJO del toggle (el toggle
-      // queda por encima del divider).
+      const header = nav.closest('.pz-header');
+      // Mide cuánto baja el divider del header para aterrizar DEBAJO del toggle
+      // (el toggle queda por encima). Se setea en el header (lo heredan el ::after
+      // que baja y el plano del menú).
       const setSweepTravel = () => {
-        if (!sweep || !footer) return;
-        const travel = footer.getBoundingClientRect().bottom - sweep.getBoundingClientRect().top;
-        if (travel > 0) nav.style.setProperty('--pz-sweep-travel', `${travel}px`);
+        if (!footer || !header) return;
+        const travel = footer.getBoundingClientRect().bottom - header.getBoundingClientRect().bottom;
+        if (travel > 0) header.style.setProperty('--pz-sweep-travel', `${travel}px`);
       };
       let closeTimer;
       const CLOSE_MS = 730; // ventana del cierre (cascada→fill-out→retract): unlock al final
-      const header = nav.closest('.pz-header');
       const open = () => {
         clearTimeout(closeTimer);
         nav.classList.remove('is-closing');
