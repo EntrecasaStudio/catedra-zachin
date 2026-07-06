@@ -16,9 +16,16 @@ const explorar = [
   <section class="hero" data-hero-halftone>
     <canvas class="hero__bg" aria-hidden="true"></canvas>
     <div class="hero__content pz-container" data-reveal-group>
-      <span class="pz-eyebrow" data-reveal>Diseño gráfico | FADU · UBA</span>
+      <span class="pz-eyebrow" data-reveal>Diseño gráfico · FADU · UBA</span>
       <h1 class="hero__title" data-reveal>Cátedra<br />Zachin</h1>
-      <p class="hero__subtitle" data-reveal>Tecnología | Nivel <span class="text-n1">1</span> &amp; <span class="text-n2">2</span></p>
+      <p class="hero__subtitle" data-reveal aria-label="Tecnología, Nivel 1 y 2">
+        <span class="hero__disc">Tecnología</span>
+        <span class="hero__levels" aria-hidden="true">
+          <span class="hero__sep">·</span>
+          <span class="hero__lvl hero__lvl--n1">N1</span>
+          <span class="hero__lvl hero__lvl--n2">N2</span>
+        </span>
+      </p>
     </div>
   </section>
 
@@ -92,9 +99,10 @@ const explorar = [
     line-height: 0.9;
     margin-top: var(--pz-space-md);
   }
-  /* Segunda jerarquía reforzada: mono (como la volanta) pero mucho más presente
-     —tamaño de subhead, bold, color pleno— con los números en color de nivel.
-     Deja de leerse como caption. */
+  /* Segunda jerarquía: "Tecnología" es la palabra ancla (mono, fg, subhead) y los
+     dos niveles son PÍLDORAS sólidas N1/N2 —mismo lenguaje que el active del nav—.
+     El color vive en objetos (chips), no en dígitos sueltos: lee como sistema, no
+     como glitch. Separador · (metadato, como la volanta). Sin barra vertical. */
   .hero__subtitle {
     font-family: var(--pz-font-mono);
     font-size: clamp(1.5rem, 4vw, 2.5rem);
@@ -103,7 +111,37 @@ const explorar = [
     line-height: 1.15;
     color: var(--pz-fg);
     margin-top: auto; /* se ancla al fondo del hero */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4em;
   }
+  .hero__disc { color: var(--pz-fg); }
+  /* El grupo "· N1 N2" viaja junto: si envuelve, baja entero a la segunda línea */
+  .hero__levels {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    white-space: nowrap;
+  }
+  .hero__sep { color: var(--pz-muted); font-weight: 700; }
+  .hero__lvl {
+    font-size: 0.5em; /* relativo al subtítulo → escala con el clamp (~.pz-tag) */
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    padding: 0.3em 0.6em;
+    border-radius: var(--pz-radius);
+    background-clip: padding-box;
+    color: #fff; /* default: texto blanco sobre fill saturado */
+  }
+  .hero__lvl--n1 { background: var(--pz-n1); }
+  .hero__lvl--n2 { background: var(--pz-n2); }
+  /* Contraste AA: mismas parejas fill/texto que el active del nav.
+     Cyan (n2) en claro y ambos fills en oscuro llevan texto negro. */
+  :global([data-theme='light']) .hero__lvl--n2 { color: #000; }
+  :global([data-theme='dark']) .hero__lvl--n1,
+  :global([data-theme='dark']) .hero__lvl--n2 { color: #000; }
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
