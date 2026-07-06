@@ -299,7 +299,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       padding:
         calc(var(--pz-header-height) + env(safe-area-inset-top) + var(--pz-space-lg))
         calc(var(--pz-space-lg) + env(safe-area-inset-right))
-        calc(var(--pz-space-lg) + env(safe-area-inset-bottom))
+        /* padding-bottom amplio = margin-bottom de la línea: aterriza dentro del
+           alto con aire abajo, sin llegar al borde (sin salir por completo). */
+        calc(var(--pz-space-2xl) + env(safe-area-inset-bottom))
         calc(var(--pz-space-lg) + env(safe-area-inset-left));
       overflow-y: auto;
       overscroll-behavior: contain;
@@ -371,14 +373,17 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       /* sin flex:1 → la lista se ancla arriba, no flota centrada */
     }
 
-    /* Entrada escalonada: arranca cuando el plano ya bajó y los márgenes se llenaron */
+    /* Entrada escalonada: ACOMPAÑA la bajada del plano (no espera a que aterrice).
+       Arranca apenas el plano empieza a descender y cae en cascada siguiendo su
+       borde; el plano cubre las posiciones de arriba primero, así el texto siempre
+       aparece sobre plano ya bajado. */
     .pz-header__item {
       opacity: 0;
       transform: translateX(30px);
     }
     .pz-header__nav.is-open .pz-header__item {
       animation: pzMenuIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      animation-delay: calc(0.42s + var(--i) * 0.04s);
+      animation-delay: calc(0.1s + var(--i) * 0.05s);
     }
     @keyframes pzMenuIn {
       from { opacity: 0; transform: translateX(30px); }
@@ -460,10 +465,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       opacity: 0;
       transform: translateX(30px);
     }
-    /* El toggle entra DESPUÉS de los links (índice 5) y al cerrar sale PRIMERO. */
+    /* El toggle entra DESPUÉS de los links (índice 5, ~cuando el plano aterriza) y
+       al cerrar sale PRIMERO. */
     .pz-header__nav.is-open .pz-header__menu-footer {
       animation: pzMenuIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      animation-delay: calc(0.42s + 5 * 0.04s);
+      animation-delay: calc(0.1s + 5 * 0.05s);
     }
     .pz-header__nav.is-closing .pz-header__menu-footer {
       opacity: 1;
