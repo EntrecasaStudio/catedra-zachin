@@ -85,7 +85,9 @@ const accent = nivel === 1 ? 'n1' : 'n2';
     column-gap: var(--pz-space-lg);
     align-items: baseline; /* el nº queda sobre la baseline del título de la derecha */
     padding: var(--pz-space-xl) 0;
-    border-bottom: var(--pz-border-width) solid var(--_rule, var(--pz-fg));
+    /* Reglas finas (1px), como los dividers internos de sección: livianas, no el
+       grosor de marco (--pz-border-width). Conservan el color por nivel. */
+    border-bottom: 1px solid var(--_rule, var(--pz-fg));
   }
   /* Sólo reglas entre unidades: sin línea al tope ni al final */
   .niveldet-prog:last-child { border-bottom: none; }
