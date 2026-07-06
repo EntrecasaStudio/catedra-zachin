@@ -171,7 +171,9 @@ export function initHalftoneLab(root, opts = {}) {
     if (id === 'c') return deg(mix(15, 35, t));
     if (id === 'm') return deg(mix(75, 55, t)) + wob;
     if (id === 'y') return deg(mix(0, 20, t));
-    return deg(45); // k fijo
+    // K también rota (antes quedaba fijo en 45° = su ángulo horneado → delta 0 y el
+    // negro no giraba). Se aleja de 45° para que el negro participe de la interferencia.
+    return deg(mix(45, 30, t)) - wob;
   }
 
   // Render del moiré: rota la trama REAL de cada canal (con el tamaño actual de
