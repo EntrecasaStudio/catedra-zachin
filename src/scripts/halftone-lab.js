@@ -36,9 +36,24 @@ export function initHalftoneLab(root, opts = {}) {
   const reducedMotion = false;
 
   // Parámetros AM halftone
-  const SPACING = 10;
-  const BASE_RADIUS = Math.sqrt((0.05 * SPACING * SPACING) / Math.PI);
-  const MAX_RADIUS = SPACING * 0.6;
+  // Lineatura (LPI): la trama en pantalla es una vista AMPLIADA (~4×) de una trama de
+  // imprenta. spacing = MAG / lpi. Default 40 lpi → SPACING 10 (idéntico al look previo).
+  // Rango 10–85 lpi: 85 ≈ trama de diario, la más fina que resiste esta ampliación.
+  const MAG = 400;           // px de pantalla por "pulgada" simulada de imprenta
+  const DOT_BUDGET = 80000;  // tope de puntos por canal → piso de spacing en fullscreen
+  let currentLpi = 40;
+  let SPACING = 10;
+  let BASE_RADIUS = Math.sqrt((0.05 * SPACING * SPACING) / Math.PI);
+  let MAX_RADIUS = SPACING * 0.6;
+  // Recalcula el paso de trama y los radios de punto según la lineatura y el tamaño
+  // actual del stage. El piso de spacing evita que en pantalla completa el conteo de
+  // puntos explote (a mayor superficie, spacing mínimo mayor).
+  function applyLpi() {
+    const floor = Math.max(4, Math.sqrt((displayW * displayH) / DOT_BUDGET) || 4);
+    SPACING = Math.max(MAG / currentLpi, floor);
+    BASE_RADIUS = Math.sqrt((0.05 * SPACING * SPACING) / Math.PI);
+    MAX_RADIUS = SPACING * 0.6;
+  }
   const INFLUENCE = 160; // radio de revelado del hover (halo del cursor)
   // Radio INICIAL del dab al tap/click y arranque del brush: mucho más chico que el
   // halo de hover, para que el toque no cubra tanta superficie (pedido). Crece luego
@@ -145,6 +160,7 @@ export function initHalftoneLab(root, opts = {}) {
     displayW = rect.width;
     displayH = rect.height;
     if (displayW === 0 || displayH === 0) return;
+    applyLpi(); // el piso de spacing depende del tamaño medido del stage
     canvas.width = displayW * dpr;
     canvas.height = displayH * dpr;
     offscreen.width = canvas.width;
@@ -629,6 +645,32 @@ export function initHalftoneLab(root, opts = {}) {
     updateMoireReadout();
   }
 
+  // Slider de lineatura (LPI, sólo light): cambia el paso de la trama. Cambiar la
+  // lineatura = "re-filmar la pantalla": se regenera la grilla (se pierde lo pintado,
+  // que estaba anclado a puntos que ya no existen). Regen con debounce; readout en vivo.
+  const lpiSlider = root.querySelector('[data-lpi]');
+  const lpiVal = root.querySelector('[data-lpi-val]');
+  let lpiTimer = 0;
+  function updateLpiReadout() {
+    if (lpiVal) lpiVal.textContent = `≈ ${currentLpi} lpi`;
+  }
+  function regenAll() {
+    applyLpi();
+    for (const ch of channels) {
+      if (ch.active || ch.dots.length > 0) generateDotsForChannel(ch);
+    }
+    if (reducedMotion) drawStaticFrame();
+  }
+  if (lpiSlider) {
+    lpiSlider.addEventListener('input', () => {
+      currentLpi = Math.max(10, Math.min(85, parseInt(lpiSlider.value, 10) || 40));
+      updateLpiReadout();
+      clearTimeout(lpiTimer);
+      lpiTimer = setTimeout(regenAll, 120);
+    });
+    updateLpiReadout();
+  }
+
   function drawStaticFrame() {
     // Un solo cuadro con los canales activos totalmente presentes.
     for (const ch of channels) {
@@ -700,6 +742,7 @@ export function initHalftoneLab(root, opts = {}) {
     },
     destroy() {
       this.stop();
+      clearTimeout(lpiTimer);
       if (ro) ro.disconnect();
       window.removeEventListener('resize', onResize);
       window.removeEventListener('deviceorientation', onOrient);

@@ -36,7 +36,12 @@ const channels = [
       </svg>
     </button>
     <div class="pz-halftone__moire" data-moire-ctl>
-      <label class="pz-halftone__moire-label" for={`${id}-moire`}>Desalinear tramas</label>
+      <label class="pz-halftone__moire-label" for={`${id}-lpi`}>Lineatura</label>
+      <div class="pz-halftone__moire-row">
+        <input class="pz-halftone__moire-range" id={`${id}-lpi`} type="range" min="10" max="85" value="40" step="1" data-lpi aria-label="Lineatura de trama en LPI" />
+        <span class="pz-halftone__moire-val" data-lpi-val>≈ 40 lpi</span>
+      </div>
+      <label class="pz-halftone__moire-label pz-halftone__moire-label--stack" for={`${id}-moire`}>Desalinear tramas</label>
       <div class="pz-halftone__moire-row">
         <input class="pz-halftone__moire-range" id={`${id}-moire`} type="range" min="0" max="100" value="0" step="1" data-moire aria-label="Desalinear tramas — moiré" />
         <span class="pz-halftone__moire-val" data-moire-val>Δ 60°</span>
@@ -120,6 +125,8 @@ const channels = [
     border: var(--pz-border-width) solid var(--pz-fg);
     border-radius: var(--pz-radius);
   }
+  /* Separación entre los dos controles de trama (lineatura + desalinear) */
+  .pz-halftone__moire-label--stack { margin-top: var(--pz-space-xs); }
   .pz-halftone__moire-row { display: flex; align-items: center; gap: var(--pz-space-xs); }
   .pz-halftone__moire-val {
     font-family: var(--pz-font-mono);
@@ -256,6 +263,8 @@ const channels = [
   }
   @media (max-width: 560px) {
     .pz-halftone__stage:not(.is-expanded) { aspect-ratio: 3 / 4; }
+    /* En portrait angosto, riel más corto para que los dos controles no aprieten */
+    .pz-halftone__moire-range { width: 92px; }
   }
 
   /* Etiquetas: CMYK en claro, RGB en oscuro */
