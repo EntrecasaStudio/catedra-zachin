@@ -67,10 +67,11 @@ export function initHalftoneLab(root, opts = {}) {
   const SWEEP_DURATION = 800;
   const SWEEP_SOFT = 100;
 
-  // Brush: crecimiento del radio con el tiempo de presión (px/ms) y tope.
-  // Más lento al mantener (pedido): el radio se agranda más despacio.
-  const BRUSH_GROW = 0.05;
-  const BRUSH_MAX = 520;
+  // Área del brush: al mantener, el radio crece SIN parar hasta cubrir casi todo el
+  // stage (el tope se calcula desde su diagonal, no un valor chico fijo). Crecimiento
+  // lento y sostenido: llega al tope recién en BRUSH_FULL_MS.
+  const BRUSH_MAX_K = 1.5;      // tope del radio = 1.5× la diagonal del stage (satura casi todo)
+  const BRUSH_FULL_MS = 8000;   // tiempo hasta el tope (lento, pero cubre casi toda la superficie)
   // 'both': ganancia extra sobre el tamaño máximo del punto (satura donde se mantiene).
   const BRUSH_BOOST_RATE = 1 / 4500; // alcanza el tope a ~2.7s
   const BRUSH_BOOST_MAX = 0.6;
@@ -481,7 +482,9 @@ export function initHalftoneLab(root, opts = {}) {
   function paintBrush(now) {
     if (background) return;
     const held = now - pressStart;
-    const brushR = Math.min(STAMP_R + held * BRUSH_GROW, BRUSH_MAX);
+    // El tope escala con el stage → el brush llega a cubrir casi toda la superficie.
+    const brushMax = Math.hypot(displayW, displayH) * BRUSH_MAX_K;
+    const brushR = Math.min(STAMP_R + held * ((brushMax - STAMP_R) / BRUSH_FULL_MS), brushMax);
     const boost = brushMode === 'both' ? 1 + Math.min(held * BRUSH_BOOST_RATE, BRUSH_BOOST_MAX) : 1;
     const targets = isDarkNow()
       ? channels.filter((c) => c.active)
