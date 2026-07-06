@@ -7,11 +7,17 @@ import '../styles/propuesta.css';
 interface Props {
   title?: string;
   description?: string;
+  /** Variante del OG graphic (basado en el hero): 'light' | 'dark'. Default 'light'
+   *  (tema por defecto del sitio). Cada página puede declarar su variante. */
+  ogTheme?: 'light' | 'dark';
 }
 const {
-  title = 'Propuesta brutalista | Cátedra Zachin',
-  description = 'Rediseño brutalista de la Cátedra Zachin — tres intensidades conmutables (refined / raw / neo).',
+  title = 'Cátedra Zachin | Tecnología — FADU · UBA',
+  description = 'Cátedra Zachin — Tecnología, Niveles 1 y 2. Diseño gráfico, FADU · UBA.',
+  ogTheme = 'light',
 } = Astro.props;
+const ogImage = new URL(`/og/og-${ogTheme}.png`, Astro.site).href;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 
 <html lang="es" data-theme="light" data-brutalism="neo">
@@ -35,9 +41,22 @@ const {
       })();
     </script>
 
+    <link rel="canonical" href={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="Cátedra Zachin" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="2400" />
+    <meta property="og:image:height" content="1260" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content="Cátedra Zachin — Tecnología, Nivel 1 y 2. Diseño gráfico, FADU · UBA." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     <!-- Fuentes: DIN (Typekit) + Inter + Space Mono (skin raw) -->
     <link rel="stylesheet" href="https://use.typekit.net/owv7rck.css" />
