@@ -136,7 +136,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     display: block;
     width: 2.5rem;
     height: 2.5rem;
-    background: var(--pz-fg);
+    /* background-color (no el shorthand `background`): Safari/WebKit sólo interpola
+       background-color en @keyframes; con el shorthand el ciclo de color no anima. */
+    background-color: var(--pz-fg);
     -webkit-mask: url('/images/logo-iso-black-bold.svg') center / contain no-repeat;
     mask: url('/images/logo-iso-black-bold.svg') center / contain no-repeat;
     transition: transform var(--pz-transition-slow);
@@ -150,16 +152,16 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
   /* Transiciones suaves de color (interpola entre stops, no cuadro a cuadro) */
   @keyframes pz-logo-cmyk {
-    0%   { background: #00aeef; }
-    33%  { background: #ec008c; }
-    66%  { background: #fff200; }
-    100% { background: #00aeef; }
+    0%   { background-color: #00aeef; }
+    33%  { background-color: #ec008c; }
+    66%  { background-color: #fff200; }
+    100% { background-color: #00aeef; }
   }
   @keyframes pz-logo-rgb {
-    0%   { background: #ff1a1a; }
-    33%  { background: #22ff22; }
-    66%  { background: #1a6bff; }
-    100% { background: #ff1a1a; }
+    0%   { background-color: #ff1a1a; }
+    33%  { background-color: #22ff22; }
+    66%  { background-color: #1a6bff; }
+    100% { background-color: #ff1a1a; }
   }
 
   /* Nav: chips con fill en el active (como los tags de galería) */
