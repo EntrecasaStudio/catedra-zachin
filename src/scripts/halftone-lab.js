@@ -39,7 +39,11 @@ export function initHalftoneLab(root, opts = {}) {
   const SPACING = 10;
   const BASE_RADIUS = Math.sqrt((0.05 * SPACING * SPACING) / Math.PI);
   const MAX_RADIUS = SPACING * 0.6;
-  const INFLUENCE = 160;
+  const INFLUENCE = 160; // radio de revelado del hover (halo del cursor)
+  // Radio INICIAL del dab al tap/click y arranque del brush: mucho más chico que el
+  // halo de hover, para que el toque no cubra tanta superficie (pedido). Crece luego
+  // al mantener presionado.
+  const STAMP_R = 46;
   const LERP = 0.12;
   const CHANNEL_ALPHA = 1; // color al 100%; los canales se suman por 'multiply'
   const SWEEP_DURATION = 800;
@@ -74,6 +78,10 @@ export function initHalftoneLab(root, opts = {}) {
 
   let mouseX = -9999;
   let mouseY = -9999;
+  // ¿Hay un puntero activo sobre el stage? (hover en desktop, dedo apoyado en touch).
+  // El halo de revelado sólo vive mientras esto es true; al soltar el dedo o salir
+  // con el mouse se apaga, así un TAP no deja un halo grande pegado (sólo el dab fijo).
+  let pointerActive = false;
   let tiltX = 0; // inclinación del dispositivo (-1..1), sólo hero
   let tiltY = 0;
   let pressing = false;
@@ -330,7 +338,7 @@ export function initHalftoneLab(root, opts = {}) {
           // Fijo: descansa en su valor fijado. Puede crecer por encima al pasar
           // el mouse; al alejarse vuelve al valor fijado. Sólo un nuevo click re-fija.
           let g = dot.fixedR;
-          if (respond && !reducedMotion) {
+          if (respond && pointerActive && !reducedMotion) {
             const dx = mouseX - dot.x;
             const dy = mouseY - dot.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -340,7 +348,7 @@ export function initHalftoneLab(root, opts = {}) {
             }
           }
           dot.target = g;
-        } else if (respond && !reducedMotion) {
+        } else if (respond && pointerActive && !reducedMotion) {
           const dx = mouseX - dot.x;
           const dy = mouseY - dot.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
@@ -403,12 +411,14 @@ export function initHalftoneLab(root, opts = {}) {
   function onMove(e) {
     if (reducedMotion) return;
     autoMode = false;
+    pointerActive = true;
     const rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
     mouseY = e.clientY - rect.top;
   }
   function onLeave() {
     autoMode = background;
+    pointerActive = false; // el mouse salió → se apaga el halo de revelado
   }
   // Depósito inmediato bajo el cursor (click/tap): fija los dots cercanos al valor
   // de hover al instante. Es lo que hace que un TAP en mobile pinte sin necesidad de
@@ -423,11 +433,11 @@ export function initHalftoneLab(root, opts = {}) {
         const dx = mx - dot.x;
         const dy = my - dot.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < INFLUENCE) {
+        if (dist < STAMP_R) {
           // Fija el valor actual (incluye lo que creció por el hover); un nuevo click re-fija más alto.
-          // Radio inicial del dab más chico (dos pedidos de -25%): factor 0.5625.
-          const t = 1 - dist / INFLUENCE;
-          const grown = dot.baseR + (dot.maxR - dot.baseR) * t * 0.5625;
+          // Radio inicial del dab acotado a STAMP_R (chico): el toque cubre poca superficie.
+          const t = 1 - dist / STAMP_R;
+          const grown = dot.baseR + (dot.maxR - dot.baseR) * t;
           dot.frozen = true;
           dot.fixedR = Math.max(dot.fixedR, dot.current, grown);
           dot.current = dot.fixedR; // aparece al instante (no espera el LERP)
@@ -448,7 +458,7 @@ export function initHalftoneLab(root, opts = {}) {
   function paintBrush(now) {
     if (background) return;
     const held = now - pressStart;
-    const brushR = Math.min(INFLUENCE + held * BRUSH_GROW, BRUSH_MAX);
+    const brushR = Math.min(STAMP_R + held * BRUSH_GROW, BRUSH_MAX);
     const boost = brushMode === 'both' ? 1 + Math.min(held * BRUSH_BOOST_RATE, BRUSH_BOOST_MAX) : 1;
     const targets = isDarkNow()
       ? channels.filter((c) => c.active)
@@ -485,6 +495,7 @@ export function initHalftoneLab(root, opts = {}) {
     if (background) return;
     if (overControls(e.clientX, e.clientY)) return; // no pintar sobre los selectores
     autoMode = false;
+    pointerActive = true;
     const rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
     mouseY = e.clientY - rect.top;
@@ -509,6 +520,7 @@ export function initHalftoneLab(root, opts = {}) {
     const raw = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
     if (raw && overControls(raw.clientX, raw.clientY)) return; // no pintar sobre los selectores
     autoMode = false;
+    pointerActive = true;
     const p = touchXY(e);
     if (p) { mouseX = p.x; mouseY = p.y; }
     stampAt(mouseX, mouseY); // tap = pinta al instante (mobile no mantiene presionado)
@@ -523,6 +535,7 @@ export function initHalftoneLab(root, opts = {}) {
   }
   function onTouchEnd() {
     pressing = false;
+    pointerActive = false; // dedo levantado → se apaga el halo (queda sólo el dab fijo)
     autoMode = background; // el experimento no deriva solo; el hero sí
   }
 
