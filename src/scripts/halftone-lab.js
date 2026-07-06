@@ -44,6 +44,9 @@ export function initHalftoneLab(root, opts = {}) {
   // halo de hover, para que el toque no cubra tanta superficie (pedido). Crece luego
   // al mantener presionado.
   const STAMP_R = 46;
+  // Tamaño INICIAL del punto al primer tacto, como fracción del crecimiento máximo:
+  // arranca chico y crece al mantener presionado (no salta al máximo).
+  const STAMP_DOT = 0.3;
   const LERP = 0.12;
   const CHANNEL_ALPHA = 1; // color al 100%; los canales se suman por 'multiply'
   const SWEEP_DURATION = 800;
@@ -56,8 +59,9 @@ export function initHalftoneLab(root, opts = {}) {
   // 'both': ganancia extra sobre el tamaño máximo del punto (satura donde se mantiene).
   const BRUSH_BOOST_RATE = 1 / 4500; // alcanza el tope a ~2.7s
   const BRUSH_BOOST_MAX = 0.6;
-  // Suba gradual del tono pintado: el punto no salta al máximo, sube de a poco (lento).
-  const PAINT_LERP = 0.035;
+  // Suba gradual del diámetro pintado: al mantener, el punto crece de a poco hacia su
+  // máximo. Más lento (pedido): el crecimiento del diámetro se percibe gradual.
+  const PAINT_LERP = 0.02;
 
   // Subpíxeles RGB (modo oscuro / aditivo): cada celda = rayas R|G|B sobre negro.
   const CELL = 21;            // divisible por 3 → rayas de 7px
@@ -437,9 +441,10 @@ export function initHalftoneLab(root, opts = {}) {
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < STAMP_R) {
           // Fija el valor actual (incluye lo que creció por el hover); un nuevo click re-fija más alto.
-          // Radio inicial del dab acotado a STAMP_R (chico): el toque cubre poca superficie.
+          // Radio del dab acotado a STAMP_R (chico). El punto ARRANCA chico (STAMP_DOT):
+          // el primer tacto deja puntos pequeños y, al mantener, el brush los agranda.
           const t = 1 - dist / STAMP_R;
-          const grown = dot.baseR + (dot.maxR - dot.baseR) * t;
+          const grown = dot.baseR + (dot.maxR - dot.baseR) * t * STAMP_DOT;
           dot.frozen = true;
           dot.fixedR = Math.max(dot.fixedR, dot.current, grown);
           dot.current = dot.fixedR; // aparece al instante (no espera el LERP)
