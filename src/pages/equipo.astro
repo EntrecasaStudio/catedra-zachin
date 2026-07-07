@@ -17,12 +17,6 @@ const grupos = groupDocentes(docentes);
     </p>
   </section>
 
-  <div class="equipo-filtros pz-container" id="equipo-filtros" data-reveal>
-    <span class="equipo-filtros__label">Ver por nivel</span>
-    <button type="button" class="equipo-filtro equipo-filtro--n1 is-on" data-nivel="Nivel 1" aria-pressed="true">Nivel 1</button>
-    <button type="button" class="equipo-filtro equipo-filtro--n2 is-on" data-nivel="Nivel 2" aria-pressed="true">Nivel 2</button>
-  </div>
-
   {grupos.map((grupo) => (
     <Section class="equipo-grupo" reveal eyebrow={grupo.label} flush>
       <Grid data-reveal cols={6} colsMd={3} colsSm={2} isEmpty={grupo.members.length === 0}>
@@ -36,86 +30,4 @@ const grupos = groupDocentes(docentes);
   .equipo-hero { padding-block: clamp(2.5rem, 8vh, 5rem) var(--pz-space-xl); }
   .equipo-hero__title { font-size: clamp(2.5rem, 10vw, 6rem); margin-top: var(--pz-space-sm); }
   .equipo-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin-top: var(--pz-space-md); }
-
-  /* Selector por nivel (toggles independientes: prender/apagar cada nivel) */
-  .equipo-filtros {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--pz-space-xs);
-    margin-bottom: var(--pz-space-xl);
-  }
-  .equipo-filtros__label {
-    font-family: var(--pz-font-mono);
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--pz-muted);
-    margin-right: var(--pz-space-xs);
-  }
-  .equipo-filtro {
-    font-family: var(--pz-font-mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 0.3rem var(--pz-space-sm);
-    border: var(--pz-border-width) solid var(--pz-fg);
-    border-radius: var(--pz-radius);
-    background: transparent;
-    background-clip: padding-box;
-    box-shadow: var(--pz-shadow);
-    color: var(--pz-muted);
-    transition: background var(--pz-transition), color var(--pz-transition),
-      border-color var(--pz-transition), opacity var(--pz-transition),
-      box-shadow var(--pz-transition), transform var(--pz-transition);
-  }
-  /* Apagado: atenuado y levantado (con sombra) */
-  .equipo-filtro:not(.is-on) { opacity: 0.55; }
-  .equipo-filtro:not(.is-on):hover { opacity: 0.8; }
-  /* Prendido: fill del color de nivel + colapsa la sombra (se "presiona") */
-  .equipo-filtro.is-on { box-shadow: none; transform: translate(3px, 3px); }
-  .equipo-filtro--n1.is-on { background: var(--pz-n1); border-color: transparent; color: #fff; }
-  .equipo-filtro--n2.is-on { background: var(--pz-n2); border-color: transparent; color: #000; }
-  :global([data-theme='dark']) .equipo-filtro--n1.is-on,
-  :global([data-theme='dark']) .equipo-filtro--n2.is-on { color: #000; }
-
-  /* Card oculta por filtro (global: la card vive en otro componente, y su
-     display:flex vencería al [hidden] del navegador). */
-  :global(.pz-docente[hidden]) { display: none; }
 </style>
-
-<script>
-  document.addEventListener('astro:page-load', () => {
-    const filtros = document.getElementById('equipo-filtros');
-    if (!filtros) return;
-    const cards = () => Array.from(document.querySelectorAll('.pz-docente[data-nivel]'));
-
-    function apply() {
-      const on = new Set(
-        Array.from(filtros.querySelectorAll('.equipo-filtro.is-on')).map((b) => b.getAttribute('data-nivel'))
-      );
-      cards().forEach((c) => {
-        c.hidden = !on.has(c.getAttribute('data-nivel'));
-      });
-      // Ocultar grupos de rol que quedan sin docentes visibles
-      document.querySelectorAll('.equipo-grupo').forEach((sec) => {
-        const visibles = sec.querySelectorAll('.pz-docente:not([hidden])').length;
-        sec.style.display = visibles === 0 ? 'none' : '';
-      });
-    }
-
-    filtros.querySelectorAll('.equipo-filtro').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        // Mínimo un nivel encendido: no permitir apagar el último activo.
-        if (btn.classList.contains('is-on') &&
-            filtros.querySelectorAll('.equipo-filtro.is-on').length <= 1) {
-          return;
-        }
-        const on = btn.classList.toggle('is-on');
-        btn.setAttribute('aria-pressed', String(on));
-        apply();
-      });
-    });
-  });
-</script>
