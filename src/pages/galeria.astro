@@ -30,7 +30,7 @@ const label = (c) => (c === 'tps' ? 'TPs' : c.charAt(0).toUpperCase() + c.slice(
       ))}
     </div>
 
-    <Grid data-reveal cols={3} colsMd={2} colsSm={1} id="gal-grid" isEmpty={items.length === 0} emptyText="No hay material cargado todavía.">
+    <Grid data-reveal-group cols={3} colsMd={2} colsSm={1} id="gal-grid" isEmpty={items.length === 0} emptyText="No hay material cargado todavía.">
       {items.map((item, i) => <GaleriaItem item={item} index={i} />)}
     </Grid>
   </Section>
@@ -57,6 +57,12 @@ const label = (c) => (c === 'tps' ? 'TPs' : c.charAt(0).toUpperCase() + c.slice(
   .gal-hero__desc { color: var(--pz-muted); font-size: 1.1rem; margin-top: var(--pz-space-md); }
 
   .gal-filters { display: flex; flex-wrap: wrap; gap: var(--pz-space-xs); margin-bottom: var(--pz-space-xl); }
+  /* Tags de filtro: no animar el box-shadow (offset duro = repaint por frame → se
+     traba en Safari). Se anima sólo el transform del lift; la sombra cambia al instante. */
+  .gal-filters :global(.pz-btn) {
+    transition: transform var(--pz-transition), background-color var(--pz-transition),
+      color var(--pz-transition), border-color var(--pz-transition);
+  }
   /* Seleccionado: colapsa la sombra y "presiona" hacia donde estaba (feedback) */
   .gal-filters .is-active { background: var(--pz-duo); color: var(--pz-on-accent); border-color: transparent; box-shadow: none; transform: translate(3px, 3px); }
   .gal-filters__count { margin-left: 0.35rem; opacity: 0.6; }
