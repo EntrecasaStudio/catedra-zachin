@@ -48,6 +48,8 @@ const poster = item.tipo === 'video' ? item.src.replace(/\.mp4$/, '-thumb.jpg') 
     box-shadow: var(--pz-shadow);
     background: var(--pz-surface);
     overflow: hidden;
+    /* Safari: aísla el contexto para clipear el zoom del hijo compuesto sin trabarse */
+    isolation: isolate;
     transition: transform var(--pz-transition), box-shadow var(--pz-transition);
   }
   .pz-galitem:hover {
@@ -59,10 +61,16 @@ const poster = item.tipo === 'video' ? item.src.replace(/\.mp4$/, '-thumb.jpg') 
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* Safari: promover a capa GPU (translateZ + backface) para que el zoom del hover
+       se componga en la GPU y no re-rasterice cada frame → la animación deja de trabarse. */
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform;
     transition: transform var(--pz-transition-slow);
   }
   .pz-galitem:hover img,
-  .pz-galitem:hover video { transform: scale(1.05); }
+  .pz-galitem:hover video { transform: scale(1.05) translateZ(0); }
 
   .pz-galitem__play {
     position: absolute;
