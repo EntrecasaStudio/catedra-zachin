@@ -58,6 +58,34 @@ export const docentes = [
   { nombre: 'Sofía Giuliano', rol: 'Ayudante', nivel: 'Nivel 2', foto: '/images/docentes/AYUDANTE-Sofía-Giuliano.png' },
 ];
 
+// Ajustes de foto para emparejar el set (revisado con dirección de arte).
+//  `fix`   → brillo/contraste (empareja exposición; el set es bimodal, no sirve un
+//            brillo global). `zoom` + `origin` → reencuadre por CSS (acerca la cabeza).
+const ajustesFoto = {
+  // Levantar las oscuras
+  'Emilia Madroñal': { fix: 'brightness(1.35)' },
+  'Josefina Tamargo': { fix: 'brightness(1.3)' },
+  'Camila Vidal Cabrera': { fix: 'brightness(1.32) contrast(1.06)' },
+  'Catalina Somoza': { fix: 'brightness(1.25)' },
+  'Gabriel Gutiérrez': { fix: 'brightness(1.22)' },
+  'Josefina Calvo': { fix: 'brightness(1.18)' },
+  'Sofía Giuliano': { fix: 'brightness(1.16)' },
+  'César Flores': { fix: 'brightness(1.16)' },
+  'Ana Álvarez': { fix: 'brightness(1.16)' },
+  // Bajar las quemadas
+  'Valentina Scarfo': { fix: 'brightness(0.93)' },
+  'Fiorella Nucara': { fix: 'brightness(0.93)' },
+  // Reencuadre (cabeza chica / aire de más), con su corrección de exposición
+  'Karina Kusner': { fix: 'brightness(0.92) contrast(1.08)', zoom: 1.18, origin: '50% 40%' },
+  'Luciana Billoni': { fix: 'brightness(0.94)', zoom: 1.2, origin: '47% 40%' },
+  'Julieta Casela': { zoom: 1.2, origin: '49% 38%' },
+  'Luis Sánchez': { zoom: 1.15, origin: '50% 38%' },
+  'Leila Moreno': { zoom: 1.18, origin: '50% 40%' },
+};
+for (const d of docentes) {
+  if (ajustesFoto[d.nombre]) Object.assign(d, ajustesFoto[d.nombre]);
+}
+
 /** Agrupa el plantel por rol, respetando el orden jerárquico.
  *  Adjuntos y JTP van juntos: son pocos (2 + 4) y así llenan una sola fila en
  *  desktop (grilla de 6) en vez de dos filas semivacías. En mobile envuelven solos. */
