@@ -124,7 +124,7 @@ export function initHalftoneLab(root, opts = {}) {
       for (let gy = 0; gy < h; gy += CELL) {
         for (let gx = 0; gx < w; gx += CELL) {
           ch.dots.push({
-            x: gx, y: gy,
+            x: gx, y: gy, gi: Math.round(gx / CELL), gj: Math.round(gy / CELL),
             current: BASE_BRIGHT, target: BASE_BRIGHT, frozen: false,
             fixedR: BASE_BRIGHT, maxR: MAX_BRIGHT, baseR: BASE_BRIGHT,
           });
@@ -146,8 +146,32 @@ export function initHalftoneLab(root, opts = {}) {
         const y = rx * sinA + ry * cosA + h / 2;
 
         if (x >= -MAX_RADIUS && x <= w + MAX_RADIUS && y >= -MAX_RADIUS && y <= h + MAX_RADIUS) {
-          ch.dots.push({ x, y, current: BASE_RADIUS, target: BASE_RADIUS, frozen: false, fixedR: BASE_RADIUS, maxR: MAX_RADIUS, baseR: BASE_RADIUS });
+          // gi/gj = índice de grilla (relativo al centro): estable ante un resize,
+          // permite preservar lo pintado al pasar a pantalla completa.
+          ch.dots.push({ x, y, gi: i, gj: j, current: BASE_RADIUS, target: BASE_RADIUS, frozen: false, fixedR: BASE_RADIUS, maxR: MAX_RADIUS, baseR: BASE_RADIUS });
         }
+      }
+    }
+  }
+
+  // Regenera la grilla de un canal PRESERVANDO lo pintado, mapeando frozen/fixedR por
+  // índice de grilla (gi,gj). Se usa en el resize (p. ej. pantalla completa) para que
+  // no se borre lo pintado. (El cambio de lineatura sí resetea a propósito: usa
+  // generateDotsForChannel directo.)
+  function regenPreserving(ch) {
+    const prev = new Map();
+    for (const d of ch.dots) {
+      if (d.frozen) prev.set(`${d.gi},${d.gj}`, d.fixedR);
+    }
+    generateDotsForChannel(ch);
+    if (prev.size === 0) return;
+    for (const d of ch.dots) {
+      const f = prev.get(`${d.gi},${d.gj}`);
+      if (f !== undefined && f > d.baseR) {
+        d.frozen = true;
+        d.fixedR = f;
+        d.current = f;
+        d.target = f;
       }
     }
   }
@@ -166,7 +190,7 @@ export function initHalftoneLab(root, opts = {}) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     for (const ch of channels) {
-      if (ch.active || ch.dots.length > 0) generateDotsForChannel(ch);
+      if (ch.active || ch.dots.length > 0) regenPreserving(ch);
     }
   }
 
@@ -305,7 +329,7 @@ export function initHalftoneLab(root, opts = {}) {
         else ch.sweep = Math.max(ch.sweep - speed, ch.sweepTarget);
         if (ch.sweep <= 0 && ch.sweepTarget <= 0) {
           ch.active = false;
-          ch.dots = [];
+          // NO borrar ch.dots: se conserva lo pintado para cuando se vuelva a prender.
         }
       }
     }
