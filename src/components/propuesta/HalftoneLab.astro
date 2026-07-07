@@ -35,16 +35,33 @@ const channels = [
         <line x1="14" y1="10" x2="21" y2="3" /><line x1="3" y1="21" x2="10" y2="14" />
       </svg>
     </button>
-    <div class="pz-halftone__moire" data-moire-ctl>
-      <label class="pz-halftone__moire-label" for={`${id}-lpi`}>Lineatura</label>
-      <div class="pz-halftone__moire-row">
-        <input class="pz-halftone__moire-range" id={`${id}-lpi`} type="range" min="10" max="85" value="40" step="1" data-lpi aria-label="Lineatura de trama en LPI" />
-        <span class="pz-halftone__moire-val" data-lpi-val>≈ 40 lpi</span>
-      </div>
-      <label class="pz-halftone__moire-label pz-halftone__moire-label--stack" for={`${id}-moire`}>Desalinear tramas</label>
-      <div class="pz-halftone__moire-row">
-        <input class="pz-halftone__moire-range" id={`${id}-moire`} type="range" min="0" max="100" value="0" step="1" data-moire aria-label="Desalinear tramas — moiré" />
-        <span class="pz-halftone__moire-val" data-moire-val>Δ 60°</span>
+    <div class="pz-halftone__trama is-open" data-trama>
+      <button type="button" class="pz-trama__header" data-trama-toggle aria-expanded="true" aria-controls={`${id}-trama-body`}>
+        <svg class="pz-trama__glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+          <line x1="4" y1="8" x2="20" y2="8" /><rect x="8" y="6" width="4" height="4" rx="1" fill="currentColor" stroke="none" />
+          <line x1="4" y1="16" x2="20" y2="16" /><rect x="13" y="14" width="4" height="4" rx="1" fill="currentColor" stroke="none" />
+        </svg>
+        <span class="pz-trama__title">Trama</span>
+        <span class="pz-trama__badge" data-trama-badge>40 lpi · Δ 60°</span>
+        <svg class="pz-trama__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+      <div class="pz-trama__body" id={`${id}-trama-body`} role="group" aria-label="Trama de impresión">
+        <div class="pz-trama__ctl">
+          <label class="pz-trama__label" for={`${id}-lpi`}>Lineatura</label>
+          <div class="pz-halftone__moire-row">
+            <input class="pz-halftone__moire-range" id={`${id}-lpi`} type="range" min="10" max="85" value="40" step="1" data-lpi aria-label="Lineatura de trama en LPI" />
+            <span class="pz-halftone__moire-val" data-lpi-val>≈ 40 lpi</span>
+          </div>
+        </div>
+        <div class="pz-trama__ctl">
+          <label class="pz-trama__label" for={`${id}-moire`}>Desalinear tramas</label>
+          <div class="pz-halftone__moire-row">
+            <input class="pz-halftone__moire-range" id={`${id}-moire`} type="range" min="0" max="100" value="0" step="1" data-moire aria-label="Desalinear tramas — moiré" />
+            <span class="pz-halftone__moire-val" data-moire-val>Δ 60°</span>
+          </div>
+        </div>
       </div>
     </div>
     <div class="pz-halftone__controls" role="group" aria-label="Canales CMYK">
@@ -102,31 +119,55 @@ const channels = [
     z-index: 1;
   }
 
-  /* Control de moiré (sólo light): slider que colapsa los ángulos de trama */
-  .pz-halftone__moire {
+  /* Panel "Trama" (sólo light): un solo edit que agrupa lineatura + desalinear.
+     Header disclosure (glifo faders + título + badge de valores + chevron) y cuerpo
+     con los dos sliders. Abierto por defecto en desktop; colapsado en mobile. */
+  .pz-halftone__trama {
     position: absolute;
     left: var(--pz-space-md);
     top: var(--pz-space-md);
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-start;
-  }
-  .pz-halftone__moire-label {
-    font-family: var(--pz-font-mono);
-    font-size: 0.6rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--pz-fg);
-    background: var(--pz-bg);
-    padding: 3px 6px;
+    z-index: 2;
     border: var(--pz-border-width) solid var(--pz-fg);
     border-radius: var(--pz-radius);
+    box-shadow: var(--pz-shadow);
+    background: var(--pz-bg);
+    max-width: min(80vw, 290px);
   }
-  /* Separación entre los dos controles de trama (lineatura + desalinear) */
-  .pz-halftone__moire-label--stack { margin-top: var(--pz-space-xs); }
+  .pz-trama__header {
+    display: flex;
+    align-items: center;
+    gap: var(--pz-space-xs);
+    width: 100%;
+    padding: 0.4rem var(--pz-space-sm);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--pz-fg);
+    font-family: var(--pz-font-mono);
+  }
+  .pz-trama__glyph { width: 1rem; height: 1rem; flex: none; }
+  .pz-trama__title { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+  .pz-trama__badge {
+    margin-left: auto;
+    font-size: 0.6rem; font-weight: 700; color: var(--pz-muted);
+    white-space: nowrap; letter-spacing: 0.02em;
+  }
+  .pz-trama__chev { width: 0.85rem; height: 0.85rem; flex: none; transition: transform var(--pz-transition); }
+  .pz-halftone__trama:not(.is-open) .pz-trama__chev { transform: rotate(-90deg); }
+  .pz-trama__body {
+    display: grid;
+    gap: var(--pz-space-sm);
+    padding: var(--pz-space-xs) var(--pz-space-sm) var(--pz-space-sm);
+    border-top: 1px solid var(--pz-fg);
+  }
+  .pz-halftone__trama:not(.is-open) .pz-trama__body { display: none; }
+  .pz-trama__label {
+    display: block;
+    font-family: var(--pz-font-mono);
+    font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--pz-muted);
+    margin-bottom: 5px;
+  }
   .pz-halftone__moire-row { display: flex; align-items: center; gap: var(--pz-space-xs); }
   .pz-halftone__moire-val {
     font-family: var(--pz-font-mono);
@@ -166,7 +207,7 @@ const channels = [
   }
   .pz-halftone__moire-range::-moz-range-track { height: var(--pz-border-width); background: var(--pz-fg); }
   /* Sólo tiene sentido en light (CMYK/tinta): oculto en dark */
-  :global([data-theme='dark']) .pz-halftone__moire { display: none; }
+  :global([data-theme='dark']) .pz-halftone__trama { display: none; }
 
   .pz-channel-btn {
     width: 2.5rem;
@@ -316,12 +357,36 @@ const channels = [
         document.addEventListener('keydown', onKey);
       }
 
+      // Panel "Trama": disclosure que agrupa lineatura + desalinear. Abierto por
+      // defecto en desktop (hay lugar y el toy invita a tocar), colapsado en mobile.
+      const trama = el.querySelector('[data-trama]');
+      const tramaToggle = el.querySelector('[data-trama-toggle]');
+      const setTrama = (open) => {
+        if (!trama) return;
+        trama.classList.toggle('is-open', open);
+        if (tramaToggle) tramaToggle.setAttribute('aria-expanded', String(open));
+      };
+      const mqCompact = window.matchMedia('(max-width: 860px)');
+      setTrama(!mqCompact.matches); // colapsado en compacto, abierto en desktop
+      const onTramaKey = (e) => {
+        // Esc colapsa sólo si el foco está dentro del panel (no roba el Esc del expand)
+        if (e.key === 'Escape' && trama && trama.contains(document.activeElement) && trama.classList.contains('is-open')) {
+          setTrama(false);
+          if (tramaToggle) tramaToggle.focus();
+        }
+      };
+      if (tramaToggle && trama) {
+        tramaToggle.addEventListener('click', () => setTrama(!trama.classList.contains('is-open')));
+        document.addEventListener('keydown', onTramaKey);
+      }
+
       document.addEventListener(
         'astro:before-swap',
         () => {
           io.disconnect();
           lab.destroy();
           document.removeEventListener('keydown', onKey);
+          document.removeEventListener('keydown', onTramaKey);
           document.body.style.overflow = '';
         },
         { once: true }
