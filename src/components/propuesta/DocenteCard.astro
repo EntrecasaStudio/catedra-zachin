@@ -3,10 +3,10 @@
  * DocenteCard — ficha de un integrante del plantel.
  * Maneja imagen faltante (onerror → inicial) y carga diferida.
  *
- * @prop {{nombre:string, rol:string, nivel:string, foto?:string}} docente
+ * @prop {{nombre:string, rol:string, nivel:string, foto?:string, linkedin?:string}} docente
  */
 interface Props {
-  docente: { nombre: string; rol: string; nivel: string; foto?: string };
+  docente: { nombre: string; rol: string; nivel: string; foto?: string; linkedin?: string };
 }
 const { docente } = Astro.props;
 const inicial = docente.nombre.charAt(0).toUpperCase();
@@ -30,6 +30,19 @@ const nivelAbbr = docente.nivel === 'Nivel 1' ? 'N1' : docente.nivel === 'Nivel 
     )}
   </div>
   <h3 class="pz-docente__nombre">{docente.nombre}</h3>
+  {docente.linkedin && (
+    <a
+      class="pz-docente__linkedin"
+      href={docente.linkedin}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`LinkedIn de ${docente.nombre}`}
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z" />
+      </svg>
+    </a>
+  )}
   <span class="pz-docente__rol">{docente.rol}</span>
   {nivelClass && <span class:list={['pz-docente__nivel', nivelClass]}>{nivelAbbr}</span>}
 </article>
@@ -80,6 +93,14 @@ const nivelAbbr = docente.nivel === 'Nivel 1' ? 'N1' : docente.nivel === 'Nivel 
   .pz-docente:hover .pz-docente__avatar img { filter: grayscale(0%); }
 
   .pz-docente__nombre { font-size: 0.95rem; }
+  .pz-docente__linkedin {
+    display: inline-flex;
+    margin-top: var(--pz-space-2xs);
+    color: var(--pz-muted);
+    transition: color var(--pz-transition), transform var(--pz-transition);
+  }
+  .pz-docente__linkedin svg { width: 1rem; height: 1rem; }
+  .pz-docente__linkedin:hover { color: var(--pz-fg); transform: translateY(-1px); }
   .pz-docente__rol {
     font-family: var(--pz-font-mono);
     font-size: 0.72rem;

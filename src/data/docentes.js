@@ -20,7 +20,7 @@ export const docentes = [
   { nombre: 'Julieta Casela', rol: 'JTP', nivel: 'Nivel 2', foto: '/images/docentes/JTP-Julieta-Casela.png' },
   { nombre: 'Karina Kusner', rol: 'JTP', nivel: 'Nivel 2', foto: '/images/docentes/JTP-Karina-Kusner.png' },
   // Docentes - Nivel 1
-  { nombre: 'Azul Moreno', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Azul-Moreno.png' },
+  { nombre: 'Azul Moreno', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Azul-Moreno.png', oculto: true },
   { nombre: 'Camila Vidal Cabrera', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Camila-Vidal-Cabrera.png' },
   { nombre: 'Juan Hileger', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Juan-Hileger.png' },
   { nombre: 'Juan Maffeo', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Juan-Maffeo.png' },
@@ -58,12 +58,15 @@ export const docentes = [
   { nombre: 'Sofía Giuliano', rol: 'Ayudante', nivel: 'Nivel 2', foto: '/images/docentes/AYUDANTE-Sofía-Giuliano.png' },
 ];
 
-/** Agrupa el plantel por rol, respetando el orden jerárquico. */
+/** Agrupa el plantel por rol, respetando el orden jerárquico.
+ *  Adjuntos y JTP van juntos: son pocos (2 + 4) y así llenan una sola fila en
+ *  desktop (grilla de 6) en vez de dos filas semivacías. En mobile envuelven solos. */
 export function groupDocentes(list = docentes) {
+  // `oculto: true` esconde a alguien sin borrarlo del dato (se puede reactivar).
+  const visibles = list.filter((d) => !d.oculto);
   return [
-    { label: 'Adjuntos', members: list.filter((d) => d.rol.startsWith('Adjunt')) },
-    { label: 'Jefes de Trabajos Prácticos', members: list.filter((d) => d.rol === 'JTP') },
-    { label: 'Docentes', members: list.filter((d) => d.rol === 'Docente') },
-    { label: 'Ayudantes', members: list.filter((d) => d.rol === 'Ayudante') },
+    { label: 'Adjuntos y JTP', members: visibles.filter((d) => d.rol.startsWith('Adjunt') || d.rol === 'JTP') },
+    { label: 'Docentes', members: visibles.filter((d) => d.rol === 'Docente') },
+    { label: 'Ayudantes', members: visibles.filter((d) => d.rol === 'Ayudante') },
   ].filter((g) => g.members.length > 0);
 }
