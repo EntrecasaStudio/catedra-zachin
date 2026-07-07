@@ -59,9 +59,6 @@ export function initHalftoneLab(root, opts = {}) {
   // halo de hover, para que el toque no cubra tanta superficie (pedido). Crece luego
   // al mantener presionado.
   const STAMP_R = 46;
-  // Tamaño INICIAL del punto al primer tacto, como fracción del crecimiento máximo:
-  // arranca chico y crece al mantener presionado (no salta al máximo).
-  const STAMP_DOT = 0.3;
   const LERP = 0.12;
   const CHANNEL_ALPHA = 1; // color al 100%; los canales se suman por 'multiply'
   const SWEEP_DURATION = 800;
@@ -457,14 +454,14 @@ export function initHalftoneLab(root, opts = {}) {
         const dy = my - dot.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < STAMP_R) {
-          // Fija el valor actual (incluye lo que creció por el hover); un nuevo click re-fija más alto.
-          // Radio del dab acotado a STAMP_R (chico). El punto ARRANCA chico (STAMP_DOT):
-          // el primer tacto deja puntos pequeños y, al mantener, el brush los agranda.
+          // Perfil de GRADIENTE pleno centro→borde (como el hover): el dab NO es un
+          // disco de tono uniforme. Se fija ese perfil, NO dot.current —dentro del
+          // radio chico el halo de hover está uniformemente alto y dejaba tonos iguales.
           const t = 1 - dist / STAMP_R;
-          const grown = dot.baseR + (dot.maxR - dot.baseR) * t * STAMP_DOT;
+          const grown = dot.baseR + (dot.maxR - dot.baseR) * t;
           dot.frozen = true;
-          dot.fixedR = Math.max(dot.fixedR, dot.current, grown);
-          dot.current = dot.fixedR; // aparece al instante (no espera el LERP)
+          dot.fixedR = Math.max(dot.fixedR, grown);
+          dot.current = Math.max(dot.current, dot.fixedR); // aparece al instante, sin achicar el hover
         }
       }
     }
