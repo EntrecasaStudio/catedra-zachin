@@ -18,6 +18,7 @@ const poster = item.tipo === 'video' ? item.src.replace(/\.mp4$/, '-thumb.jpg') 
 
 <button
   class="pz-galitem"
+  data-reveal
   data-categoria={item.categoria}
   data-index={index}
   data-tipo={item.tipo}
@@ -25,19 +26,25 @@ const poster = item.tipo === 'video' ? item.src.replace(/\.mp4$/, '-thumb.jpg') 
   data-alt={item.alt}
   aria-label={`Ampliar: ${item.alt}`}
 >
-  {item.tipo === 'foto' ? (
-    <img src={item.src} alt={item.alt} loading="lazy" decoding="async" width="640" height="480" />
-  ) : (
-    <>
+  <span class="pz-galitem__media">
+    {item.tipo === 'foto' ? (
+      <img src={item.src} alt={item.alt} loading="lazy" decoding="async" width="640" height="480" />
+    ) : (
       <video src={item.src} poster={poster} muted loop playsinline preload="none"><track kind="captions" /></video>
-      <span class="pz-galitem__play" aria-hidden="true">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
-      </span>
-    </>
+    )}
+  </span>
+  {item.tipo === 'video' && (
+    <span class="pz-galitem__play" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
+    </span>
   )}
 </button>
 
 <style>
+  /* La card lleva `data-reveal`: su transform (entrada + cascada) lo maneja el sistema
+     de reveal. El hover NO toca el transform de la card (evita la colisión de
+     especificidad con .is-revealed{transform:none} y el delay de cascada): sólo crece
+     la sombra acá y el zoom vive en un wrapper interno propio. */
   .pz-galitem {
     position: relative;
     display: block;
@@ -48,33 +55,34 @@ const poster = item.tipo === 'video' ? item.src.replace(/\.mp4$/, '-thumb.jpg') 
     box-shadow: var(--pz-shadow);
     background: var(--pz-surface);
     overflow: hidden;
-    /* Safari: aísla el contexto para clipear el zoom del hijo compuesto sin trabarse */
-    isolation: isolate;
-    transition: transform var(--pz-transition), box-shadow var(--pz-transition);
+    isolation: isolate; /* Safari: contexto de clip para el zoom del hijo */
+    transition: box-shadow var(--pz-transition);
   }
-  .pz-galitem:hover {
-    transform: translate(var(--pz-lift), var(--pz-lift));
-    box-shadow: var(--pz-shadow-hover);
+  .pz-galitem:hover { box-shadow: var(--pz-shadow-hover); }
+
+  /* Wrapper del medio: dueño del zoom del hover, con transición propia (sin delay de
+     cascada). Se promueve a capa GPU SÓLO en hover (no permanente → sin sobrecarga). */
+  .pz-galitem__media {
+    position: absolute;
+    inset: 0;
+    transition: transform var(--pz-transition-slow);
   }
-  .pz-galitem img,
-  .pz-galitem video {
+  .pz-galitem__media img,
+  .pz-galitem__media video {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Safari: promover a capa GPU (translateZ + backface) para que el zoom del hover
-       se componga en la GPU y no re-rasterice cada frame → la animación deja de trabarse. */
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    will-change: transform;
-    transition: transform var(--pz-transition-slow);
   }
-  .pz-galitem:hover img,
-  .pz-galitem:hover video { transform: scale(1.05) translateZ(0); }
+  .pz-galitem:hover .pz-galitem__media {
+    transform: scale(1.05);
+    will-change: transform;
+  }
 
   .pz-galitem__play {
     position: absolute;
     inset: 0;
+    z-index: 1;
     display: grid;
     place-items: center;
     color: #fff;
