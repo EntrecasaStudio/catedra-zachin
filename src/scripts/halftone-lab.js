@@ -506,7 +506,7 @@ export function initHalftoneLab(root, opts = {}) {
   // ¿El punto (viewport) cae sobre el área de los controles? Con un margen extra
   // para que tocar/errarle a los selectores NO accione la trama.
   function overControls(clientX, clientY) {
-    const zones = root.querySelectorAll('.pz-halftone__controls, .pz-halftone__moire, [data-expand]');
+    const zones = root.querySelectorAll('.pz-halftone__controls, .pz-halftone__trama, [data-expand]');
     const M = 18;
     for (const z of zones) {
       const r = z.getBoundingClientRect();
@@ -627,11 +627,19 @@ export function initHalftoneLab(root, opts = {}) {
   // Slider de moiré (sólo light): 0 = halftone normal; >0 = colapso de ángulos.
   const moireSlider = root.querySelector('[data-moire]');
   const moireVal = root.querySelector('[data-moire-val]');
+  // Badge del panel "Trama": resume ambos valores para que el header colapsado no mienta.
+  const tramaBadge = root.querySelector('[data-trama-badge]');
+  function updateTramaBadge() {
+    if (!tramaBadge) return;
+    const ang = moireVal ? moireVal.textContent : 'Δ 0°';
+    tramaBadge.textContent = `${currentLpi} lpi · ${ang}`;
+  }
   function updateMoireReadout() {
     if (!moireVal) return;
     const t = moireT * moireT;
     const gap = Math.abs(mix(75, 23, t) - mix(15, 19, t)); // separación C/M en grados
     moireVal.textContent = `Δ ${Math.round(gap)}°`;
+    updateTramaBadge();
   }
   const onMoire = () => {
     const prev = moireT;
@@ -653,6 +661,7 @@ export function initHalftoneLab(root, opts = {}) {
   let lpiTimer = 0;
   function updateLpiReadout() {
     if (lpiVal) lpiVal.textContent = `≈ ${currentLpi} lpi`;
+    updateTramaBadge();
   }
   function regenAll() {
     applyLpi();
