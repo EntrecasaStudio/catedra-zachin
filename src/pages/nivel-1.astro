@@ -3,13 +3,12 @@ import PropuestaLayout from '../layouts/PropuestaLayout.astro';
 import NivelDetalle from '../components/propuesta/NivelDetalle.astro';
 
 const programa = [
-  { num: '1', titulo: 'Color', desc: 'Cómo se forma y se percibe el color en gráfica virtual y material. Síntesis aditiva y sustractiva, los modelos RGB, CMYK y hexadecimal, y la correspondencia entre el color de pantalla y el color de impresión.' },
-  { num: '2', titulo: 'Tecnología y diseño', desc: 'El rol del diseñador dentro del proceso productivo: flujo de trabajo, estandarización y sustentabilidad. Los dispositivos y el software como herramientas de producción.' },
-  { num: '3', titulo: 'La imagen digital', desc: 'Naturaleza de la imagen digital: mapa de bits (pixelar) frente a vectorial, resolución y modos de imagen. Los archivos de fuentes tipográficas.' },
-  { num: '4', titulo: 'Soportes digitales', desc: 'Los dispositivos como soporte: resoluciones de pantalla, densidad de píxeles y diseño responsivo para adaptar la pieza a cada dispositivo.' },
-  { num: '5', titulo: 'Generación digital de originales', desc: 'Producción digital de originales listos para reproducir, para destino virtual y material. Preparación del archivo, criterios de calidad y adecuación a cada sistema de salida.' },
-  { num: '6', titulo: 'Web', desc: 'La web como soporte: estándares y lenguajes, hipertexto e interfaces. Fundamentos de usabilidad y experiencia de usuario (UX).' },
-  { num: '7', titulo: 'Introducción a la industria gráfica', desc: 'Primer acercamiento a la producción gráfica material: panorama de la industria, sus procesos y su lógica, como puente hacia Tecnología 2.' },
+  { num: '1', titulo: 'Color', desc: 'Formación y percepción del color en gráfica virtual y material. Síntesis aditiva y sustractiva, modelos RGB, CMYK y hexadecimal, y correspondencia entre color de pantalla y color de impresión.' },
+  { num: '2', titulo: 'Imagen digital y web', desc: 'Naturaleza de la imagen digital: mapa de bits frente a vectorial, resolución, modos de imagen y archivos tipográficos. La web como soporte: estándares, hipertexto, interfaces y fundamentos de UX.' },
+  { num: '3', titulo: 'Originales digitales', desc: 'Producción de originales listos para reproducir en destino virtual y material. Preparación del archivo, criterios de calidad y adecuación a cada sistema de salida.' },
+  { num: '4', titulo: 'Papel y preimpresión', desc: 'El papel como soporte de impresión: tipos, formatos, gramaje y acabados. Flujo de preimpresión y generación de formas impresoras (CTP).' },
+  { num: '5', titulo: 'Introducción a la industria gráfica', desc: 'Panorama de los sistemas de impresión industriales: offset, flexografía, rotograbado, serigrafía e híbridos. Formas impresoras, tintas, sustratos y aplicaciones de cada sistema.' },
+  { num: '6', titulo: 'Impresión digital y bajo demanda', desc: 'Sistemas de impresión digital: tóner y chorro de tinta. Impresión bajo demanda, dato variable, tiradas cortas y nuevas tecnologías de reproducción.' },
 ];
 
 ---
@@ -17,7 +16,7 @@ const programa = [
 <PropuestaLayout title="Tecnología 1 | Propuesta Zachin" description="Tecnología 1 — Introducción a los procesos de producción gráfica.">
   <NivelDetalle
     nivel={1}
-    desc="Los fundamentos tecnológicos del diseño en soporte virtual: color, tecnología y diseño, imagen digital, soportes digitales, generación de originales, web e introducción a la industria gráfica."
+    desc="Los fundamentos tecnológicos del diseño en soporte virtual y material: color, imagen digital y web, originales digitales, papel y preimpresión, introducción a la industria gráfica e impresión digital."
     mail="cat.zachin.tecno1@gmail.com"
     programa={programa}
     cursada={[
