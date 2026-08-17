@@ -11,11 +11,15 @@
 
 /** @type {Docente[]} */
 export const docentes = [
-  // ── Nivel 1 ──────────────────────────────────────────────
-  // Adjuntos y JTP
+  // ── Adjuntos y JTP (cargo más alto primero, luego por nivel) ──
   { nombre: 'Daniela Vulcano', rol: 'Adjunta', nivel: 'Nivel 1', foto: '/images/docentes/Adjunta-Daniela-Vulcano.png' },
+  { nombre: 'Leandro Barales', rol: 'Adjunto', nivel: 'Nivel 2', foto: '/images/docentes/Adjunto-Leandro-Barales.png' },
   { nombre: 'Gabriel Gutiérrez', rol: 'JTP', nivel: 'Nivel 1', foto: '/images/docentes/JTP-Gabriel-Gutierrez.jpg' },
   { nombre: 'Paula Rincón', rol: 'JTP', nivel: 'Nivel 1', foto: '/images/docentes/JTP-Paula-Rincon.png' },
+  { nombre: 'Julieta Casela', rol: 'JTP', nivel: 'Nivel 2', foto: '/images/docentes/JTP-Julieta-Casela.png' },
+  { nombre: 'Karina Kusner', rol: 'JTP', nivel: 'Nivel 2', foto: '/images/docentes/JTP-Karina-Kusner.jpg' },
+
+  // ── Nivel 1 ──────────────────────────────────────────────
   // Docentes (por apellido)
   { nombre: 'Lucas Belfiore', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Lucas-Belfiore.png' },
   { nombre: 'Juan Hileger', rol: 'Docente', nivel: 'Nivel 1', foto: '/images/docentes/DOCENTE-Juan-Hileger.jpeg' },
@@ -43,10 +47,6 @@ export const docentes = [
   { nombre: 'Micaela Ivana Wroceawsky', rol: 'Ayudante', nivel: 'Nivel 1', foto: '/images/docentes/AYUDANTE-Micaela-Ivana-Wroceawsky.png' },
 
   // ── Nivel 2 ──────────────────────────────────────────────
-  // Adjuntos y JTP
-  { nombre: 'Leandro Barales', rol: 'Adjunto', nivel: 'Nivel 2', foto: '/images/docentes/Adjunto-Leandro-Barales.png' },
-  { nombre: 'Julieta Casela', rol: 'JTP', nivel: 'Nivel 2', foto: '/images/docentes/JTP-Julieta-Casela.png' },
-  { nombre: 'Karina Kusner', rol: 'JTP', nivel: 'Nivel 2', foto: '/images/docentes/JTP-Karina-Kusner.jpg' },
   // Docentes (por apellido)
   { nombre: 'Daniela Borromeo', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Daniela-Borromeo.jpg' },
   { nombre: 'Josefina Calvo', rol: 'Docente', nivel: 'Nivel 2', foto: '/images/docentes/DOCENTE-Josefina-Calvo.png' },
