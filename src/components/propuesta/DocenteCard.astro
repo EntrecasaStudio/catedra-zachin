@@ -109,10 +109,6 @@ const nivelAbbr = docente.nivel === 'Nivel 1' ? 'N1' : docente.nivel === 'Nivel 
     transform-origin: var(--foto-origin, 50% 38%);
     /* Base uniforme (grayscale + leve contraste) + corrección de brillo por foto. */
     filter: grayscale(100%) contrast(1.04) var(--foto-fix, brightness(1));
-    transition: filter var(--pz-transition);
-  }
-  .pz-docente:hover .pz-docente__avatar img {
-    filter: grayscale(0%) contrast(1.04) var(--foto-fix, brightness(1));
   }
 
   .pz-docente__nombre { font-size: 0.95rem; }
